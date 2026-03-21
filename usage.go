@@ -32,7 +32,7 @@ func NewUsageService(opts ...option.RequestOption) (r *UsageService) {
 	return
 }
 
-// Returns current subscription details and usage statistics for the organization.
+// Returns current plan details and API call usage statistics for the organization.
 func (r *UsageService) Get(ctx context.Context, opts ...option.RequestOption) (res *UsageGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/usage"
@@ -41,20 +41,22 @@ func (r *UsageService) Get(ctx context.Context, opts ...option.RequestOption) (r
 }
 
 type UsageGetResponse struct {
-	APICalls UsageGetResponseAPICalls `json:"api_calls" api:"required"`
-	Plan     UsageGetResponsePlan     `json:"plan" api:"required"`
-	Usage    UsageGetResponseUsage    `json:"usage" api:"required"`
-	JSON     usageGetResponseJSON     `json:"-"`
+	Plan         UsageGetResponsePlan         `json:"plan" api:"required"`
+	RateLimit    UsageGetResponseRateLimit    `json:"rate_limit" api:"required"`
+	Subscription UsageGetResponseSubscription `json:"subscription" api:"required"`
+	Usage        UsageGetResponseUsage        `json:"usage" api:"required"`
+	JSON         usageGetResponseJSON         `json:"-"`
 }
 
 // usageGetResponseJSON contains the JSON metadata for the struct
 // [UsageGetResponse]
 type usageGetResponseJSON struct {
-	APICalls    apijson.Field
-	Plan        apijson.Field
-	Usage       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Plan         apijson.Field
+	RateLimit    apijson.Field
+	Subscription apijson.Field
+	Usage        apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
 }
 
 func (r *UsageGetResponse) UnmarshalJSON(data []byte) (err error) {
@@ -65,47 +67,24 @@ func (r usageGetResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type UsageGetResponseAPICalls struct {
-	// API calls in the current minute
-	CurrentMinute float64 `json:"current_minute" api:"required"`
-	// Max API calls per minute
-	LimitPerMinute float64                      `json:"limit_per_minute" api:"required"`
-	JSON           usageGetResponseAPICallsJSON `json:"-"`
-}
-
-// usageGetResponseAPICallsJSON contains the JSON metadata for the struct
-// [UsageGetResponseAPICalls]
-type usageGetResponseAPICallsJSON struct {
-	CurrentMinute  apijson.Field
-	LimitPerMinute apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *UsageGetResponseAPICalls) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r usageGetResponseAPICallsJSON) RawJSON() string {
-	return r.raw
-}
-
 type UsageGetResponsePlan struct {
+	// API calls included per billing cycle
+	APICallsLimit float64 `json:"api_calls_limit" api:"required"`
 	// API calls allowed per minute
-	APICallsPerMin float64 `json:"api_calls_per_min" api:"required"`
-	// Plan name
-	Name string `json:"name" api:"required"`
-	// Max posts per billing cycle
-	PostsLimit float64                  `json:"posts_limit" api:"required"`
-	JSON       usageGetResponsePlanJSON `json:"-"`
+	APICallsPerMin float64                      `json:"api_calls_per_min" api:"required"`
+	Features       UsageGetResponsePlanFeatures `json:"features" api:"required"`
+	// Current plan
+	Name UsageGetResponsePlanName `json:"name" api:"required"`
+	JSON usageGetResponsePlanJSON `json:"-"`
 }
 
 // usageGetResponsePlanJSON contains the JSON metadata for the struct
 // [UsageGetResponsePlan]
 type usageGetResponsePlanJSON struct {
+	APICallsLimit  apijson.Field
 	APICallsPerMin apijson.Field
+	Features       apijson.Field
 	Name           apijson.Field
-	PostsLimit     apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -118,30 +97,127 @@ func (r usageGetResponsePlanJSON) RawJSON() string {
 	return r.raw
 }
 
+type UsageGetResponsePlanFeatures struct {
+	// Access to /v1/analytics
+	Analytics bool `json:"analytics" api:"required"`
+	// Access to /v1/inbox
+	Inbox bool                             `json:"inbox" api:"required"`
+	JSON  usageGetResponsePlanFeaturesJSON `json:"-"`
+}
+
+// usageGetResponsePlanFeaturesJSON contains the JSON metadata for the struct
+// [UsageGetResponsePlanFeatures]
+type usageGetResponsePlanFeaturesJSON struct {
+	Analytics   apijson.Field
+	Inbox       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *UsageGetResponsePlanFeatures) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r usageGetResponsePlanFeaturesJSON) RawJSON() string {
+	return r.raw
+}
+
+// Current plan
+type UsageGetResponsePlanName string
+
+const (
+	UsageGetResponsePlanNameFree UsageGetResponsePlanName = "free"
+	UsageGetResponsePlanNamePro  UsageGetResponsePlanName = "pro"
+)
+
+func (r UsageGetResponsePlanName) IsKnown() bool {
+	switch r {
+	case UsageGetResponsePlanNameFree, UsageGetResponsePlanNamePro:
+		return true
+	}
+	return false
+}
+
+type UsageGetResponseRateLimit struct {
+	// API calls in the current rate-limit window
+	CurrentMinute float64 `json:"current_minute" api:"required"`
+	// Max API calls per rate-limit window
+	LimitPerMinute float64                       `json:"limit_per_minute" api:"required"`
+	JSON           usageGetResponseRateLimitJSON `json:"-"`
+}
+
+// usageGetResponseRateLimitJSON contains the JSON metadata for the struct
+// [UsageGetResponseRateLimit]
+type usageGetResponseRateLimitJSON struct {
+	CurrentMinute  apijson.Field
+	LimitPerMinute apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *UsageGetResponseRateLimit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r usageGetResponseRateLimitJSON) RawJSON() string {
+	return r.raw
+}
+
+type UsageGetResponseSubscription struct {
+	// Base monthly price in cents
+	MonthlyPriceCents float64 `json:"monthly_price_cents" api:"required"`
+	// Overage price per 1K API calls in cents
+	PricePerThousandCallsCents float64 `json:"price_per_thousand_calls_cents" api:"required"`
+	// Subscription status
+	Status string                           `json:"status" api:"required"`
+	JSON   usageGetResponseSubscriptionJSON `json:"-"`
+}
+
+// usageGetResponseSubscriptionJSON contains the JSON metadata for the struct
+// [UsageGetResponseSubscription]
+type usageGetResponseSubscriptionJSON struct {
+	MonthlyPriceCents          apijson.Field
+	PricePerThousandCallsCents apijson.Field
+	Status                     apijson.Field
+	raw                        string
+	ExtraFields                map[string]apijson.Field
+}
+
+func (r *UsageGetResponseSubscription) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r usageGetResponseSubscriptionJSON) RawJSON() string {
+	return r.raw
+}
+
 type UsageGetResponseUsage struct {
+	// API calls remaining this cycle (Infinity for pro overage)
+	APICallsRemaining float64 `json:"api_calls_remaining" api:"required"`
+	// API calls used this cycle
+	APICallsUsed float64 `json:"api_calls_used" api:"required"`
 	// Current billing cycle end
 	CycleEnd time.Time `json:"cycle_end" api:"required" format:"date-time"`
-	// When the cycle resets
-	CycleResetsAt time.Time `json:"cycle_resets_at" api:"required" format:"date-time"`
 	// Current billing cycle start
 	CycleStart time.Time `json:"cycle_start" api:"required" format:"date-time"`
-	// Max posts per billing cycle
-	PostsLimit float64 `json:"posts_limit" api:"required"`
-	// Posts used this cycle
-	PostsUsed float64                   `json:"posts_used" api:"required"`
-	JSON      usageGetResponseUsageJSON `json:"-"`
+	// API calls exceeding included amount
+	OverageCalls float64 `json:"overage_calls" api:"required"`
+	// Overage cost in cents
+	OverageCostCents float64                   `json:"overage_cost_cents" api:"required"`
+	JSON             usageGetResponseUsageJSON `json:"-"`
 }
 
 // usageGetResponseUsageJSON contains the JSON metadata for the struct
 // [UsageGetResponseUsage]
 type usageGetResponseUsageJSON struct {
-	CycleEnd      apijson.Field
-	CycleResetsAt apijson.Field
-	CycleStart    apijson.Field
-	PostsLimit    apijson.Field
-	PostsUsed     apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
+	APICallsRemaining apijson.Field
+	APICallsUsed      apijson.Field
+	CycleEnd          apijson.Field
+	CycleStart        apijson.Field
+	OverageCalls      apijson.Field
+	OverageCostCents  apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *UsageGetResponseUsage) UnmarshalJSON(data []byte) (err error) {
