@@ -1,0 +1,126 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package relaygo_test
+
+import (
+	"context"
+	"errors"
+	"os"
+	"testing"
+
+	"github.com/relayapi-dev/relay-go"
+	"github.com/relayapi-dev/relay-go/internal/testutil"
+	"github.com/relayapi-dev/relay-go/option"
+)
+
+func TestToolValidateCheckPostLength(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := relaygo.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Tools.Validate.CheckPostLength(context.TODO(), relaygo.ToolValidateCheckPostLengthParams{
+		Content: relaygo.F("content"),
+	})
+	if err != nil {
+		var apierr *relaygo.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestToolValidateGetSubreddit(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := relaygo.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Tools.Validate.GetSubreddit(context.TODO(), relaygo.ToolValidateGetSubredditParams{
+		Name: relaygo.F("name"),
+	})
+	if err != nil {
+		var apierr *relaygo.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestToolValidateValidateMedia(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := relaygo.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Tools.Validate.ValidateMedia(context.TODO(), relaygo.ToolValidateValidateMediaParams{
+		URL: relaygo.F("https://example.com"),
+	})
+	if err != nil {
+		var apierr *relaygo.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := relaygo.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Tools.Validate.ValidatePost(context.TODO(), relaygo.ToolValidateValidatePostParams{
+		ScheduledAt: relaygo.F("now"),
+		Targets:     relaygo.F([]string{"string"}),
+		Content:     relaygo.F("content"),
+		Media: relaygo.F([]relaygo.ToolValidateValidatePostParamsMedia{{
+			URL:  relaygo.F("https://example.com"),
+			Type: relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
+		}}),
+		TargetOptions: relaygo.F(map[string]map[string]interface{}{
+			"foo": {
+				"foo": "bar",
+			},
+		}),
+		Timezone: relaygo.F("timezone"),
+	})
+	if err != nil {
+		var apierr *relaygo.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
