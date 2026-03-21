@@ -2,7 +2,7 @@
 
 <a href="https://pkg.go.dev/github.com/relayapi-dev/relay-go"><img src="https://pkg.go.dev/badge/github.com/relayapi-dev/relay-go.svg" alt="Go Reference"></a>
 
-The Relay Go library provides convenient access to the Relay REST API
+The Relay Go library provides convenient access to the [Relay REST API](https://docs.relayapi.dev)
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
