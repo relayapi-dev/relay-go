@@ -139,8 +139,6 @@ func (r UsageGetResponsePlanName) IsKnown() bool {
 }
 
 type UsageGetResponseRateLimit struct {
-	// API calls in the current rate-limit window
-	CurrentMinute float64 `json:"current_minute" api:"required"`
 	// Max API calls per rate-limit window
 	LimitPerMinute float64                       `json:"limit_per_minute" api:"required"`
 	JSON           usageGetResponseRateLimitJSON `json:"-"`
@@ -149,7 +147,6 @@ type UsageGetResponseRateLimit struct {
 // usageGetResponseRateLimitJSON contains the JSON metadata for the struct
 // [UsageGetResponseRateLimit]
 type usageGetResponseRateLimitJSON struct {
-	CurrentMinute  apijson.Field
 	LimitPerMinute apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
