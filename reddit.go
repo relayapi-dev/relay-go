@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"time"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
 	"github.com/relayapi-dev/relay-go/internal/apiquery"
@@ -217,12 +218,16 @@ type RedditGetFeedParams struct {
 	Subreddit param.Field[string] `query:"subreddit" api:"required"`
 	// Pagination cursor
 	Cursor param.Field[string] `query:"cursor"`
+	// Filter: start date (ISO 8601)
+	From param.Field[time.Time] `query:"from" format:"date-time"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
 	// Sort order
 	Sort param.Field[RedditGetFeedParamsSort] `query:"sort"`
 	// Time filter (for top sort)
 	Time param.Field[RedditGetFeedParamsTime] `query:"time"`
+	// Filter: end date (ISO 8601)
+	To param.Field[time.Time] `query:"to" format:"date-time"`
 }
 
 // URLQuery serializes [RedditGetFeedParams]'s query parameters as `url.Values`.
@@ -278,6 +283,8 @@ type RedditSearchParams struct {
 	Query param.Field[string] `query:"query" api:"required"`
 	// Pagination cursor
 	Cursor param.Field[string] `query:"cursor"`
+	// Filter: start date (ISO 8601)
+	From param.Field[time.Time] `query:"from" format:"date-time"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
 	// Sort order
@@ -286,6 +293,8 @@ type RedditSearchParams struct {
 	Subreddit param.Field[string] `query:"subreddit"`
 	// Time filter
 	Time param.Field[RedditSearchParamsTime] `query:"time"`
+	// Filter: end date (ISO 8601)
+	To param.Field[time.Time] `query:"to" format:"date-time"`
 }
 
 // URLQuery serializes [RedditSearchParams]'s query parameters as `url.Values`.

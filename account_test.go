@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/relayapi-dev/relay-go"
 	"github.com/relayapi-dev/relay-go/internal/testutil"
@@ -83,7 +84,9 @@ func TestAccountListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Accounts.List(context.TODO(), relaygo.AccountListParams{
 		Cursor: relaygo.F("cursor"),
+		From:   relaygo.F(time.Now()),
 		Limit:  relaygo.F(int64(1)),
+		To:     relaygo.F(time.Now()),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

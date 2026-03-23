@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/relayapi-dev/relay-go"
 	"github.com/relayapi-dev/relay-go/internal/testutil"
@@ -28,7 +29,9 @@ func TestConnectionListLogsWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Connections.ListLogs(context.TODO(), relaygo.ConnectionListLogsParams{
 		Cursor: relaygo.F("cursor"),
+		From:   relaygo.F(time.Now()),
 		Limit:  relaygo.F(int64(1)),
+		To:     relaygo.F(time.Now()),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
