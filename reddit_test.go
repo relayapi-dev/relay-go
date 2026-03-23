@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/relayapi-dev/relay-go"
 	"github.com/relayapi-dev/relay-go/internal/testutil"
@@ -30,9 +31,11 @@ func TestRedditGetFeedWithOptionalParams(t *testing.T) {
 		AccountID: relaygo.F("account_id"),
 		Subreddit: relaygo.F("subreddit"),
 		Cursor:    relaygo.F("cursor"),
+		From:      relaygo.F(time.Now()),
 		Limit:     relaygo.F(int64(1)),
 		Sort:      relaygo.F(relaygo.RedditGetFeedParamsSortHot),
 		Time:      relaygo.F(relaygo.RedditGetFeedParamsTimeHour),
+		To:        relaygo.F(time.Now()),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -60,10 +63,12 @@ func TestRedditSearchWithOptionalParams(t *testing.T) {
 		AccountID: relaygo.F("account_id"),
 		Query:     relaygo.F("query"),
 		Cursor:    relaygo.F("cursor"),
+		From:      relaygo.F(time.Now()),
 		Limit:     relaygo.F(int64(1)),
 		Sort:      relaygo.F(relaygo.RedditSearchParamsSortRelevance),
 		Subreddit: relaygo.F("subreddit"),
 		Time:      relaygo.F(relaygo.RedditSearchParamsTimeHour),
+		To:        relaygo.F(time.Now()),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

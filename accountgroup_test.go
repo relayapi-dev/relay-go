@@ -13,7 +13,7 @@ import (
 	"github.com/relayapi-dev/relay-go/option"
 )
 
-func TestAccountGroupNew(t *testing.T) {
+func TestAccountGroupNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,8 +27,8 @@ func TestAccountGroupNew(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.AccountGroups.New(context.TODO(), relaygo.AccountGroupNewParams{
-		AccountIDs: relaygo.F([]string{"string"}),
 		Name:       relaygo.F("x"),
+		AccountIDs: relaygo.F([]string{"string"}),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

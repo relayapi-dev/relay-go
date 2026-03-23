@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/relayapi-dev/relay-go"
 	"github.com/relayapi-dev/relay-go/internal/testutil"
@@ -85,7 +86,9 @@ func TestWebhookListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Webhooks.List(context.TODO(), relaygo.WebhookListParams{
 		Cursor: relaygo.F("cursor"),
+		From:   relaygo.F(time.Now()),
 		Limit:  relaygo.F(int64(1)),
+		To:     relaygo.F(time.Now()),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -134,7 +137,9 @@ func TestWebhookListLogsWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Webhooks.ListLogs(context.TODO(), relaygo.WebhookListLogsParams{
 		Cursor: relaygo.F("cursor"),
+		From:   relaygo.F(time.Now()),
 		Limit:  relaygo.F(int64(1)),
+		To:     relaygo.F(time.Now()),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

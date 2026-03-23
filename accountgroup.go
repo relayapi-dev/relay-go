@@ -200,10 +200,10 @@ func (r accountGroupListResponseDataJSON) RawJSON() string {
 }
 
 type AccountGroupNewParams struct {
-	// Account IDs to include in the group
-	AccountIDs param.Field[[]string] `json:"account_ids" api:"required"`
 	// Group name
 	Name param.Field[string] `json:"name" api:"required"`
+	// Account IDs to include in the group
+	AccountIDs param.Field[[]string] `json:"account_ids"`
 }
 
 func (r AccountGroupNewParams) MarshalJSON() (data []byte, err error) {

@@ -390,8 +390,12 @@ func (r WebhookUpdateParamsEvent) IsKnown() bool {
 type WebhookListParams struct {
 	// Pagination cursor
 	Cursor param.Field[string] `query:"cursor"`
+	// Filter: start date (ISO 8601)
+	From param.Field[time.Time] `query:"from" format:"date-time"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
+	// Filter: end date (ISO 8601)
+	To param.Field[time.Time] `query:"to" format:"date-time"`
 }
 
 // URLQuery serializes [WebhookListParams]'s query parameters as `url.Values`.
@@ -405,8 +409,12 @@ func (r WebhookListParams) URLQuery() (v url.Values) {
 type WebhookListLogsParams struct {
 	// Pagination cursor
 	Cursor param.Field[string] `query:"cursor"`
+	// Filter: start date (ISO 8601)
+	From param.Field[time.Time] `query:"from" format:"date-time"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
+	// Filter: end date (ISO 8601)
+	To param.Field[time.Time] `query:"to" format:"date-time"`
 }
 
 // URLQuery serializes [WebhookListLogsParams]'s query parameters as `url.Values`.

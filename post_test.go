@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/relayapi-dev/relay-go"
 	"github.com/relayapi-dev/relay-go/internal/testutil"
@@ -129,7 +130,9 @@ func TestPostListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Posts.List(context.TODO(), relaygo.PostListParams{
 		Cursor: relaygo.F("cursor"),
+		From:   relaygo.F(time.Now()),
 		Limit:  relaygo.F(int64(1)),
+		To:     relaygo.F(time.Now()),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
