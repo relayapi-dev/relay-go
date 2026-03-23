@@ -1858,10 +1858,14 @@ func (r PostUpdateParamsMediaType) IsKnown() bool {
 }
 
 type PostListParams struct {
+	// Filter by specific account ID
+	AccountID param.Field[string] `query:"account_id"`
 	// Pagination cursor
 	Cursor param.Field[string] `query:"cursor"`
 	// Filter: start date (ISO 8601)
 	From param.Field[time.Time] `query:"from" format:"date-time"`
+	// Filter by account group ID
+	GroupID param.Field[string] `query:"group_id"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
 	// Filter: end date (ISO 8601)

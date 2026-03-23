@@ -107,10 +107,12 @@ func (r accountPinterestBoardGetResponseDataJSON) RawJSON() string {
 
 type AccountPinterestBoardSetDefaultResponse struct {
 	// Account ID
-	ID                string                                          `json:"id" api:"required"`
-	AvatarURL         string                                          `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt       time.Time                                       `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName       string                                          `json:"display_name" api:"required,nullable"`
+	ID          string    `json:"id" api:"required"`
+	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName string    `json:"display_name" api:"required,nullable"`
+	// Account group
+	Group             AccountPinterestBoardSetDefaultResponseGroup    `json:"group" api:"required,nullable"`
 	Metadata          map[string]interface{}                          `json:"metadata" api:"required,nullable"`
 	Platform          AccountPinterestBoardSetDefaultResponsePlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                          `json:"platform_account_id" api:"required"`
@@ -126,6 +128,7 @@ type accountPinterestBoardSetDefaultResponseJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
+	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
@@ -140,6 +143,30 @@ func (r *AccountPinterestBoardSetDefaultResponse) UnmarshalJSON(data []byte) (er
 }
 
 func (r accountPinterestBoardSetDefaultResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// Account group
+type AccountPinterestBoardSetDefaultResponseGroup struct {
+	ID   string                                           `json:"id" api:"required"`
+	Name string                                           `json:"name" api:"required"`
+	JSON accountPinterestBoardSetDefaultResponseGroupJSON `json:"-"`
+}
+
+// accountPinterestBoardSetDefaultResponseGroupJSON contains the JSON metadata for
+// the struct [AccountPinterestBoardSetDefaultResponseGroup]
+type accountPinterestBoardSetDefaultResponseGroupJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountPinterestBoardSetDefaultResponseGroup) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountPinterestBoardSetDefaultResponseGroupJSON) RawJSON() string {
 	return r.raw
 }
 

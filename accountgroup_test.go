@@ -27,8 +27,8 @@ func TestAccountGroupNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.AccountGroups.New(context.TODO(), relaygo.AccountGroupNewParams{
-		Name:       relaygo.F("x"),
-		AccountIDs: relaygo.F([]string{"string"}),
+		Name:        relaygo.F("x"),
+		Description: relaygo.F("description"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -56,8 +56,8 @@ func TestAccountGroupUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		relaygo.AccountGroupUpdateParams{
-			AccountIDs: relaygo.F([]string{"string"}),
-			Name:       relaygo.F("x"),
+			Description: relaygo.F("description"),
+			Name:        relaygo.F("x"),
 		},
 	)
 	if err != nil {
@@ -69,7 +69,7 @@ func TestAccountGroupUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountGroupList(t *testing.T) {
+func TestAccountGroupListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -82,7 +82,11 @@ func TestAccountGroupList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountGroups.List(context.TODO())
+	_, err := client.AccountGroups.List(context.TODO(), relaygo.AccountGroupListParams{
+		Cursor: relaygo.F("cursor"),
+		Limit:  relaygo.F(1.000000),
+		Search: relaygo.F("search"),
+	})
 	if err != nil {
 		var apierr *relaygo.Error
 		if errors.As(err, &apierr) {

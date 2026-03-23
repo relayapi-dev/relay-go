@@ -55,6 +55,7 @@ func TestAccountUpdateWithOptionalParams(t *testing.T) {
 		"id",
 		relaygo.AccountUpdateParams{
 			DisplayName: relaygo.F("display_name"),
+			GroupID:     relaygo.F("group_id"),
 			Metadata: relaygo.F(map[string]interface{}{
 				"foo": "bar",
 			}),
@@ -83,10 +84,13 @@ func TestAccountListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Accounts.List(context.TODO(), relaygo.AccountListParams{
-		Cursor: relaygo.F("cursor"),
-		From:   relaygo.F(time.Now()),
-		Limit:  relaygo.F(int64(1)),
-		To:     relaygo.F(time.Now()),
+		Cursor:    relaygo.F("cursor"),
+		From:      relaygo.F(time.Now()),
+		GroupID:   relaygo.F("group_id"),
+		Limit:     relaygo.F(int64(1)),
+		Search:    relaygo.F("search"),
+		To:        relaygo.F(time.Now()),
+		Ungrouped: relaygo.F(true),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

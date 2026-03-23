@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"time"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
+	"github.com/relayapi-dev/relay-go/internal/apiquery"
 	"github.com/relayapi-dev/relay-go/internal/param"
 	"github.com/relayapi-dev/relay-go/internal/requestconfig"
 	"github.com/relayapi-dev/relay-go/option"
@@ -56,10 +58,10 @@ func (r *AccountGroupService) Update(ctx context.Context, id string, body Accoun
 }
 
 // List account groups
-func (r *AccountGroupService) List(ctx context.Context, opts ...option.RequestOption) (res *AccountGroupListResponse, err error) {
+func (r *AccountGroupService) List(ctx context.Context, query AccountGroupListParams, opts ...option.RequestOption) (res *AccountGroupListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/account-groups"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return res, err
 }
 
@@ -79,10 +81,12 @@ func (r *AccountGroupService) Delete(ctx context.Context, id string, opts ...opt
 type AccountGroupNewResponse struct {
 	// Group ID
 	ID string `json:"id" api:"required"`
-	// Account IDs in the group
-	AccountIDs []string `json:"account_ids" api:"required"`
+	// Number of accounts in this group
+	AccountCount float64 `json:"account_count" api:"required"`
 	// Creation timestamp
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
+	// Group description
+	Description string `json:"description" api:"required,nullable"`
 	// Group name
 	Name string `json:"name" api:"required"`
 	// Last updated timestamp
@@ -93,13 +97,14 @@ type AccountGroupNewResponse struct {
 // accountGroupNewResponseJSON contains the JSON metadata for the struct
 // [AccountGroupNewResponse]
 type accountGroupNewResponseJSON struct {
-	ID          apijson.Field
-	AccountIDs  apijson.Field
-	CreatedAt   apijson.Field
-	Name        apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID           apijson.Field
+	AccountCount apijson.Field
+	CreatedAt    apijson.Field
+	Description  apijson.Field
+	Name         apijson.Field
+	UpdatedAt    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
 }
 
 func (r *AccountGroupNewResponse) UnmarshalJSON(data []byte) (err error) {
@@ -113,10 +118,12 @@ func (r accountGroupNewResponseJSON) RawJSON() string {
 type AccountGroupUpdateResponse struct {
 	// Group ID
 	ID string `json:"id" api:"required"`
-	// Account IDs in the group
-	AccountIDs []string `json:"account_ids" api:"required"`
+	// Number of accounts in this group
+	AccountCount float64 `json:"account_count" api:"required"`
 	// Creation timestamp
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
+	// Group description
+	Description string `json:"description" api:"required,nullable"`
 	// Group name
 	Name string `json:"name" api:"required"`
 	// Last updated timestamp
@@ -127,13 +134,14 @@ type AccountGroupUpdateResponse struct {
 // accountGroupUpdateResponseJSON contains the JSON metadata for the struct
 // [AccountGroupUpdateResponse]
 type accountGroupUpdateResponseJSON struct {
-	ID          apijson.Field
-	AccountIDs  apijson.Field
-	CreatedAt   apijson.Field
-	Name        apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID           apijson.Field
+	AccountCount apijson.Field
+	CreatedAt    apijson.Field
+	Description  apijson.Field
+	Name         apijson.Field
+	UpdatedAt    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
 }
 
 func (r *AccountGroupUpdateResponse) UnmarshalJSON(data []byte) (err error) {
@@ -145,14 +153,18 @@ func (r accountGroupUpdateResponseJSON) RawJSON() string {
 }
 
 type AccountGroupListResponse struct {
-	Data []AccountGroupListResponseData `json:"data" api:"required"`
-	JSON accountGroupListResponseJSON   `json:"-"`
+	Data       []AccountGroupListResponseData `json:"data" api:"required"`
+	HasMore    bool                           `json:"has_more" api:"required"`
+	NextCursor string                         `json:"next_cursor" api:"required,nullable"`
+	JSON       accountGroupListResponseJSON   `json:"-"`
 }
 
 // accountGroupListResponseJSON contains the JSON metadata for the struct
 // [AccountGroupListResponse]
 type accountGroupListResponseJSON struct {
 	Data        apijson.Field
+	HasMore     apijson.Field
+	NextCursor  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -168,10 +180,12 @@ func (r accountGroupListResponseJSON) RawJSON() string {
 type AccountGroupListResponseData struct {
 	// Group ID
 	ID string `json:"id" api:"required"`
-	// Account IDs in the group
-	AccountIDs []string `json:"account_ids" api:"required"`
+	// Number of accounts in this group
+	AccountCount float64 `json:"account_count" api:"required"`
 	// Creation timestamp
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
+	// Group description
+	Description string `json:"description" api:"required,nullable"`
 	// Group name
 	Name string `json:"name" api:"required"`
 	// Last updated timestamp
@@ -182,13 +196,14 @@ type AccountGroupListResponseData struct {
 // accountGroupListResponseDataJSON contains the JSON metadata for the struct
 // [AccountGroupListResponseData]
 type accountGroupListResponseDataJSON struct {
-	ID          apijson.Field
-	AccountIDs  apijson.Field
-	CreatedAt   apijson.Field
-	Name        apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID           apijson.Field
+	AccountCount apijson.Field
+	CreatedAt    apijson.Field
+	Description  apijson.Field
+	Name         apijson.Field
+	UpdatedAt    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
 }
 
 func (r *AccountGroupListResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -202,8 +217,8 @@ func (r accountGroupListResponseDataJSON) RawJSON() string {
 type AccountGroupNewParams struct {
 	// Group name
 	Name param.Field[string] `json:"name" api:"required"`
-	// Account IDs to include in the group
-	AccountIDs param.Field[[]string] `json:"account_ids"`
+	// Group description
+	Description param.Field[string] `json:"description"`
 }
 
 func (r AccountGroupNewParams) MarshalJSON() (data []byte, err error) {
@@ -211,12 +226,29 @@ func (r AccountGroupNewParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AccountGroupUpdateParams struct {
-	// Account IDs to include in the group
-	AccountIDs param.Field[[]string] `json:"account_ids"`
+	// Group description
+	Description param.Field[string] `json:"description"`
 	// Group name
 	Name param.Field[string] `json:"name"`
 }
 
 func (r AccountGroupUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type AccountGroupListParams struct {
+	// Pagination cursor
+	Cursor param.Field[string] `query:"cursor"`
+	// Page size
+	Limit param.Field[float64] `query:"limit"`
+	// Search groups by name
+	Search param.Field[string] `query:"search"`
+}
+
+// URLQuery serializes [AccountGroupListParams]'s query parameters as `url.Values`.
+func (r AccountGroupListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

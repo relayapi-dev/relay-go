@@ -82,10 +82,12 @@ func (r connectTelegramConnectDirectlyResponseJSON) RawJSON() string {
 
 type ConnectTelegramConnectDirectlyResponseAccount struct {
 	// Account ID
-	ID                string                                                `json:"id" api:"required"`
-	AvatarURL         string                                                `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt       time.Time                                             `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName       string                                                `json:"display_name" api:"required,nullable"`
+	ID          string    `json:"id" api:"required"`
+	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName string    `json:"display_name" api:"required,nullable"`
+	// Account group
+	Group             ConnectTelegramConnectDirectlyResponseAccountGroup    `json:"group" api:"required,nullable"`
 	Metadata          map[string]interface{}                                `json:"metadata" api:"required,nullable"`
 	Platform          ConnectTelegramConnectDirectlyResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                `json:"platform_account_id" api:"required"`
@@ -101,6 +103,7 @@ type connectTelegramConnectDirectlyResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
+	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
@@ -115,6 +118,30 @@ func (r *ConnectTelegramConnectDirectlyResponseAccount) UnmarshalJSON(data []byt
 }
 
 func (r connectTelegramConnectDirectlyResponseAccountJSON) RawJSON() string {
+	return r.raw
+}
+
+// Account group
+type ConnectTelegramConnectDirectlyResponseAccountGroup struct {
+	ID   string                                                 `json:"id" api:"required"`
+	Name string                                                 `json:"name" api:"required"`
+	JSON connectTelegramConnectDirectlyResponseAccountGroupJSON `json:"-"`
+}
+
+// connectTelegramConnectDirectlyResponseAccountGroupJSON contains the JSON
+// metadata for the struct [ConnectTelegramConnectDirectlyResponseAccountGroup]
+type connectTelegramConnectDirectlyResponseAccountGroupJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectTelegramConnectDirectlyResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectTelegramConnectDirectlyResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -239,10 +266,12 @@ func (r ConnectTelegramPollConnectionStatusResponseStatus) IsKnown() bool {
 // Connected account details
 type ConnectTelegramPollConnectionStatusResponseAccount struct {
 	// Account ID
-	ID                string                                                     `json:"id" api:"required"`
-	AvatarURL         string                                                     `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt       time.Time                                                  `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName       string                                                     `json:"display_name" api:"required,nullable"`
+	ID          string    `json:"id" api:"required"`
+	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName string    `json:"display_name" api:"required,nullable"`
+	// Account group
+	Group             ConnectTelegramPollConnectionStatusResponseAccountGroup    `json:"group" api:"required,nullable"`
 	Metadata          map[string]interface{}                                     `json:"metadata" api:"required,nullable"`
 	Platform          ConnectTelegramPollConnectionStatusResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                     `json:"platform_account_id" api:"required"`
@@ -258,6 +287,7 @@ type connectTelegramPollConnectionStatusResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
+	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
@@ -272,6 +302,31 @@ func (r *ConnectTelegramPollConnectionStatusResponseAccount) UnmarshalJSON(data 
 }
 
 func (r connectTelegramPollConnectionStatusResponseAccountJSON) RawJSON() string {
+	return r.raw
+}
+
+// Account group
+type ConnectTelegramPollConnectionStatusResponseAccountGroup struct {
+	ID   string                                                      `json:"id" api:"required"`
+	Name string                                                      `json:"name" api:"required"`
+	JSON connectTelegramPollConnectionStatusResponseAccountGroupJSON `json:"-"`
+}
+
+// connectTelegramPollConnectionStatusResponseAccountGroupJSON contains the JSON
+// metadata for the struct
+// [ConnectTelegramPollConnectionStatusResponseAccountGroup]
+type connectTelegramPollConnectionStatusResponseAccountGroupJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectTelegramPollConnectionStatusResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectTelegramPollConnectionStatusResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 

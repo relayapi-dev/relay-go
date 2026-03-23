@@ -124,10 +124,12 @@ func (r connectFacebookPageSelectResponseJSON) RawJSON() string {
 
 type ConnectFacebookPageSelectResponseAccount struct {
 	// Account ID
-	ID                string                                           `json:"id" api:"required"`
-	AvatarURL         string                                           `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt       time.Time                                        `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName       string                                           `json:"display_name" api:"required,nullable"`
+	ID          string    `json:"id" api:"required"`
+	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName string    `json:"display_name" api:"required,nullable"`
+	// Account group
+	Group             ConnectFacebookPageSelectResponseAccountGroup    `json:"group" api:"required,nullable"`
 	Metadata          map[string]interface{}                           `json:"metadata" api:"required,nullable"`
 	Platform          ConnectFacebookPageSelectResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                           `json:"platform_account_id" api:"required"`
@@ -143,6 +145,7 @@ type connectFacebookPageSelectResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
+	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
@@ -157,6 +160,30 @@ func (r *ConnectFacebookPageSelectResponseAccount) UnmarshalJSON(data []byte) (e
 }
 
 func (r connectFacebookPageSelectResponseAccountJSON) RawJSON() string {
+	return r.raw
+}
+
+// Account group
+type ConnectFacebookPageSelectResponseAccountGroup struct {
+	ID   string                                            `json:"id" api:"required"`
+	Name string                                            `json:"name" api:"required"`
+	JSON connectFacebookPageSelectResponseAccountGroupJSON `json:"-"`
+}
+
+// connectFacebookPageSelectResponseAccountGroupJSON contains the JSON metadata for
+// the struct [ConnectFacebookPageSelectResponseAccountGroup]
+type connectFacebookPageSelectResponseAccountGroupJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectFacebookPageSelectResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectFacebookPageSelectResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
