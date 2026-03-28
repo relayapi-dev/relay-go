@@ -501,6 +501,9 @@ func (r ConnectFetchPendingDataParams) URLQuery() (v url.Values) {
 type ConnectStartOAuthFlowParams struct {
 	// Set to "true" for headless mode (returns data instead of redirecting)
 	Headless param.Field[string] `query:"headless"`
+	// Auth method variant (e.g. "direct" for Instagram Login instead of Facebook
+	// Login)
+	Method param.Field[string] `query:"method"`
 	// URL to redirect after OAuth completes
 	RedirectURL param.Field[string] `query:"redirect_url" format:"uri"`
 }

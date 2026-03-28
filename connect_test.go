@@ -112,6 +112,7 @@ func TestConnectStartOAuthFlowWithOptionalParams(t *testing.T) {
 		relaygo.ConnectStartOAuthFlowParamsPlatformTwitter,
 		relaygo.ConnectStartOAuthFlowParams{
 			Headless:    relaygo.F("headless"),
+			Method:      relaygo.F("method"),
 			RedirectURL: relaygo.F("https://example.com"),
 		},
 	)
