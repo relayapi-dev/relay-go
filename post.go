@@ -1868,6 +1868,8 @@ type PostListParams struct {
 	GroupID param.Field[string] `query:"group_id"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
+	// Filter by post status
+	Status param.Field[PostListParamsStatus] `query:"status"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
 }
@@ -1878,6 +1880,25 @@ func (r PostListParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// Filter by post status
+type PostListParamsStatus string
+
+const (
+	PostListParamsStatusDraft      PostListParamsStatus = "draft"
+	PostListParamsStatusScheduled  PostListParamsStatus = "scheduled"
+	PostListParamsStatusPublishing PostListParamsStatus = "publishing"
+	PostListParamsStatusPublished  PostListParamsStatus = "published"
+	PostListParamsStatusFailed     PostListParamsStatus = "failed"
+)
+
+func (r PostListParamsStatus) IsKnown() bool {
+	switch r {
+	case PostListParamsStatusDraft, PostListParamsStatusScheduled, PostListParamsStatusPublishing, PostListParamsStatusPublished, PostListParamsStatusFailed:
+		return true
+	}
+	return false
 }
 
 type PostBulkNewParams struct {
