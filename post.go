@@ -116,14 +116,14 @@ func (r *PostService) Retry(ctx context.Context, id string, opts ...option.Reque
 
 // Attempt to delete the post from each platform and set the post status to
 // cancelled.
-func (r *PostService) Unpublish(ctx context.Context, id string, opts ...option.RequestOption) (res *PostUnpublishResponse, err error) {
+func (r *PostService) Unpublish(ctx context.Context, id string, body PostUnpublishParams, opts ...option.RequestOption) (res *PostUnpublishResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("v1/posts/%s/unpublish", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
 
@@ -1936,4 +1936,13 @@ func (r PostBulkNewParamsPostsMediaType) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+type PostUnpublishParams struct {
+	// Platforms to unpublish from. If omitted, unpublishes from all.
+	Platforms param.Field[[]string] `json:"platforms"`
+}
+
+func (r PostUnpublishParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }

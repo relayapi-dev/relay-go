@@ -230,7 +230,7 @@ func TestPostRetry(t *testing.T) {
 	}
 }
 
-func TestPostUnpublish(t *testing.T) {
+func TestPostUnpublishWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -243,7 +243,13 @@ func TestPostUnpublish(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Posts.Unpublish(context.TODO(), "id")
+	_, err := client.Posts.Unpublish(
+		context.TODO(),
+		"id",
+		relaygo.PostUnpublishParams{
+			Platforms: relaygo.F([]string{"string"}),
+		},
+	)
 	if err != nil {
 		var apierr *relaygo.Error
 		if errors.As(err, &apierr) {
