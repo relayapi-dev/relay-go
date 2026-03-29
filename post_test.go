@@ -134,6 +134,7 @@ func TestPostListWithOptionalParams(t *testing.T) {
 		From:      relaygo.F(time.Now()),
 		GroupID:   relaygo.F("group_id"),
 		Limit:     relaygo.F(int64(1)),
+		Status:    relaygo.F(relaygo.PostListParamsStatusDraft),
 		To:        relaygo.F(time.Now()),
 	})
 	if err != nil {
