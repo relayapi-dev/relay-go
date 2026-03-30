@@ -137,12 +137,22 @@ type InboxCommentGetResponseData struct {
 	Platform  InboxCommentGetResponseDataPlatform `json:"platform" api:"required"`
 	// Comment text
 	Text string `json:"text" api:"required"`
+	// Social account ID
+	AccountID string `json:"account_id"`
 	// Author avatar URL
 	AuthorAvatar string `json:"author_avatar" api:"nullable"`
 	// Whether comment is hidden
 	Hidden bool `json:"hidden"`
 	// Like count
 	Likes float64 `json:"likes"`
+	// Platform post/media/video ID
+	PostID string `json:"post_id"`
+	// URL to the post on the platform
+	PostPlatformURL string `json:"post_platform_url" api:"nullable"`
+	// Post caption snippet
+	PostText string `json:"post_text" api:"nullable"`
+	// Post thumbnail URL
+	PostThumbnailURL string `json:"post_thumbnail_url" api:"nullable"`
 	// Reply count
 	RepliesCount float64                         `json:"replies_count"`
 	JSON         inboxCommentGetResponseDataJSON `json:"-"`
@@ -151,17 +161,22 @@ type InboxCommentGetResponseData struct {
 // inboxCommentGetResponseDataJSON contains the JSON metadata for the struct
 // [InboxCommentGetResponseData]
 type inboxCommentGetResponseDataJSON struct {
-	ID           apijson.Field
-	AuthorName   apijson.Field
-	CreatedAt    apijson.Field
-	Platform     apijson.Field
-	Text         apijson.Field
-	AuthorAvatar apijson.Field
-	Hidden       apijson.Field
-	Likes        apijson.Field
-	RepliesCount apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
+	ID               apijson.Field
+	AuthorName       apijson.Field
+	CreatedAt        apijson.Field
+	Platform         apijson.Field
+	Text             apijson.Field
+	AccountID        apijson.Field
+	AuthorAvatar     apijson.Field
+	Hidden           apijson.Field
+	Likes            apijson.Field
+	PostID           apijson.Field
+	PostPlatformURL  apijson.Field
+	PostText         apijson.Field
+	PostThumbnailURL apijson.Field
+	RepliesCount     apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *InboxCommentGetResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -272,12 +287,22 @@ type InboxCommentListResponseData struct {
 	Platform  InboxCommentListResponseDataPlatform `json:"platform" api:"required"`
 	// Comment text
 	Text string `json:"text" api:"required"`
+	// Social account ID
+	AccountID string `json:"account_id"`
 	// Author avatar URL
 	AuthorAvatar string `json:"author_avatar" api:"nullable"`
 	// Whether comment is hidden
 	Hidden bool `json:"hidden"`
 	// Like count
 	Likes float64 `json:"likes"`
+	// Platform post/media/video ID
+	PostID string `json:"post_id"`
+	// URL to the post on the platform
+	PostPlatformURL string `json:"post_platform_url" api:"nullable"`
+	// Post caption snippet
+	PostText string `json:"post_text" api:"nullable"`
+	// Post thumbnail URL
+	PostThumbnailURL string `json:"post_thumbnail_url" api:"nullable"`
 	// Reply count
 	RepliesCount float64                          `json:"replies_count"`
 	JSON         inboxCommentListResponseDataJSON `json:"-"`
@@ -286,17 +311,22 @@ type InboxCommentListResponseData struct {
 // inboxCommentListResponseDataJSON contains the JSON metadata for the struct
 // [InboxCommentListResponseData]
 type inboxCommentListResponseDataJSON struct {
-	ID           apijson.Field
-	AuthorName   apijson.Field
-	CreatedAt    apijson.Field
-	Platform     apijson.Field
-	Text         apijson.Field
-	AuthorAvatar apijson.Field
-	Hidden       apijson.Field
-	Likes        apijson.Field
-	RepliesCount apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
+	ID               apijson.Field
+	AuthorName       apijson.Field
+	CreatedAt        apijson.Field
+	Platform         apijson.Field
+	Text             apijson.Field
+	AccountID        apijson.Field
+	AuthorAvatar     apijson.Field
+	Hidden           apijson.Field
+	Likes            apijson.Field
+	PostID           apijson.Field
+	PostPlatformURL  apijson.Field
+	PostText         apijson.Field
+	PostThumbnailURL apijson.Field
+	RepliesCount     apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *InboxCommentListResponseData) UnmarshalJSON(data []byte) (err error) {
