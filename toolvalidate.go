@@ -1324,7 +1324,7 @@ type ToolValidateValidatePostParams struct {
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
 	// an ISO 8601 timestamp to schedule.
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
-	// Account IDs or platform names to publish to
+	// Account IDs, platform names, or group IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
 	// Post text. Optional if target_options provide per-target content.
 	Content param.Field[string] `json:"content"`
