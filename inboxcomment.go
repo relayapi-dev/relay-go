@@ -145,6 +145,8 @@ type InboxCommentGetResponseData struct {
 	Hidden bool `json:"hidden"`
 	// Like count
 	Likes float64 `json:"likes"`
+	// Parent comment ID if this is a reply
+	ParentID string `json:"parent_id" api:"nullable"`
 	// Platform post/media/video ID
 	PostID string `json:"post_id"`
 	// URL to the post on the platform
@@ -170,6 +172,7 @@ type inboxCommentGetResponseDataJSON struct {
 	AuthorAvatar     apijson.Field
 	Hidden           apijson.Field
 	Likes            apijson.Field
+	ParentID         apijson.Field
 	PostID           apijson.Field
 	PostPlatformURL  apijson.Field
 	PostText         apijson.Field
@@ -295,6 +298,8 @@ type InboxCommentListResponseData struct {
 	Hidden bool `json:"hidden"`
 	// Like count
 	Likes float64 `json:"likes"`
+	// Parent comment ID if this is a reply
+	ParentID string `json:"parent_id" api:"nullable"`
 	// Platform post/media/video ID
 	PostID string `json:"post_id"`
 	// URL to the post on the platform
@@ -320,6 +325,7 @@ type inboxCommentListResponseDataJSON struct {
 	AuthorAvatar     apijson.Field
 	Hidden           apijson.Field
 	Likes            apijson.Field
+	ParentID         apijson.Field
 	PostID           apijson.Field
 	PostPlatformURL  apijson.Field
 	PostText         apijson.Field
