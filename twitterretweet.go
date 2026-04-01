@@ -50,14 +50,20 @@ func (r *TwitterRetweetService) Undo(ctx context.Context, body TwitterRetweetUnd
 
 type TwitterRetweetNewResponse struct {
 	// Whether the action succeeded
-	Success bool                          `json:"success" api:"required"`
-	JSON    twitterRetweetNewResponseJSON `json:"-"`
+	Success bool `json:"success" api:"required"`
+	// Action result data from Twitter API
+	Data TwitterRetweetNewResponseData `json:"data"`
+	// Error details when success is false
+	Error TwitterRetweetNewResponseError `json:"error"`
+	JSON  twitterRetweetNewResponseJSON  `json:"-"`
 }
 
 // twitterRetweetNewResponseJSON contains the JSON metadata for the struct
 // [TwitterRetweetNewResponse]
 type twitterRetweetNewResponseJSON struct {
 	Success     apijson.Field
+	Data        apijson.Field
+	Error       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -70,16 +76,79 @@ func (r twitterRetweetNewResponseJSON) RawJSON() string {
 	return r.raw
 }
 
+// Action result data from Twitter API
+type TwitterRetweetNewResponseData struct {
+	Bookmarked    bool                              `json:"bookmarked"`
+	Following     bool                              `json:"following"`
+	PendingFollow bool                              `json:"pending_follow"`
+	Retweeted     bool                              `json:"retweeted"`
+	JSON          twitterRetweetNewResponseDataJSON `json:"-"`
+}
+
+// twitterRetweetNewResponseDataJSON contains the JSON metadata for the struct
+// [TwitterRetweetNewResponseData]
+type twitterRetweetNewResponseDataJSON struct {
+	Bookmarked    apijson.Field
+	Following     apijson.Field
+	PendingFollow apijson.Field
+	Retweeted     apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *TwitterRetweetNewResponseData) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r twitterRetweetNewResponseDataJSON) RawJSON() string {
+	return r.raw
+}
+
+// Error details when success is false
+type TwitterRetweetNewResponseError struct {
+	// Error code (e.g. ACCOUNT_NOT_FOUND, TOKEN_MISSING, TWITTER_API_ERROR)
+	Code string `json:"code" api:"required"`
+	// Human-readable error message
+	Message string `json:"message" api:"required"`
+	// Twitter API error code if available
+	TwitterErrorCode float64                            `json:"twitter_error_code"`
+	JSON             twitterRetweetNewResponseErrorJSON `json:"-"`
+}
+
+// twitterRetweetNewResponseErrorJSON contains the JSON metadata for the struct
+// [TwitterRetweetNewResponseError]
+type twitterRetweetNewResponseErrorJSON struct {
+	Code             apijson.Field
+	Message          apijson.Field
+	TwitterErrorCode apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
+}
+
+func (r *TwitterRetweetNewResponseError) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r twitterRetweetNewResponseErrorJSON) RawJSON() string {
+	return r.raw
+}
+
 type TwitterRetweetUndoResponse struct {
 	// Whether the action succeeded
-	Success bool                           `json:"success" api:"required"`
-	JSON    twitterRetweetUndoResponseJSON `json:"-"`
+	Success bool `json:"success" api:"required"`
+	// Action result data from Twitter API
+	Data TwitterRetweetUndoResponseData `json:"data"`
+	// Error details when success is false
+	Error TwitterRetweetUndoResponseError `json:"error"`
+	JSON  twitterRetweetUndoResponseJSON  `json:"-"`
 }
 
 // twitterRetweetUndoResponseJSON contains the JSON metadata for the struct
 // [TwitterRetweetUndoResponse]
 type twitterRetweetUndoResponseJSON struct {
 	Success     apijson.Field
+	Data        apijson.Field
+	Error       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -89,6 +158,63 @@ func (r *TwitterRetweetUndoResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r twitterRetweetUndoResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// Action result data from Twitter API
+type TwitterRetweetUndoResponseData struct {
+	Bookmarked    bool                               `json:"bookmarked"`
+	Following     bool                               `json:"following"`
+	PendingFollow bool                               `json:"pending_follow"`
+	Retweeted     bool                               `json:"retweeted"`
+	JSON          twitterRetweetUndoResponseDataJSON `json:"-"`
+}
+
+// twitterRetweetUndoResponseDataJSON contains the JSON metadata for the struct
+// [TwitterRetweetUndoResponseData]
+type twitterRetweetUndoResponseDataJSON struct {
+	Bookmarked    apijson.Field
+	Following     apijson.Field
+	PendingFollow apijson.Field
+	Retweeted     apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *TwitterRetweetUndoResponseData) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r twitterRetweetUndoResponseDataJSON) RawJSON() string {
+	return r.raw
+}
+
+// Error details when success is false
+type TwitterRetweetUndoResponseError struct {
+	// Error code (e.g. ACCOUNT_NOT_FOUND, TOKEN_MISSING, TWITTER_API_ERROR)
+	Code string `json:"code" api:"required"`
+	// Human-readable error message
+	Message string `json:"message" api:"required"`
+	// Twitter API error code if available
+	TwitterErrorCode float64                             `json:"twitter_error_code"`
+	JSON             twitterRetweetUndoResponseErrorJSON `json:"-"`
+}
+
+// twitterRetweetUndoResponseErrorJSON contains the JSON metadata for the struct
+// [TwitterRetweetUndoResponseError]
+type twitterRetweetUndoResponseErrorJSON struct {
+	Code             apijson.Field
+	Message          apijson.Field
+	TwitterErrorCode apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
+}
+
+func (r *TwitterRetweetUndoResponseError) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r twitterRetweetUndoResponseErrorJSON) RawJSON() string {
 	return r.raw
 }
 
