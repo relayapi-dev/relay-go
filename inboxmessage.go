@@ -380,6 +380,8 @@ type InboxMessageListParams struct {
 	Limit param.Field[int64] `query:"limit"`
 	// Filter by platform
 	Platform param.Field[InboxMessageListParamsPlatform] `query:"platform"`
+	// Filter by workspace ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [InboxMessageListParams]'s query parameters as `url.Values`.

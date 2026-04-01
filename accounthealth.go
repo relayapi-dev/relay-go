@@ -56,8 +56,11 @@ func (r *AccountHealthService) List(ctx context.Context, opts ...option.RequestO
 
 type AccountHealthGetResponse struct {
 	ID             string                        `json:"id" api:"required"`
+	AvatarURL      string                        `json:"avatar_url" api:"required,nullable"`
+	DisplayName    string                        `json:"display_name" api:"required,nullable"`
 	Healthy        bool                          `json:"healthy" api:"required"`
 	Platform       string                        `json:"platform" api:"required"`
+	Scopes         []string                      `json:"scopes" api:"required"`
 	TokenExpiresAt string                        `json:"token_expires_at" api:"required,nullable"`
 	Username       string                        `json:"username" api:"required,nullable"`
 	Error          AccountHealthGetResponseError `json:"error"`
@@ -68,8 +71,11 @@ type AccountHealthGetResponse struct {
 // [AccountHealthGetResponse]
 type accountHealthGetResponseJSON struct {
 	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
 	Healthy        apijson.Field
 	Platform       apijson.Field
+	Scopes         apijson.Field
 	TokenExpiresAt apijson.Field
 	Username       apijson.Field
 	Error          apijson.Field

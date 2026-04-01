@@ -311,6 +311,8 @@ type WhatsappContactNewParams struct {
 	Name param.Field[string] `json:"name"`
 	// Tags
 	Tags param.Field[[]string] `json:"tags"`
+	// Workspace ID to scope this contact to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r WhatsappContactNewParams) MarshalJSON() (data []byte, err error) {
@@ -328,6 +330,8 @@ type WhatsappContactListParams struct {
 	Search param.Field[string] `query:"search"`
 	// Filter by tag
 	Tag param.Field[string] `query:"tag"`
+	// Filter by workspace ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [WhatsappContactListParams]'s query parameters as

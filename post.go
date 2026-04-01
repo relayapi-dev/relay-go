@@ -1765,7 +1765,7 @@ type PostNewParams struct {
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
 	// an ISO 8601 timestamp to schedule.
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
-	// Account IDs, platform names, or group IDs to publish to
+	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
 	// Post text. Optional if target_options provide per-target content.
 	Content param.Field[string] `json:"content"`
@@ -1775,6 +1775,8 @@ type PostNewParams struct {
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
+	// Workspace ID to scope this post to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r PostNewParams) MarshalJSON() (data []byte, err error) {
@@ -1864,14 +1866,14 @@ type PostListParams struct {
 	Cursor param.Field[string] `query:"cursor"`
 	// Filter: start date (ISO 8601)
 	From param.Field[time.Time] `query:"from" format:"date-time"`
-	// Filter by account group ID
-	GroupID param.Field[string] `query:"group_id"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
 	// Filter by post status
 	Status param.Field[PostListParamsStatus] `query:"status"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
+	// Filter by workspace ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [PostListParams]'s query parameters as `url.Values`.
@@ -1914,7 +1916,7 @@ type PostBulkNewParamsPost struct {
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
 	// an ISO 8601 timestamp to schedule.
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
-	// Account IDs, platform names, or group IDs to publish to
+	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
 	// Post text. Optional if target_options provide per-target content.
 	Content param.Field[string] `json:"content"`
@@ -1924,6 +1926,8 @@ type PostBulkNewParamsPost struct {
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
+	// Workspace ID to scope this post to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r PostBulkNewParamsPost) MarshalJSON() (data []byte, err error) {

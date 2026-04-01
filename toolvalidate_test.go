@@ -114,7 +114,8 @@ func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
 				"foo": "bar",
 			},
 		}),
-		Timezone: relaygo.F("timezone"),
+		Timezone:    relaygo.F("timezone"),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

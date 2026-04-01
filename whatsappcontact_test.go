@@ -27,11 +27,12 @@ func TestWhatsappContactNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Whatsapp.Contacts.New(context.TODO(), relaygo.WhatsappContactNewParams{
-		AccountID: relaygo.F("account_id"),
-		Phone:     relaygo.F("phone"),
-		Email:     relaygo.F("email"),
-		Name:      relaygo.F("name"),
-		Tags:      relaygo.F([]string{"string"}),
+		AccountID:   relaygo.F("account_id"),
+		Phone:       relaygo.F("phone"),
+		Email:       relaygo.F("email"),
+		Name:        relaygo.F("name"),
+		Tags:        relaygo.F([]string{"string"}),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -79,11 +80,12 @@ func TestWhatsappContactListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Whatsapp.Contacts.List(context.TODO(), relaygo.WhatsappContactListParams{
-		AccountID: relaygo.F("account_id"),
-		Cursor:    relaygo.F("cursor"),
-		Limit:     relaygo.F(int64(1)),
-		Search:    relaygo.F("search"),
-		Tag:       relaygo.F("tag"),
+		AccountID:   relaygo.F("account_id"),
+		Cursor:      relaygo.F("cursor"),
+		Limit:       relaygo.F(int64(1)),
+		Search:      relaygo.F("search"),
+		Tag:         relaygo.F("tag"),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
