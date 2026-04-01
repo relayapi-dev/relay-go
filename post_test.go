@@ -40,7 +40,8 @@ func TestPostNewWithOptionalParams(t *testing.T) {
 				"foo": "bar",
 			},
 		}),
-		Timezone: relaygo.F("timezone"),
+		Timezone:    relaygo.F("timezone"),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -129,13 +130,13 @@ func TestPostListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Posts.List(context.TODO(), relaygo.PostListParams{
-		AccountID: relaygo.F("account_id"),
-		Cursor:    relaygo.F("cursor"),
-		From:      relaygo.F(time.Now()),
-		GroupID:   relaygo.F("group_id"),
-		Limit:     relaygo.F(int64(1)),
-		Status:    relaygo.F(relaygo.PostListParamsStatusDraft),
-		To:        relaygo.F(time.Now()),
+		AccountID:   relaygo.F("account_id"),
+		Cursor:      relaygo.F("cursor"),
+		From:        relaygo.F(time.Now()),
+		Limit:       relaygo.F(int64(1)),
+		Status:      relaygo.F(relaygo.PostListParamsStatusDraft),
+		To:          relaygo.F(time.Now()),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -196,7 +197,8 @@ func TestPostBulkNew(t *testing.T) {
 					"foo": "bar",
 				},
 			}),
-			Timezone: relaygo.F("timezone"),
+			Timezone:    relaygo.F("timezone"),
+			WorkspaceID: relaygo.F("workspace_id"),
 		}}),
 	})
 	if err != nil {

@@ -409,10 +409,10 @@ func (r AccountListResponseDataPlatform) IsKnown() bool {
 }
 
 type AccountUpdateParams struct {
-	DisplayName param.Field[string] `json:"display_name"`
-	// Group ID (null to ungroup)
-	GroupID  param.Field[string]                 `json:"group_id"`
-	Metadata param.Field[map[string]interface{}] `json:"metadata"`
+	DisplayName param.Field[string]                 `json:"display_name"`
+	Metadata    param.Field[map[string]interface{}] `json:"metadata"`
+	// Workspace ID (null to unassign)
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r AccountUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -424,16 +424,18 @@ type AccountListParams struct {
 	Cursor param.Field[string] `query:"cursor"`
 	// Filter: start date (ISO 8601)
 	From param.Field[time.Time] `query:"from" format:"date-time"`
-	// Filter by group ID
-	GroupID param.Field[string] `query:"group_id"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
+	// Comma-separated platform filter (e.g. instagram,facebook)
+	Platforms param.Field[string] `query:"platforms"`
 	// Search by name or username
 	Search param.Field[string] `query:"search"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
 	// Only show ungrouped accounts
 	Ungrouped param.Field[bool] `query:"ungrouped"`
+	// Filter by group ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [AccountListParams]'s query parameters as `url.Values`.

@@ -50,10 +50,11 @@ func TestInboxMessageListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Inbox.Messages.List(context.TODO(), relaygo.InboxMessageListParams{
-		AccountID: relaygo.F("account_id"),
-		Cursor:    relaygo.F("cursor"),
-		Limit:     relaygo.F(int64(1)),
-		Platform:  relaygo.F(relaygo.InboxMessageListParamsPlatformTwitter),
+		AccountID:   relaygo.F("account_id"),
+		Cursor:      relaygo.F("cursor"),
+		Limit:       relaygo.F(int64(1)),
+		Platform:    relaygo.F(relaygo.InboxMessageListParamsPlatformTwitter),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

@@ -326,6 +326,8 @@ type WebhookNewParams struct {
 	Events param.Field[[]WebhookNewParamsEvent] `json:"events" api:"required"`
 	// Webhook endpoint URL
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Workspace ID to scope this webhook to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r WebhookNewParams) MarshalJSON() (data []byte, err error) {
@@ -396,6 +398,8 @@ type WebhookListParams struct {
 	Limit param.Field[int64] `query:"limit"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
+	// Filter by workspace ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [WebhookListParams]'s query parameters as `url.Values`.
