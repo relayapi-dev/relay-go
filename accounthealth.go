@@ -7,10 +7,13 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"time"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
+	"github.com/relayapi-dev/relay-go/internal/apiquery"
+	"github.com/relayapi-dev/relay-go/internal/param"
 	"github.com/relayapi-dev/relay-go/internal/requestconfig"
 	"github.com/relayapi-dev/relay-go/option"
 )
@@ -47,10 +50,10 @@ func (r *AccountHealthService) Get(ctx context.Context, id string, opts ...optio
 }
 
 // Check health of all connected accounts
-func (r *AccountHealthService) List(ctx context.Context, opts ...option.RequestOption) (res *AccountHealthListResponse, err error) {
+func (r *AccountHealthService) List(ctx context.Context, query AccountHealthListParams, opts ...option.RequestOption) (res *AccountHealthListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/accounts/health"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return res, err
 }
 
@@ -116,13 +119,19 @@ func (r accountHealthGetResponseErrorJSON) RawJSON() string {
 
 type AccountHealthListResponse struct {
 	Data []AccountHealthListResponseData `json:"data" api:"required"`
-	JSON accountHealthListResponseJSON   `json:"-"`
+	// Whether more items exist
+	HasMore bool `json:"has_more" api:"required"`
+	// Cursor for next page
+	NextCursor string                        `json:"next_cursor" api:"required,nullable"`
+	JSON       accountHealthListResponseJSON `json:"-"`
 }
 
 // accountHealthListResponseJSON contains the JSON metadata for the struct
 // [AccountHealthListResponse]
 type accountHealthListResponseJSON struct {
 	Data        apijson.Field
+	HasMore     apijson.Field
+	NextCursor  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -217,4 +226,20 @@ func (r *AccountHealthListResponseDataError) UnmarshalJSON(data []byte) (err err
 
 func (r accountHealthListResponseDataErrorJSON) RawJSON() string {
 	return r.raw
+}
+
+type AccountHealthListParams struct {
+	// Pagination cursor
+	Cursor param.Field[string] `query:"cursor"`
+	// Number of items per page
+	Limit param.Field[int64] `query:"limit"`
+}
+
+// URLQuery serializes [AccountHealthListParams]'s query parameters as
+// `url.Values`.
+func (r AccountHealthListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
