@@ -136,13 +136,33 @@ func TestInboxMessageSendWithOptionalParams(t *testing.T) {
 		"conversation_id",
 		relaygo.InboxMessageSendParams{
 			AccountID: relaygo.F("account_id"),
-			Text:      relaygo.F("x"),
 			Attachments: relaygo.F([]relaygo.InboxMessageSendParamsAttachment{{
 				Type: relaygo.F("type"),
 				URL:  relaygo.F("https://example.com"),
 			}}),
-			MessageTag: relaygo.F("message_tag"),
-			ReplyTo:    relaygo.F("reply_to"),
+			MessageTag: relaygo.F(relaygo.InboxMessageSendParamsMessageTagHumanAgent),
+			QuickReplies: relaygo.F([]relaygo.InboxMessageSendParamsQuickReply{{
+				ContentType: relaygo.F(relaygo.InboxMessageSendParamsQuickRepliesContentTypeText),
+				ImageURL:    relaygo.F("https://example.com"),
+				Payload:     relaygo.F("payload"),
+				Title:       relaygo.F("title"),
+			}}),
+			ReplyTo: relaygo.F("reply_to"),
+			Template: relaygo.F(relaygo.InboxMessageSendParamsTemplate{
+				Elements: relaygo.F([]relaygo.InboxMessageSendParamsTemplateElement{{
+					Title: relaygo.F("title"),
+					Buttons: relaygo.F([]relaygo.InboxMessageSendParamsTemplateElementsButton{{
+						Title:   relaygo.F("title"),
+						Type:    relaygo.F(relaygo.InboxMessageSendParamsTemplateElementsButtonsTypeWebURL),
+						Payload: relaygo.F("payload"),
+						URL:     relaygo.F("https://example.com"),
+					}}),
+					ImageURL: relaygo.F("https://example.com"),
+					Subtitle: relaygo.F("subtitle"),
+				}}),
+				Type: relaygo.F(relaygo.InboxMessageSendParamsTemplateTypeGeneric),
+			}),
+			Text: relaygo.F("x"),
 		},
 	)
 	if err != nil {
