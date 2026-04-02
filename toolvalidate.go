@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"time"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
 	"github.com/relayapi-dev/relay-go/internal/apiquery"
@@ -1384,7 +1385,11 @@ type ToolValidateValidatePostParams struct {
 	Content param.Field[string] `json:"content"`
 	// Media attachments
 	Media param.Field[[]ToolValidateValidatePostParamsMedia] `json:"media"`
-	// Per-target customizations keyed by target value (account ID or platform name)
+	// Recycling configuration for evergreen content (Pro plan only)
+	Recycling param.Field[ToolValidateValidatePostParamsRecycling] `json:"recycling"`
+	// Per-target customizations keyed by target value (account ID or platform name).
+	// Supports platform-specific features such as Twitter polls (poll.options,
+	// poll.duration_minutes), threads, reply_to, and reply_settings.
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
@@ -1420,6 +1425,45 @@ const (
 func (r ToolValidateValidatePostParamsMediaType) IsKnown() bool {
 	switch r {
 	case ToolValidateValidatePostParamsMediaTypeImage, ToolValidateValidatePostParamsMediaTypeVideo, ToolValidateValidatePostParamsMediaTypeGif, ToolValidateValidatePostParamsMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration for evergreen content (Pro plan only)
+type ToolValidateValidatePostParamsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[ToolValidateValidatePostParamsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r ToolValidateValidatePostParamsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type ToolValidateValidatePostParamsRecyclingGapFreq string
+
+const (
+	ToolValidateValidatePostParamsRecyclingGapFreqDay   ToolValidateValidatePostParamsRecyclingGapFreq = "day"
+	ToolValidateValidatePostParamsRecyclingGapFreqWeek  ToolValidateValidatePostParamsRecyclingGapFreq = "week"
+	ToolValidateValidatePostParamsRecyclingGapFreqMonth ToolValidateValidatePostParamsRecyclingGapFreq = "month"
+)
+
+func (r ToolValidateValidatePostParamsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case ToolValidateValidatePostParamsRecyclingGapFreqDay, ToolValidateValidatePostParamsRecyclingGapFreqWeek, ToolValidateValidatePostParamsRecyclingGapFreqMonth:
 		return true
 	}
 	return false

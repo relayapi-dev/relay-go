@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"time"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
 	"github.com/relayapi-dev/relay-go/internal/apiquery"
@@ -52,7 +53,7 @@ func (r *WhatsappService) BulkSend(ctx context.Context, body WhatsappBulkSendPar
 	return res, err
 }
 
-// List registered phone numbers
+// List purchased phone numbers
 func (r *WhatsappService) ListPhoneNumbers(ctx context.Context, query WhatsappListPhoneNumbersParams, opts ...option.RequestOption) (res *WhatsappListPhoneNumbersResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/whatsapp/phone-numbers"
@@ -174,26 +175,41 @@ func (r whatsappListPhoneNumbersResponseJSON) RawJSON() string {
 }
 
 type WhatsappListPhoneNumbersResponseData struct {
-	// Phone number ID
+	// Phone number resource ID
 	ID string `json:"id" api:"required"`
-	// Phone number
+	// ISO country code
+	Country string `json:"country" api:"required"`
+	// Created timestamp
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
+	// Monthly cost in cents
+	MonthlyCostCents float64 `json:"monthly_cost_cents" api:"required"`
+	// E.164 phone number
 	PhoneNumber string `json:"phone_number" api:"required"`
-	// Registration status
+	// Carrier provider
+	Provider string `json:"provider" api:"required"`
+	// Provisioning status
 	Status WhatsappListPhoneNumbersResponseDataStatus `json:"status" api:"required"`
-	// Display name
-	DisplayName string                                   `json:"display_name" api:"nullable"`
-	JSON        whatsappListPhoneNumbersResponseDataJSON `json:"-"`
+	// Linked RelayAPI social account ID
+	SocialAccountID string `json:"social_account_id" api:"nullable"`
+	// Meta WhatsApp phone number ID
+	WaPhoneNumberID string                                   `json:"wa_phone_number_id" api:"nullable"`
+	JSON            whatsappListPhoneNumbersResponseDataJSON `json:"-"`
 }
 
 // whatsappListPhoneNumbersResponseDataJSON contains the JSON metadata for the
 // struct [WhatsappListPhoneNumbersResponseData]
 type whatsappListPhoneNumbersResponseDataJSON struct {
-	ID          apijson.Field
-	PhoneNumber apijson.Field
-	Status      apijson.Field
-	DisplayName apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID               apijson.Field
+	Country          apijson.Field
+	CreatedAt        apijson.Field
+	MonthlyCostCents apijson.Field
+	PhoneNumber      apijson.Field
+	Provider         apijson.Field
+	Status           apijson.Field
+	SocialAccountID  apijson.Field
+	WaPhoneNumberID  apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *WhatsappListPhoneNumbersResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -204,18 +220,21 @@ func (r whatsappListPhoneNumbersResponseDataJSON) RawJSON() string {
 	return r.raw
 }
 
-// Registration status
+// Provisioning status
 type WhatsappListPhoneNumbersResponseDataStatus string
 
 const (
-	WhatsappListPhoneNumbersResponseDataStatusActive   WhatsappListPhoneNumbersResponseDataStatus = "active"
-	WhatsappListPhoneNumbersResponseDataStatusInactive WhatsappListPhoneNumbersResponseDataStatus = "inactive"
-	WhatsappListPhoneNumbersResponseDataStatusPending  WhatsappListPhoneNumbersResponseDataStatus = "pending"
+	WhatsappListPhoneNumbersResponseDataStatusPurchasing          WhatsappListPhoneNumbersResponseDataStatus = "purchasing"
+	WhatsappListPhoneNumbersResponseDataStatusPendingVerification WhatsappListPhoneNumbersResponseDataStatus = "pending_verification"
+	WhatsappListPhoneNumbersResponseDataStatusVerified            WhatsappListPhoneNumbersResponseDataStatus = "verified"
+	WhatsappListPhoneNumbersResponseDataStatusActive              WhatsappListPhoneNumbersResponseDataStatus = "active"
+	WhatsappListPhoneNumbersResponseDataStatusReleasing           WhatsappListPhoneNumbersResponseDataStatus = "releasing"
+	WhatsappListPhoneNumbersResponseDataStatusReleased            WhatsappListPhoneNumbersResponseDataStatus = "released"
 )
 
 func (r WhatsappListPhoneNumbersResponseDataStatus) IsKnown() bool {
 	switch r {
-	case WhatsappListPhoneNumbersResponseDataStatusActive, WhatsappListPhoneNumbersResponseDataStatusInactive, WhatsappListPhoneNumbersResponseDataStatusPending:
+	case WhatsappListPhoneNumbersResponseDataStatusPurchasing, WhatsappListPhoneNumbersResponseDataStatusPendingVerification, WhatsappListPhoneNumbersResponseDataStatusVerified, WhatsappListPhoneNumbersResponseDataStatusActive, WhatsappListPhoneNumbersResponseDataStatusReleasing, WhatsappListPhoneNumbersResponseDataStatusReleased:
 		return true
 	}
 	return false
@@ -286,8 +305,8 @@ func (r WhatsappBulkSendParamsTemplateComponentsType) IsKnown() bool {
 }
 
 type WhatsappListPhoneNumbersParams struct {
-	// WhatsApp account ID
-	AccountID param.Field[string] `query:"account_id" api:"required"`
+	// Filter by provisioning status
+	Status param.Field[WhatsappListPhoneNumbersParamsStatus] `query:"status"`
 }
 
 // URLQuery serializes [WhatsappListPhoneNumbersParams]'s query parameters as
@@ -297,4 +316,24 @@ func (r WhatsappListPhoneNumbersParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// Filter by provisioning status
+type WhatsappListPhoneNumbersParamsStatus string
+
+const (
+	WhatsappListPhoneNumbersParamsStatusPurchasing          WhatsappListPhoneNumbersParamsStatus = "purchasing"
+	WhatsappListPhoneNumbersParamsStatusPendingVerification WhatsappListPhoneNumbersParamsStatus = "pending_verification"
+	WhatsappListPhoneNumbersParamsStatusVerified            WhatsappListPhoneNumbersParamsStatus = "verified"
+	WhatsappListPhoneNumbersParamsStatusActive              WhatsappListPhoneNumbersParamsStatus = "active"
+	WhatsappListPhoneNumbersParamsStatusReleasing           WhatsappListPhoneNumbersParamsStatus = "releasing"
+	WhatsappListPhoneNumbersParamsStatusReleased            WhatsappListPhoneNumbersParamsStatus = "released"
+)
+
+func (r WhatsappListPhoneNumbersParamsStatus) IsKnown() bool {
+	switch r {
+	case WhatsappListPhoneNumbersParamsStatusPurchasing, WhatsappListPhoneNumbersParamsStatusPendingVerification, WhatsappListPhoneNumbersParamsStatusVerified, WhatsappListPhoneNumbersParamsStatusActive, WhatsappListPhoneNumbersParamsStatusReleasing, WhatsappListPhoneNumbersParamsStatusReleased:
+		return true
+	}
+	return false
 }
