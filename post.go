@@ -129,12 +129,16 @@ func (r *PostService) Unpublish(ctx context.Context, id string, body PostUnpubli
 
 type PostNewResponse struct {
 	// Post ID
-	ID          string                 `json:"id" api:"required"`
-	Content     string                 `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time              `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostNewResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                 `json:"scheduled_at" api:"required,nullable"`
-	Status      PostNewResponseStatus  `json:"status" api:"required"`
+	ID        string                 `json:"id" api:"required"`
+	Content   string                 `json:"content" api:"required,nullable"`
+	CreatedAt time.Time              `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostNewResponseMedia `json:"media" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostNewResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                   `json:"scheduled_at" api:"required,nullable"`
+	Status      PostNewResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostNewResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
@@ -143,16 +147,18 @@ type PostNewResponse struct {
 
 // postNewResponseJSON contains the JSON metadata for the struct [PostNewResponse]
 type postNewResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostNewResponse) UnmarshalJSON(data []byte) (err error) {
@@ -201,6 +207,70 @@ const (
 func (r PostNewResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostNewResponseMediaTypeImage, PostNewResponseMediaTypeVideo, PostNewResponseMediaTypeGif, PostNewResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostNewResponseRecycling struct {
+	ID                    string                          `json:"id" api:"required"`
+	ContentVariationIndex float64                         `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                        `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                       `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                            `json:"enabled" api:"required"`
+	ExpireCount           float64                         `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                       `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                         `json:"gap" api:"required"`
+	GapFreq               PostNewResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                       `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                       `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                         `json:"recycle_count" api:"required"`
+	StartDate             time.Time                       `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                       `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postNewResponseRecyclingJSON    `json:"-"`
+}
+
+// postNewResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostNewResponseRecycling]
+type postNewResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostNewResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postNewResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostNewResponseRecyclingGapFreq string
+
+const (
+	PostNewResponseRecyclingGapFreqDay   PostNewResponseRecyclingGapFreq = "day"
+	PostNewResponseRecyclingGapFreqWeek  PostNewResponseRecyclingGapFreq = "week"
+	PostNewResponseRecyclingGapFreqMonth PostNewResponseRecyclingGapFreq = "month"
+)
+
+func (r PostNewResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostNewResponseRecyclingGapFreqDay, PostNewResponseRecyclingGapFreqWeek, PostNewResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -351,12 +421,16 @@ func (r postNewResponseTargetsErrorJSON) RawJSON() string {
 
 type PostGetResponse struct {
 	// Post ID
-	ID          string                 `json:"id" api:"required"`
-	Content     string                 `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time              `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostGetResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                 `json:"scheduled_at" api:"required,nullable"`
-	Status      PostGetResponseStatus  `json:"status" api:"required"`
+	ID        string                 `json:"id" api:"required"`
+	Content   string                 `json:"content" api:"required,nullable"`
+	CreatedAt time.Time              `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostGetResponseMedia `json:"media" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostGetResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                   `json:"scheduled_at" api:"required,nullable"`
+	Status      PostGetResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostGetResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
@@ -365,16 +439,18 @@ type PostGetResponse struct {
 
 // postGetResponseJSON contains the JSON metadata for the struct [PostGetResponse]
 type postGetResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostGetResponse) UnmarshalJSON(data []byte) (err error) {
@@ -423,6 +499,70 @@ const (
 func (r PostGetResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostGetResponseMediaTypeImage, PostGetResponseMediaTypeVideo, PostGetResponseMediaTypeGif, PostGetResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostGetResponseRecycling struct {
+	ID                    string                          `json:"id" api:"required"`
+	ContentVariationIndex float64                         `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                        `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                       `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                            `json:"enabled" api:"required"`
+	ExpireCount           float64                         `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                       `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                         `json:"gap" api:"required"`
+	GapFreq               PostGetResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                       `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                       `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                         `json:"recycle_count" api:"required"`
+	StartDate             time.Time                       `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                       `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postGetResponseRecyclingJSON    `json:"-"`
+}
+
+// postGetResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostGetResponseRecycling]
+type postGetResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostGetResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postGetResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostGetResponseRecyclingGapFreq string
+
+const (
+	PostGetResponseRecyclingGapFreqDay   PostGetResponseRecyclingGapFreq = "day"
+	PostGetResponseRecyclingGapFreqWeek  PostGetResponseRecyclingGapFreq = "week"
+	PostGetResponseRecyclingGapFreqMonth PostGetResponseRecyclingGapFreq = "month"
+)
+
+func (r PostGetResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostGetResponseRecyclingGapFreqDay, PostGetResponseRecyclingGapFreqWeek, PostGetResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -573,12 +713,16 @@ func (r postGetResponseTargetsErrorJSON) RawJSON() string {
 
 type PostUpdateResponse struct {
 	// Post ID
-	ID          string                    `json:"id" api:"required"`
-	Content     string                    `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                 `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostUpdateResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                    `json:"scheduled_at" api:"required,nullable"`
-	Status      PostUpdateResponseStatus  `json:"status" api:"required"`
+	ID        string                    `json:"id" api:"required"`
+	Content   string                    `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                 `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostUpdateResponseMedia `json:"media" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostUpdateResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                      `json:"scheduled_at" api:"required,nullable"`
+	Status      PostUpdateResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostUpdateResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                           `json:"updated_at" api:"required" format:"date-time"`
@@ -588,16 +732,18 @@ type PostUpdateResponse struct {
 // postUpdateResponseJSON contains the JSON metadata for the struct
 // [PostUpdateResponse]
 type postUpdateResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUpdateResponse) UnmarshalJSON(data []byte) (err error) {
@@ -646,6 +792,70 @@ const (
 func (r PostUpdateResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostUpdateResponseMediaTypeImage, PostUpdateResponseMediaTypeVideo, PostUpdateResponseMediaTypeGif, PostUpdateResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostUpdateResponseRecycling struct {
+	ID                    string                             `json:"id" api:"required"`
+	ContentVariationIndex float64                            `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                           `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                          `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                               `json:"enabled" api:"required"`
+	ExpireCount           float64                            `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                          `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                            `json:"gap" api:"required"`
+	GapFreq               PostUpdateResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                          `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                          `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                            `json:"recycle_count" api:"required"`
+	StartDate             time.Time                          `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                          `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postUpdateResponseRecyclingJSON    `json:"-"`
+}
+
+// postUpdateResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostUpdateResponseRecycling]
+type postUpdateResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostUpdateResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUpdateResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostUpdateResponseRecyclingGapFreq string
+
+const (
+	PostUpdateResponseRecyclingGapFreqDay   PostUpdateResponseRecyclingGapFreq = "day"
+	PostUpdateResponseRecyclingGapFreqWeek  PostUpdateResponseRecyclingGapFreq = "week"
+	PostUpdateResponseRecyclingGapFreqMonth PostUpdateResponseRecyclingGapFreq = "month"
+)
+
+func (r PostUpdateResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostUpdateResponseRecyclingGapFreqDay, PostUpdateResponseRecyclingGapFreqWeek, PostUpdateResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -823,12 +1033,16 @@ func (r postListResponseJSON) RawJSON() string {
 
 type PostListResponseData struct {
 	// Post ID
-	ID          string                      `json:"id" api:"required"`
-	Content     string                      `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                   `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostListResponseDataMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                      `json:"scheduled_at" api:"required,nullable"`
-	Status      PostListResponseDataStatus  `json:"status" api:"required"`
+	ID        string                      `json:"id" api:"required"`
+	Content   string                      `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                   `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostListResponseDataMedia `json:"media" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostListResponseDataRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                        `json:"scheduled_at" api:"required,nullable"`
+	Status      PostListResponseDataStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostListResponseDataTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                             `json:"updated_at" api:"required" format:"date-time"`
@@ -838,16 +1052,18 @@ type PostListResponseData struct {
 // postListResponseDataJSON contains the JSON metadata for the struct
 // [PostListResponseData]
 type postListResponseDataJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostListResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -896,6 +1112,70 @@ const (
 func (r PostListResponseDataMediaType) IsKnown() bool {
 	switch r {
 	case PostListResponseDataMediaTypeImage, PostListResponseDataMediaTypeVideo, PostListResponseDataMediaTypeGif, PostListResponseDataMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostListResponseDataRecycling struct {
+	ID                    string                               `json:"id" api:"required"`
+	ContentVariationIndex float64                              `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                             `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                            `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                                 `json:"enabled" api:"required"`
+	ExpireCount           float64                              `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                            `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                              `json:"gap" api:"required"`
+	GapFreq               PostListResponseDataRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                            `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                            `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                              `json:"recycle_count" api:"required"`
+	StartDate             time.Time                            `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                            `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postListResponseDataRecyclingJSON    `json:"-"`
+}
+
+// postListResponseDataRecyclingJSON contains the JSON metadata for the struct
+// [PostListResponseDataRecycling]
+type postListResponseDataRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostListResponseDataRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postListResponseDataRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostListResponseDataRecyclingGapFreq string
+
+const (
+	PostListResponseDataRecyclingGapFreqDay   PostListResponseDataRecyclingGapFreq = "day"
+	PostListResponseDataRecyclingGapFreqWeek  PostListResponseDataRecyclingGapFreq = "week"
+	PostListResponseDataRecyclingGapFreqMonth PostListResponseDataRecyclingGapFreq = "month"
+)
+
+func (r PostListResponseDataRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostListResponseDataRecyclingGapFreqDay, PostListResponseDataRecyclingGapFreqWeek, PostListResponseDataRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1069,12 +1349,16 @@ func (r postBulkNewResponseJSON) RawJSON() string {
 
 type PostBulkNewResponseData struct {
 	// Post ID
-	ID          string                         `json:"id" api:"required"`
-	Content     string                         `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                      `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostBulkNewResponseDataMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                         `json:"scheduled_at" api:"required,nullable"`
-	Status      PostBulkNewResponseDataStatus  `json:"status" api:"required"`
+	ID        string                         `json:"id" api:"required"`
+	Content   string                         `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                      `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostBulkNewResponseDataMedia `json:"media" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostBulkNewResponseDataRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                           `json:"scheduled_at" api:"required,nullable"`
+	Status      PostBulkNewResponseDataStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostBulkNewResponseDataTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                                `json:"updated_at" api:"required" format:"date-time"`
@@ -1084,16 +1368,18 @@ type PostBulkNewResponseData struct {
 // postBulkNewResponseDataJSON contains the JSON metadata for the struct
 // [PostBulkNewResponseData]
 type postBulkNewResponseDataJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostBulkNewResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -1142,6 +1428,70 @@ const (
 func (r PostBulkNewResponseDataMediaType) IsKnown() bool {
 	switch r {
 	case PostBulkNewResponseDataMediaTypeImage, PostBulkNewResponseDataMediaTypeVideo, PostBulkNewResponseDataMediaTypeGif, PostBulkNewResponseDataMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostBulkNewResponseDataRecycling struct {
+	ID                    string                                  `json:"id" api:"required"`
+	ContentVariationIndex float64                                 `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                                `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                               `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                                    `json:"enabled" api:"required"`
+	ExpireCount           float64                                 `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                               `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                                 `json:"gap" api:"required"`
+	GapFreq               PostBulkNewResponseDataRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                               `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                               `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                                 `json:"recycle_count" api:"required"`
+	StartDate             time.Time                               `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                               `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postBulkNewResponseDataRecyclingJSON    `json:"-"`
+}
+
+// postBulkNewResponseDataRecyclingJSON contains the JSON metadata for the struct
+// [PostBulkNewResponseDataRecycling]
+type postBulkNewResponseDataRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostBulkNewResponseDataRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postBulkNewResponseDataRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostBulkNewResponseDataRecyclingGapFreq string
+
+const (
+	PostBulkNewResponseDataRecyclingGapFreqDay   PostBulkNewResponseDataRecyclingGapFreq = "day"
+	PostBulkNewResponseDataRecyclingGapFreqWeek  PostBulkNewResponseDataRecyclingGapFreq = "week"
+	PostBulkNewResponseDataRecyclingGapFreqMonth PostBulkNewResponseDataRecyclingGapFreq = "month"
+)
+
+func (r PostBulkNewResponseDataRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostBulkNewResponseDataRecyclingGapFreqDay, PostBulkNewResponseDataRecyclingGapFreqWeek, PostBulkNewResponseDataRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1317,12 +1667,16 @@ func (r postBulkNewResponseSummaryJSON) RawJSON() string {
 
 type PostRetryResponse struct {
 	// Post ID
-	ID          string                   `json:"id" api:"required"`
-	Content     string                   `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostRetryResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                   `json:"scheduled_at" api:"required,nullable"`
-	Status      PostRetryResponseStatus  `json:"status" api:"required"`
+	ID        string                   `json:"id" api:"required"`
+	Content   string                   `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostRetryResponseMedia `json:"media" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostRetryResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                     `json:"scheduled_at" api:"required,nullable"`
+	Status      PostRetryResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostRetryResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                          `json:"updated_at" api:"required" format:"date-time"`
@@ -1332,16 +1686,18 @@ type PostRetryResponse struct {
 // postRetryResponseJSON contains the JSON metadata for the struct
 // [PostRetryResponse]
 type postRetryResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostRetryResponse) UnmarshalJSON(data []byte) (err error) {
@@ -1390,6 +1746,70 @@ const (
 func (r PostRetryResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostRetryResponseMediaTypeImage, PostRetryResponseMediaTypeVideo, PostRetryResponseMediaTypeGif, PostRetryResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostRetryResponseRecycling struct {
+	ID                    string                            `json:"id" api:"required"`
+	ContentVariationIndex float64                           `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                          `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                         `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                              `json:"enabled" api:"required"`
+	ExpireCount           float64                           `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                         `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                           `json:"gap" api:"required"`
+	GapFreq               PostRetryResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                         `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                         `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                           `json:"recycle_count" api:"required"`
+	StartDate             time.Time                         `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                         `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postRetryResponseRecyclingJSON    `json:"-"`
+}
+
+// postRetryResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostRetryResponseRecycling]
+type postRetryResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostRetryResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postRetryResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostRetryResponseRecyclingGapFreq string
+
+const (
+	PostRetryResponseRecyclingGapFreqDay   PostRetryResponseRecyclingGapFreq = "day"
+	PostRetryResponseRecyclingGapFreqWeek  PostRetryResponseRecyclingGapFreq = "week"
+	PostRetryResponseRecyclingGapFreqMonth PostRetryResponseRecyclingGapFreq = "month"
+)
+
+func (r PostRetryResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostRetryResponseRecyclingGapFreqDay, PostRetryResponseRecyclingGapFreqWeek, PostRetryResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1540,12 +1960,16 @@ func (r postRetryResponseTargetsErrorJSON) RawJSON() string {
 
 type PostUnpublishResponse struct {
 	// Post ID
-	ID          string                       `json:"id" api:"required"`
-	Content     string                       `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                    `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostUnpublishResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                       `json:"scheduled_at" api:"required,nullable"`
-	Status      PostUnpublishResponseStatus  `json:"status" api:"required"`
+	ID        string                       `json:"id" api:"required"`
+	Content   string                       `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                    `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostUnpublishResponseMedia `json:"media" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostUnpublishResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                         `json:"scheduled_at" api:"required,nullable"`
+	Status      PostUnpublishResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostUnpublishResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                              `json:"updated_at" api:"required" format:"date-time"`
@@ -1555,16 +1979,18 @@ type PostUnpublishResponse struct {
 // postUnpublishResponseJSON contains the JSON metadata for the struct
 // [PostUnpublishResponse]
 type postUnpublishResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUnpublishResponse) UnmarshalJSON(data []byte) (err error) {
@@ -1613,6 +2039,70 @@ const (
 func (r PostUnpublishResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostUnpublishResponseMediaTypeImage, PostUnpublishResponseMediaTypeVideo, PostUnpublishResponseMediaTypeGif, PostUnpublishResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostUnpublishResponseRecycling struct {
+	ID                    string                                `json:"id" api:"required"`
+	ContentVariationIndex float64                               `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                              `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                             `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                                  `json:"enabled" api:"required"`
+	ExpireCount           float64                               `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                             `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                               `json:"gap" api:"required"`
+	GapFreq               PostUnpublishResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                             `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                             `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                               `json:"recycle_count" api:"required"`
+	StartDate             time.Time                             `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                             `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postUnpublishResponseRecyclingJSON    `json:"-"`
+}
+
+// postUnpublishResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostUnpublishResponseRecycling]
+type postUnpublishResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostUnpublishResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUnpublishResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostUnpublishResponseRecyclingGapFreq string
+
+const (
+	PostUnpublishResponseRecyclingGapFreqDay   PostUnpublishResponseRecyclingGapFreq = "day"
+	PostUnpublishResponseRecyclingGapFreqWeek  PostUnpublishResponseRecyclingGapFreq = "week"
+	PostUnpublishResponseRecyclingGapFreqMonth PostUnpublishResponseRecyclingGapFreq = "month"
+)
+
+func (r PostUnpublishResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostUnpublishResponseRecyclingGapFreqDay, PostUnpublishResponseRecyclingGapFreqWeek, PostUnpublishResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1771,7 +2261,11 @@ type PostNewParams struct {
 	Content param.Field[string] `json:"content"`
 	// Media attachments
 	Media param.Field[[]PostNewParamsMedia] `json:"media"`
-	// Per-target customizations keyed by target value (account ID or platform name)
+	// Recycling configuration for evergreen content (Pro plan only)
+	Recycling param.Field[PostNewParamsRecycling] `json:"recycling"`
+	// Per-target customizations keyed by target value (account ID or platform name).
+	// Supports platform-specific features such as Twitter polls (poll.options,
+	// poll.duration_minutes), threads, reply_to, and reply_settings.
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
@@ -1812,11 +2306,52 @@ func (r PostNewParamsMediaType) IsKnown() bool {
 	return false
 }
 
+// Recycling configuration for evergreen content (Pro plan only)
+type PostNewParamsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[PostNewParamsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r PostNewParamsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type PostNewParamsRecyclingGapFreq string
+
+const (
+	PostNewParamsRecyclingGapFreqDay   PostNewParamsRecyclingGapFreq = "day"
+	PostNewParamsRecyclingGapFreqWeek  PostNewParamsRecyclingGapFreq = "week"
+	PostNewParamsRecyclingGapFreqMonth PostNewParamsRecyclingGapFreq = "month"
+)
+
+func (r PostNewParamsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostNewParamsRecyclingGapFreqDay, PostNewParamsRecyclingGapFreqWeek, PostNewParamsRecyclingGapFreqMonth:
+		return true
+	}
+	return false
+}
+
 type PostUpdateParams struct {
 	// Post text
 	Content param.Field[string] `json:"content"`
 	// Updated media
 	Media param.Field[[]PostUpdateParamsMedia] `json:"media"`
+	// Recycling configuration (Pro plan only)
+	Recycling param.Field[PostUpdateParamsRecycling] `json:"recycling"`
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
 	// an ISO 8601 timestamp to schedule.
 	ScheduledAt   param.Field[string]                            `json:"scheduled_at"`
@@ -1854,6 +2389,45 @@ const (
 func (r PostUpdateParamsMediaType) IsKnown() bool {
 	switch r {
 	case PostUpdateParamsMediaTypeImage, PostUpdateParamsMediaTypeVideo, PostUpdateParamsMediaTypeGif, PostUpdateParamsMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration (Pro plan only)
+type PostUpdateParamsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[PostUpdateParamsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r PostUpdateParamsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type PostUpdateParamsRecyclingGapFreq string
+
+const (
+	PostUpdateParamsRecyclingGapFreqDay   PostUpdateParamsRecyclingGapFreq = "day"
+	PostUpdateParamsRecyclingGapFreqWeek  PostUpdateParamsRecyclingGapFreq = "week"
+	PostUpdateParamsRecyclingGapFreqMonth PostUpdateParamsRecyclingGapFreq = "month"
+)
+
+func (r PostUpdateParamsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostUpdateParamsRecyclingGapFreqDay, PostUpdateParamsRecyclingGapFreqWeek, PostUpdateParamsRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1922,7 +2496,11 @@ type PostBulkNewParamsPost struct {
 	Content param.Field[string] `json:"content"`
 	// Media attachments
 	Media param.Field[[]PostBulkNewParamsPostsMedia] `json:"media"`
-	// Per-target customizations keyed by target value (account ID or platform name)
+	// Recycling configuration for evergreen content (Pro plan only)
+	Recycling param.Field[PostBulkNewParamsPostsRecycling] `json:"recycling"`
+	// Per-target customizations keyed by target value (account ID or platform name).
+	// Supports platform-specific features such as Twitter polls (poll.options,
+	// poll.duration_minutes), threads, reply_to, and reply_settings.
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
@@ -1958,6 +2536,45 @@ const (
 func (r PostBulkNewParamsPostsMediaType) IsKnown() bool {
 	switch r {
 	case PostBulkNewParamsPostsMediaTypeImage, PostBulkNewParamsPostsMediaTypeVideo, PostBulkNewParamsPostsMediaTypeGif, PostBulkNewParamsPostsMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration for evergreen content (Pro plan only)
+type PostBulkNewParamsPostsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[PostBulkNewParamsPostsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r PostBulkNewParamsPostsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type PostBulkNewParamsPostsRecyclingGapFreq string
+
+const (
+	PostBulkNewParamsPostsRecyclingGapFreqDay   PostBulkNewParamsPostsRecyclingGapFreq = "day"
+	PostBulkNewParamsPostsRecyclingGapFreqWeek  PostBulkNewParamsPostsRecyclingGapFreq = "week"
+	PostBulkNewParamsPostsRecyclingGapFreqMonth PostBulkNewParamsPostsRecyclingGapFreq = "month"
+)
+
+func (r PostBulkNewParamsPostsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostBulkNewParamsPostsRecyclingGapFreqDay, PostBulkNewParamsPostsRecyclingGapFreqWeek, PostBulkNewParamsPostsRecyclingGapFreqMonth:
 		return true
 	}
 	return false

@@ -341,6 +341,7 @@ const (
 	WebhookNewParamsEventPostPartial         WebhookNewParamsEvent = "post.partial"
 	WebhookNewParamsEventPostFailed          WebhookNewParamsEvent = "post.failed"
 	WebhookNewParamsEventPostScheduled       WebhookNewParamsEvent = "post.scheduled"
+	WebhookNewParamsEventPostRecycled        WebhookNewParamsEvent = "post.recycled"
 	WebhookNewParamsEventAccountConnected    WebhookNewParamsEvent = "account.connected"
 	WebhookNewParamsEventAccountDisconnected WebhookNewParamsEvent = "account.disconnected"
 	WebhookNewParamsEventCommentReceived     WebhookNewParamsEvent = "comment.received"
@@ -349,7 +350,7 @@ const (
 
 func (r WebhookNewParamsEvent) IsKnown() bool {
 	switch r {
-	case WebhookNewParamsEventPostPublished, WebhookNewParamsEventPostPartial, WebhookNewParamsEventPostFailed, WebhookNewParamsEventPostScheduled, WebhookNewParamsEventAccountConnected, WebhookNewParamsEventAccountDisconnected, WebhookNewParamsEventCommentReceived, WebhookNewParamsEventMessageReceived:
+	case WebhookNewParamsEventPostPublished, WebhookNewParamsEventPostPartial, WebhookNewParamsEventPostFailed, WebhookNewParamsEventPostScheduled, WebhookNewParamsEventPostRecycled, WebhookNewParamsEventAccountConnected, WebhookNewParamsEventAccountDisconnected, WebhookNewParamsEventCommentReceived, WebhookNewParamsEventMessageReceived:
 		return true
 	}
 	return false
@@ -375,6 +376,7 @@ const (
 	WebhookUpdateParamsEventPostPartial         WebhookUpdateParamsEvent = "post.partial"
 	WebhookUpdateParamsEventPostFailed          WebhookUpdateParamsEvent = "post.failed"
 	WebhookUpdateParamsEventPostScheduled       WebhookUpdateParamsEvent = "post.scheduled"
+	WebhookUpdateParamsEventPostRecycled        WebhookUpdateParamsEvent = "post.recycled"
 	WebhookUpdateParamsEventAccountConnected    WebhookUpdateParamsEvent = "account.connected"
 	WebhookUpdateParamsEventAccountDisconnected WebhookUpdateParamsEvent = "account.disconnected"
 	WebhookUpdateParamsEventCommentReceived     WebhookUpdateParamsEvent = "comment.received"
@@ -383,7 +385,7 @@ const (
 
 func (r WebhookUpdateParamsEvent) IsKnown() bool {
 	switch r {
-	case WebhookUpdateParamsEventPostPublished, WebhookUpdateParamsEventPostPartial, WebhookUpdateParamsEventPostFailed, WebhookUpdateParamsEventPostScheduled, WebhookUpdateParamsEventAccountConnected, WebhookUpdateParamsEventAccountDisconnected, WebhookUpdateParamsEventCommentReceived, WebhookUpdateParamsEventMessageReceived:
+	case WebhookUpdateParamsEventPostPublished, WebhookUpdateParamsEventPostPartial, WebhookUpdateParamsEventPostFailed, WebhookUpdateParamsEventPostScheduled, WebhookUpdateParamsEventPostRecycled, WebhookUpdateParamsEventAccountConnected, WebhookUpdateParamsEventAccountDisconnected, WebhookUpdateParamsEventCommentReceived, WebhookUpdateParamsEventMessageReceived:
 		return true
 	}
 	return false

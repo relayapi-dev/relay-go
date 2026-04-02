@@ -54,7 +54,7 @@ func TestWhatsappBulkSendWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestWhatsappListPhoneNumbers(t *testing.T) {
+func TestWhatsappListPhoneNumbersWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -68,7 +68,7 @@ func TestWhatsappListPhoneNumbers(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Whatsapp.ListPhoneNumbers(context.TODO(), relaygo.WhatsappListPhoneNumbersParams{
-		AccountID: relaygo.F("account_id"),
+		Status: relaygo.F(relaygo.WhatsappListPhoneNumbersParamsStatusPurchasing),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

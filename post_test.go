@@ -35,6 +35,15 @@ func TestPostNewWithOptionalParams(t *testing.T) {
 			URL:  relaygo.F("https://example.com"),
 			Type: relaygo.F(relaygo.PostNewParamsMediaTypeImage),
 		}}),
+		Recycling: relaygo.F(relaygo.PostNewParamsRecycling{
+			Gap:               relaygo.F(int64(1)),
+			GapFreq:           relaygo.F(relaygo.PostNewParamsRecyclingGapFreqDay),
+			StartDate:         relaygo.F(time.Now()),
+			ContentVariations: relaygo.F([]string{"string"}),
+			Enabled:           relaygo.F(true),
+			ExpireCount:       relaygo.F(int64(1)),
+			ExpireDate:        relaygo.F(time.Now()),
+		}),
 		TargetOptions: relaygo.F(map[string]map[string]interface{}{
 			"foo": {
 				"foo": "bar",
@@ -97,6 +106,15 @@ func TestPostUpdateWithOptionalParams(t *testing.T) {
 				URL:  relaygo.F("https://example.com"),
 				Type: relaygo.F(relaygo.PostUpdateParamsMediaTypeImage),
 			}}),
+			Recycling: relaygo.F(relaygo.PostUpdateParamsRecycling{
+				Gap:               relaygo.F(int64(1)),
+				GapFreq:           relaygo.F(relaygo.PostUpdateParamsRecyclingGapFreqDay),
+				StartDate:         relaygo.F(time.Now()),
+				ContentVariations: relaygo.F([]string{"string"}),
+				Enabled:           relaygo.F(true),
+				ExpireCount:       relaygo.F(int64(1)),
+				ExpireDate:        relaygo.F(time.Now()),
+			}),
 			ScheduledAt: relaygo.F("now"),
 			TargetOptions: relaygo.F(map[string]map[string]interface{}{
 				"foo": {
@@ -192,6 +210,15 @@ func TestPostBulkNew(t *testing.T) {
 				URL:  relaygo.F("https://example.com"),
 				Type: relaygo.F(relaygo.PostBulkNewParamsPostsMediaTypeImage),
 			}}),
+			Recycling: relaygo.F(relaygo.PostBulkNewParamsPostsRecycling{
+				Gap:               relaygo.F(int64(1)),
+				GapFreq:           relaygo.F(relaygo.PostBulkNewParamsPostsRecyclingGapFreqDay),
+				StartDate:         relaygo.F(time.Now()),
+				ContentVariations: relaygo.F([]string{"string"}),
+				Enabled:           relaygo.F(true),
+				ExpireCount:       relaygo.F(int64(1)),
+				ExpireDate:        relaygo.F(time.Now()),
+			}),
 			TargetOptions: relaygo.F(map[string]map[string]interface{}{
 				"foo": {
 					"foo": "bar",

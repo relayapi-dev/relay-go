@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/relayapi-dev/relay-go"
 	"github.com/relayapi-dev/relay-go/internal/testutil"
@@ -109,6 +110,15 @@ func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
 			URL:  relaygo.F("https://example.com"),
 			Type: relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
 		}}),
+		Recycling: relaygo.F(relaygo.ToolValidateValidatePostParamsRecycling{
+			Gap:               relaygo.F(int64(1)),
+			GapFreq:           relaygo.F(relaygo.ToolValidateValidatePostParamsRecyclingGapFreqDay),
+			StartDate:         relaygo.F(time.Now()),
+			ContentVariations: relaygo.F([]string{"string"}),
+			Enabled:           relaygo.F(true),
+			ExpireCount:       relaygo.F(int64(1)),
+			ExpireDate:        relaygo.F(time.Now()),
+		}),
 		TargetOptions: relaygo.F(map[string]map[string]interface{}{
 			"foo": {
 				"foo": "bar",
