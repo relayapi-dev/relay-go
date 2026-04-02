@@ -133,6 +133,8 @@ type PostNewResponse struct {
 	Content   string                 `json:"content" api:"required,nullable"`
 	CreatedAt time.Time              `json:"created_at" api:"required" format:"date-time"`
 	Media     []PostNewResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
 	// Source post ID if this is a recycled copy
 	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
 	// Recycling configuration, if any
@@ -151,6 +153,7 @@ type postNewResponseJSON struct {
 	Content        apijson.Field
 	CreatedAt      apijson.Field
 	Media          apijson.Field
+	PublishedAt    apijson.Field
 	RecycledFromID apijson.Field
 	Recycling      apijson.Field
 	ScheduledAt    apijson.Field
@@ -372,6 +375,12 @@ func (r PostNewResponseTargetsStatus) IsKnown() bool {
 
 type PostNewResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                            `json:"url" api:"required,nullable"`
 	Username string                            `json:"username" api:"required,nullable"`
@@ -381,11 +390,14 @@ type PostNewResponseTargetsAccount struct {
 // postNewResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostNewResponseTargetsAccount]
 type postNewResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostNewResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -425,6 +437,8 @@ type PostGetResponse struct {
 	Content   string                 `json:"content" api:"required,nullable"`
 	CreatedAt time.Time              `json:"created_at" api:"required" format:"date-time"`
 	Media     []PostGetResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
 	// Source post ID if this is a recycled copy
 	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
 	// Recycling configuration, if any
@@ -443,6 +457,7 @@ type postGetResponseJSON struct {
 	Content        apijson.Field
 	CreatedAt      apijson.Field
 	Media          apijson.Field
+	PublishedAt    apijson.Field
 	RecycledFromID apijson.Field
 	Recycling      apijson.Field
 	ScheduledAt    apijson.Field
@@ -664,6 +679,12 @@ func (r PostGetResponseTargetsStatus) IsKnown() bool {
 
 type PostGetResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                            `json:"url" api:"required,nullable"`
 	Username string                            `json:"username" api:"required,nullable"`
@@ -673,11 +694,14 @@ type PostGetResponseTargetsAccount struct {
 // postGetResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostGetResponseTargetsAccount]
 type postGetResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostGetResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -717,6 +741,8 @@ type PostUpdateResponse struct {
 	Content   string                    `json:"content" api:"required,nullable"`
 	CreatedAt time.Time                 `json:"created_at" api:"required" format:"date-time"`
 	Media     []PostUpdateResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
 	// Source post ID if this is a recycled copy
 	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
 	// Recycling configuration, if any
@@ -736,6 +762,7 @@ type postUpdateResponseJSON struct {
 	Content        apijson.Field
 	CreatedAt      apijson.Field
 	Media          apijson.Field
+	PublishedAt    apijson.Field
 	RecycledFromID apijson.Field
 	Recycling      apijson.Field
 	ScheduledAt    apijson.Field
@@ -957,6 +984,12 @@ func (r PostUpdateResponseTargetsStatus) IsKnown() bool {
 
 type PostUpdateResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                               `json:"url" api:"required,nullable"`
 	Username string                               `json:"username" api:"required,nullable"`
@@ -966,11 +999,14 @@ type PostUpdateResponseTargetsAccount struct {
 // postUpdateResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostUpdateResponseTargetsAccount]
 type postUpdateResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUpdateResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1037,6 +1073,8 @@ type PostListResponseData struct {
 	Content   string                      `json:"content" api:"required,nullable"`
 	CreatedAt time.Time                   `json:"created_at" api:"required" format:"date-time"`
 	Media     []PostListResponseDataMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
 	// Source post ID if this is a recycled copy
 	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
 	// Recycling configuration, if any
@@ -1056,6 +1094,7 @@ type postListResponseDataJSON struct {
 	Content        apijson.Field
 	CreatedAt      apijson.Field
 	Media          apijson.Field
+	PublishedAt    apijson.Field
 	RecycledFromID apijson.Field
 	Recycling      apijson.Field
 	ScheduledAt    apijson.Field
@@ -1277,6 +1316,12 @@ func (r PostListResponseDataTargetsStatus) IsKnown() bool {
 
 type PostListResponseDataTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                 `json:"url" api:"required,nullable"`
 	Username string                                 `json:"username" api:"required,nullable"`
@@ -1286,11 +1331,14 @@ type PostListResponseDataTargetsAccount struct {
 // postListResponseDataTargetsAccountJSON contains the JSON metadata for the struct
 // [PostListResponseDataTargetsAccount]
 type postListResponseDataTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostListResponseDataTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1353,6 +1401,8 @@ type PostBulkNewResponseData struct {
 	Content   string                         `json:"content" api:"required,nullable"`
 	CreatedAt time.Time                      `json:"created_at" api:"required" format:"date-time"`
 	Media     []PostBulkNewResponseDataMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
 	// Source post ID if this is a recycled copy
 	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
 	// Recycling configuration, if any
@@ -1372,6 +1422,7 @@ type postBulkNewResponseDataJSON struct {
 	Content        apijson.Field
 	CreatedAt      apijson.Field
 	Media          apijson.Field
+	PublishedAt    apijson.Field
 	RecycledFromID apijson.Field
 	Recycling      apijson.Field
 	ScheduledAt    apijson.Field
@@ -1593,6 +1644,12 @@ func (r PostBulkNewResponseDataTargetsStatus) IsKnown() bool {
 
 type PostBulkNewResponseDataTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                    `json:"url" api:"required,nullable"`
 	Username string                                    `json:"username" api:"required,nullable"`
@@ -1602,11 +1659,14 @@ type PostBulkNewResponseDataTargetsAccount struct {
 // postBulkNewResponseDataTargetsAccountJSON contains the JSON metadata for the
 // struct [PostBulkNewResponseDataTargetsAccount]
 type postBulkNewResponseDataTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostBulkNewResponseDataTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1671,6 +1731,8 @@ type PostRetryResponse struct {
 	Content   string                   `json:"content" api:"required,nullable"`
 	CreatedAt time.Time                `json:"created_at" api:"required" format:"date-time"`
 	Media     []PostRetryResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
 	// Source post ID if this is a recycled copy
 	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
 	// Recycling configuration, if any
@@ -1690,6 +1752,7 @@ type postRetryResponseJSON struct {
 	Content        apijson.Field
 	CreatedAt      apijson.Field
 	Media          apijson.Field
+	PublishedAt    apijson.Field
 	RecycledFromID apijson.Field
 	Recycling      apijson.Field
 	ScheduledAt    apijson.Field
@@ -1911,6 +1974,12 @@ func (r PostRetryResponseTargetsStatus) IsKnown() bool {
 
 type PostRetryResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                              `json:"url" api:"required,nullable"`
 	Username string                              `json:"username" api:"required,nullable"`
@@ -1920,11 +1989,14 @@ type PostRetryResponseTargetsAccount struct {
 // postRetryResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostRetryResponseTargetsAccount]
 type postRetryResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostRetryResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1964,6 +2036,8 @@ type PostUnpublishResponse struct {
 	Content   string                       `json:"content" api:"required,nullable"`
 	CreatedAt time.Time                    `json:"created_at" api:"required" format:"date-time"`
 	Media     []PostUnpublishResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
 	// Source post ID if this is a recycled copy
 	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
 	// Recycling configuration, if any
@@ -1983,6 +2057,7 @@ type postUnpublishResponseJSON struct {
 	Content        apijson.Field
 	CreatedAt      apijson.Field
 	Media          apijson.Field
+	PublishedAt    apijson.Field
 	RecycledFromID apijson.Field
 	Recycling      apijson.Field
 	ScheduledAt    apijson.Field
@@ -2204,6 +2279,12 @@ func (r PostUnpublishResponseTargetsStatus) IsKnown() bool {
 
 type PostUnpublishResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                  `json:"url" api:"required,nullable"`
 	Username string                                  `json:"username" api:"required,nullable"`
@@ -2213,11 +2294,14 @@ type PostUnpublishResponseTargetsAccount struct {
 // postUnpublishResponseTargetsAccountJSON contains the JSON metadata for the
 // struct [PostUnpublishResponseTargetsAccount]
 type postUnpublishResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUnpublishResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -2440,6 +2524,8 @@ type PostListParams struct {
 	Cursor param.Field[string] `query:"cursor"`
 	// Filter: start date (ISO 8601)
 	From param.Field[time.Time] `query:"from" format:"date-time"`
+	// Comma-separated list of fields to include in the response (e.g. 'targets,media')
+	Include param.Field[string] `query:"include"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
 	// Filter by post status
