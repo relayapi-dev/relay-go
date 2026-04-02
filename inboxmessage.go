@@ -299,6 +299,8 @@ func (r InboxMessageListResponseDataPlatform) IsKnown() bool {
 type InboxMessageArchiveResponse struct {
 	// Whether the action succeeded
 	Success bool `json:"success" api:"required"`
+	// Error message if failed
+	Error string `json:"error"`
 	// Message ID
 	MessageID string                          `json:"message_id"`
 	JSON      inboxMessageArchiveResponseJSON `json:"-"`
@@ -308,6 +310,7 @@ type InboxMessageArchiveResponse struct {
 // [InboxMessageArchiveResponse]
 type inboxMessageArchiveResponseJSON struct {
 	Success     apijson.Field
+	Error       apijson.Field
 	MessageID   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -324,6 +327,8 @@ func (r inboxMessageArchiveResponseJSON) RawJSON() string {
 type InboxMessageEditResponse struct {
 	// Whether the action succeeded
 	Success bool `json:"success" api:"required"`
+	// Error message if failed
+	Error string `json:"error"`
 	// Message ID
 	MessageID string                       `json:"message_id"`
 	JSON      inboxMessageEditResponseJSON `json:"-"`
@@ -333,6 +338,7 @@ type InboxMessageEditResponse struct {
 // [InboxMessageEditResponse]
 type inboxMessageEditResponseJSON struct {
 	Success     apijson.Field
+	Error       apijson.Field
 	MessageID   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -349,6 +355,8 @@ func (r inboxMessageEditResponseJSON) RawJSON() string {
 type InboxMessageSendResponse struct {
 	// Whether the action succeeded
 	Success bool `json:"success" api:"required"`
+	// Error message if failed
+	Error string `json:"error"`
 	// Message ID
 	MessageID string                       `json:"message_id"`
 	JSON      inboxMessageSendResponseJSON `json:"-"`
@@ -358,6 +366,7 @@ type InboxMessageSendResponse struct {
 // [InboxMessageSendResponse]
 type inboxMessageSendResponseJSON struct {
 	Success     apijson.Field
+	Error       apijson.Field
 	MessageID   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -435,14 +444,18 @@ func (r InboxMessageEditParams) MarshalJSON() (data []byte, err error) {
 type InboxMessageSendParams struct {
 	// Account ID to send from
 	AccountID param.Field[string] `json:"account_id" api:"required"`
-	// Message text
-	Text param.Field[string] `json:"text" api:"required"`
 	// Attachments
 	Attachments param.Field[[]InboxMessageSendParamsAttachment] `json:"attachments"`
-	// Message tag (e.g. for Facebook outside 24h window)
-	MessageTag param.Field[string] `json:"message_tag"`
+	// Message tag for sending outside the 24h window (Facebook only)
+	MessageTag param.Field[InboxMessageSendParamsMessageTag] `json:"message_tag"`
+	// Quick reply buttons (Facebook/Instagram, max 13)
+	QuickReplies param.Field[[]InboxMessageSendParamsQuickReply] `json:"quick_replies"`
 	// Message ID to reply to
 	ReplyTo param.Field[string] `json:"reply_to"`
+	// Structured template message (Facebook/Instagram)
+	Template param.Field[InboxMessageSendParamsTemplate] `json:"template"`
+	// Message text
+	Text param.Field[string] `json:"text"`
 }
 
 func (r InboxMessageSendParams) MarshalJSON() (data []byte, err error) {
@@ -458,4 +471,126 @@ type InboxMessageSendParamsAttachment struct {
 
 func (r InboxMessageSendParamsAttachment) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Message tag for sending outside the 24h window (Facebook only)
+type InboxMessageSendParamsMessageTag string
+
+const (
+	InboxMessageSendParamsMessageTagHumanAgent       InboxMessageSendParamsMessageTag = "HUMAN_AGENT"
+	InboxMessageSendParamsMessageTagCustomerFeedback InboxMessageSendParamsMessageTag = "CUSTOMER_FEEDBACK"
+)
+
+func (r InboxMessageSendParamsMessageTag) IsKnown() bool {
+	switch r {
+	case InboxMessageSendParamsMessageTagHumanAgent, InboxMessageSendParamsMessageTagCustomerFeedback:
+		return true
+	}
+	return false
+}
+
+type InboxMessageSendParamsQuickReply struct {
+	// Quick reply type
+	ContentType param.Field[InboxMessageSendParamsQuickRepliesContentType] `json:"content_type"`
+	// Icon URL for the button
+	ImageURL param.Field[string] `json:"image_url" format:"uri"`
+	// Postback payload
+	Payload param.Field[string] `json:"payload"`
+	// Button label (required for text type)
+	Title param.Field[string] `json:"title"`
+}
+
+func (r InboxMessageSendParamsQuickReply) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Quick reply type
+type InboxMessageSendParamsQuickRepliesContentType string
+
+const (
+	InboxMessageSendParamsQuickRepliesContentTypeText            InboxMessageSendParamsQuickRepliesContentType = "text"
+	InboxMessageSendParamsQuickRepliesContentTypeUserPhoneNumber InboxMessageSendParamsQuickRepliesContentType = "user_phone_number"
+	InboxMessageSendParamsQuickRepliesContentTypeUserEmail       InboxMessageSendParamsQuickRepliesContentType = "user_email"
+)
+
+func (r InboxMessageSendParamsQuickRepliesContentType) IsKnown() bool {
+	switch r {
+	case InboxMessageSendParamsQuickRepliesContentTypeText, InboxMessageSendParamsQuickRepliesContentTypeUserPhoneNumber, InboxMessageSendParamsQuickRepliesContentTypeUserEmail:
+		return true
+	}
+	return false
+}
+
+// Structured template message (Facebook/Instagram)
+type InboxMessageSendParamsTemplate struct {
+	// Template elements (max 10 for carousel)
+	Elements param.Field[[]InboxMessageSendParamsTemplateElement] `json:"elements" api:"required"`
+	// Template type
+	Type param.Field[InboxMessageSendParamsTemplateType] `json:"type" api:"required"`
+}
+
+func (r InboxMessageSendParamsTemplate) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type InboxMessageSendParamsTemplateElement struct {
+	// Element title
+	Title param.Field[string] `json:"title" api:"required"`
+	// Element buttons (max 3)
+	Buttons param.Field[[]InboxMessageSendParamsTemplateElementsButton] `json:"buttons"`
+	// Element image URL
+	ImageURL param.Field[string] `json:"image_url" format:"uri"`
+	// Element subtitle
+	Subtitle param.Field[string] `json:"subtitle"`
+}
+
+func (r InboxMessageSendParamsTemplateElement) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type InboxMessageSendParamsTemplateElementsButton struct {
+	// Button label
+	Title param.Field[string] `json:"title" api:"required"`
+	// Button type
+	Type param.Field[InboxMessageSendParamsTemplateElementsButtonsType] `json:"type" api:"required"`
+	// Payload for postback buttons
+	Payload param.Field[string] `json:"payload"`
+	// URL for web_url buttons
+	URL param.Field[string] `json:"url" format:"uri"`
+}
+
+func (r InboxMessageSendParamsTemplateElementsButton) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Button type
+type InboxMessageSendParamsTemplateElementsButtonsType string
+
+const (
+	InboxMessageSendParamsTemplateElementsButtonsTypeWebURL   InboxMessageSendParamsTemplateElementsButtonsType = "web_url"
+	InboxMessageSendParamsTemplateElementsButtonsTypePostback InboxMessageSendParamsTemplateElementsButtonsType = "postback"
+)
+
+func (r InboxMessageSendParamsTemplateElementsButtonsType) IsKnown() bool {
+	switch r {
+	case InboxMessageSendParamsTemplateElementsButtonsTypeWebURL, InboxMessageSendParamsTemplateElementsButtonsTypePostback:
+		return true
+	}
+	return false
+}
+
+// Template type
+type InboxMessageSendParamsTemplateType string
+
+const (
+	InboxMessageSendParamsTemplateTypeGeneric InboxMessageSendParamsTemplateType = "generic"
+	InboxMessageSendParamsTemplateTypeButton  InboxMessageSendParamsTemplateType = "button"
+)
+
+func (r InboxMessageSendParamsTemplateType) IsKnown() bool {
+	switch r {
+	case InboxMessageSendParamsTemplateTypeGeneric, InboxMessageSendParamsTemplateTypeButton:
+		return true
+	}
+	return false
 }
