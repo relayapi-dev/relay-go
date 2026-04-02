@@ -36,7 +36,7 @@ func TestAccountHealthGet(t *testing.T) {
 	}
 }
 
-func TestAccountHealthList(t *testing.T) {
+func TestAccountHealthListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -49,7 +49,10 @@ func TestAccountHealthList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Accounts.Health.List(context.TODO())
+	_, err := client.Accounts.Health.List(context.TODO(), relaygo.AccountHealthListParams{
+		Cursor: relaygo.F("cursor"),
+		Limit:  relaygo.F(int64(1)),
+	})
 	if err != nil {
 		var apierr *relaygo.Error
 		if errors.As(err, &apierr) {
