@@ -151,6 +151,7 @@ func TestPostListWithOptionalParams(t *testing.T) {
 		AccountID:   relaygo.F("account_id"),
 		Cursor:      relaygo.F("cursor"),
 		From:        relaygo.F(time.Now()),
+		Include:     relaygo.F("include"),
 		Limit:       relaygo.F(int64(1)),
 		Status:      relaygo.F(relaygo.PostListParamsStatusDraft),
 		To:          relaygo.F(time.Now()),
