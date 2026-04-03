@@ -148,14 +148,15 @@ func TestPostListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Posts.List(context.TODO(), relaygo.PostListParams{
-		AccountID:   relaygo.F("account_id"),
-		Cursor:      relaygo.F("cursor"),
-		From:        relaygo.F(time.Now()),
-		Include:     relaygo.F("include"),
-		Limit:       relaygo.F(int64(1)),
-		Status:      relaygo.F(relaygo.PostListParamsStatusDraft),
-		To:          relaygo.F(time.Now()),
-		WorkspaceID: relaygo.F("workspace_id"),
+		AccountID:       relaygo.F("account_id"),
+		Cursor:          relaygo.F("cursor"),
+		From:            relaygo.F(time.Now()),
+		Include:         relaygo.F("include"),
+		IncludeExternal: relaygo.F(relaygo.PostListParamsIncludeExternalTrue),
+		Limit:           relaygo.F(int64(1)),
+		Status:          relaygo.F(relaygo.PostListParamsStatusDraft),
+		To:              relaygo.F(time.Now()),
+		WorkspaceID:     relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
