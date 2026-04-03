@@ -146,7 +146,11 @@ type PostNewResponse struct {
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
 	// Engagement metrics (reactions, comments, views, etc.)
 	Metrics PostNewResponseMetrics `json:"metrics"`
-	JSON    postNewResponseJSON    `json:"-"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// IANA timezone
+	Timezone string              `json:"timezone" api:"nullable"`
+	JSON     postNewResponseJSON `json:"-"`
 }
 
 // postNewResponseJSON contains the JSON metadata for the struct [PostNewResponse]
@@ -163,6 +167,8 @@ type postNewResponseJSON struct {
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -491,7 +497,11 @@ type PostGetResponse struct {
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
 	// Engagement metrics (reactions, comments, views, etc.)
 	Metrics PostGetResponseMetrics `json:"metrics"`
-	JSON    postGetResponseJSON    `json:"-"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// IANA timezone
+	Timezone string              `json:"timezone" api:"nullable"`
+	JSON     postGetResponseJSON `json:"-"`
 }
 
 // postGetResponseJSON contains the JSON metadata for the struct [PostGetResponse]
@@ -508,6 +518,8 @@ type postGetResponseJSON struct {
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -836,7 +848,11 @@ type PostUpdateResponse struct {
 	UpdatedAt time.Time                           `json:"updated_at" api:"required" format:"date-time"`
 	// Engagement metrics (reactions, comments, views, etc.)
 	Metrics PostUpdateResponseMetrics `json:"metrics"`
-	JSON    postUpdateResponseJSON    `json:"-"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// IANA timezone
+	Timezone string                 `json:"timezone" api:"nullable"`
+	JSON     postUpdateResponseJSON `json:"-"`
 }
 
 // postUpdateResponseJSON contains the JSON metadata for the struct
@@ -854,6 +870,8 @@ type postUpdateResponseJSON struct {
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -1209,7 +1227,11 @@ type PostListResponseData struct {
 	UpdatedAt time.Time                             `json:"updated_at" api:"required" format:"date-time"`
 	// Engagement metrics (reactions, comments, views, etc.)
 	Metrics PostListResponseDataMetrics `json:"metrics"`
-	JSON    postListResponseDataJSON    `json:"-"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// IANA timezone
+	Timezone string                   `json:"timezone" api:"nullable"`
+	JSON     postListResponseDataJSON `json:"-"`
 }
 
 // postListResponseDataJSON contains the JSON metadata for the struct
@@ -1227,6 +1249,8 @@ type postListResponseDataJSON struct {
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -1578,7 +1602,11 @@ type PostBulkNewResponseData struct {
 	UpdatedAt time.Time                                `json:"updated_at" api:"required" format:"date-time"`
 	// Engagement metrics (reactions, comments, views, etc.)
 	Metrics PostBulkNewResponseDataMetrics `json:"metrics"`
-	JSON    postBulkNewResponseDataJSON    `json:"-"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// IANA timezone
+	Timezone string                      `json:"timezone" api:"nullable"`
+	JSON     postBulkNewResponseDataJSON `json:"-"`
 }
 
 // postBulkNewResponseDataJSON contains the JSON metadata for the struct
@@ -1596,6 +1624,8 @@ type postBulkNewResponseDataJSON struct {
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -1949,7 +1979,11 @@ type PostRetryResponse struct {
 	UpdatedAt time.Time                          `json:"updated_at" api:"required" format:"date-time"`
 	// Engagement metrics (reactions, comments, views, etc.)
 	Metrics PostRetryResponseMetrics `json:"metrics"`
-	JSON    postRetryResponseJSON    `json:"-"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// IANA timezone
+	Timezone string                `json:"timezone" api:"nullable"`
+	JSON     postRetryResponseJSON `json:"-"`
 }
 
 // postRetryResponseJSON contains the JSON metadata for the struct
@@ -1967,6 +2001,8 @@ type postRetryResponseJSON struct {
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -2295,7 +2331,11 @@ type PostUnpublishResponse struct {
 	UpdatedAt time.Time                              `json:"updated_at" api:"required" format:"date-time"`
 	// Engagement metrics (reactions, comments, views, etc.)
 	Metrics PostUnpublishResponseMetrics `json:"metrics"`
-	JSON    postUnpublishResponseJSON    `json:"-"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// IANA timezone
+	Timezone string                    `json:"timezone" api:"nullable"`
+	JSON     postUnpublishResponseJSON `json:"-"`
 }
 
 // postUnpublishResponseJSON contains the JSON metadata for the struct
@@ -2313,6 +2353,8 @@ type postUnpublishResponseJSON struct {
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
