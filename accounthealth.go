@@ -145,23 +145,31 @@ func (r accountHealthListResponseJSON) RawJSON() string {
 }
 
 type AccountHealthListResponseData struct {
-	ID             string                                `json:"id" api:"required"`
-	Healthy        bool                                  `json:"healthy" api:"required"`
-	Platform       AccountHealthListResponseDataPlatform `json:"platform" api:"required"`
-	TokenExpiresAt time.Time                             `json:"token_expires_at" api:"required,nullable" format:"date-time"`
-	Username       string                                `json:"username" api:"required,nullable"`
-	Error          AccountHealthListResponseDataError    `json:"error"`
-	JSON           accountHealthListResponseDataJSON     `json:"-"`
+	ID             string                                 `json:"id" api:"required"`
+	AvatarURL      string                                 `json:"avatar_url" api:"required,nullable"`
+	DisplayName    string                                 `json:"display_name" api:"required,nullable"`
+	Healthy        bool                                   `json:"healthy" api:"required"`
+	Platform       AccountHealthListResponseDataPlatform  `json:"platform" api:"required"`
+	Scopes         []string                               `json:"scopes" api:"required"`
+	TokenExpiresAt time.Time                              `json:"token_expires_at" api:"required,nullable" format:"date-time"`
+	Username       string                                 `json:"username" api:"required,nullable"`
+	Workspace      AccountHealthListResponseDataWorkspace `json:"workspace" api:"required,nullable"`
+	Error          AccountHealthListResponseDataError     `json:"error"`
+	JSON           accountHealthListResponseDataJSON      `json:"-"`
 }
 
 // accountHealthListResponseDataJSON contains the JSON metadata for the struct
 // [AccountHealthListResponseData]
 type accountHealthListResponseDataJSON struct {
 	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
 	Healthy        apijson.Field
 	Platform       apijson.Field
+	Scopes         apijson.Field
 	TokenExpiresAt apijson.Field
 	Username       apijson.Field
+	Workspace      apijson.Field
 	Error          apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -203,6 +211,29 @@ func (r AccountHealthListResponseDataPlatform) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+type AccountHealthListResponseDataWorkspace struct {
+	ID   string                                     `json:"id" api:"required"`
+	Name string                                     `json:"name" api:"required"`
+	JSON accountHealthListResponseDataWorkspaceJSON `json:"-"`
+}
+
+// accountHealthListResponseDataWorkspaceJSON contains the JSON metadata for the
+// struct [AccountHealthListResponseDataWorkspace]
+type accountHealthListResponseDataWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountHealthListResponseDataWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountHealthListResponseDataWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type AccountHealthListResponseDataError struct {
