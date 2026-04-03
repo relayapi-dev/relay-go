@@ -2857,8 +2857,8 @@ type PostListParams struct {
 	From param.Field[time.Time] `query:"from" format:"date-time"`
 	// Comma-separated list of fields to include in the response (e.g. 'targets,media')
 	Include param.Field[string] `query:"include"`
-	// When true and status=published, also return external posts merged by
-	// published_at
+	// When true, also return external posts merged by published_at (works with
+	// status=published or no status filter)
 	IncludeExternal param.Field[PostListParamsIncludeExternal] `query:"include_external"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
@@ -2878,8 +2878,8 @@ func (r PostListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// When true and status=published, also return external posts merged by
-// published_at
+// When true, also return external posts merged by published_at (works with
+// status=published or no status filter)
 type PostListParamsIncludeExternal string
 
 const (

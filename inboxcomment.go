@@ -137,6 +137,8 @@ type InboxCommentGetResponseData struct {
 	Platform  InboxCommentGetResponseDataPlatform `json:"platform" api:"required"`
 	// Comment text
 	Text string `json:"text" api:"required"`
+	// Social account avatar URL
+	AccountAvatarURL string `json:"account_avatar_url" api:"nullable"`
 	// Social account ID
 	AccountID string `json:"account_id"`
 	// Author avatar URL
@@ -168,6 +170,7 @@ type inboxCommentGetResponseDataJSON struct {
 	CreatedAt        apijson.Field
 	Platform         apijson.Field
 	Text             apijson.Field
+	AccountAvatarURL apijson.Field
 	AccountID        apijson.Field
 	AuthorAvatar     apijson.Field
 	Hidden           apijson.Field
@@ -290,6 +293,8 @@ type InboxCommentListResponseData struct {
 	Platform  InboxCommentListResponseDataPlatform `json:"platform" api:"required"`
 	// Comment text
 	Text string `json:"text" api:"required"`
+	// Social account avatar URL
+	AccountAvatarURL string `json:"account_avatar_url" api:"nullable"`
 	// Social account ID
 	AccountID string `json:"account_id"`
 	// Author avatar URL
@@ -321,6 +326,7 @@ type inboxCommentListResponseDataJSON struct {
 	CreatedAt        apijson.Field
 	Platform         apijson.Field
 	Text             apijson.Field
+	AccountAvatarURL apijson.Field
 	AccountID        apijson.Field
 	AuthorAvatar     apijson.Field
 	Hidden           apijson.Field
