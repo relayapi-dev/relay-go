@@ -144,7 +144,9 @@ type PostNewResponse struct {
 	// Per-target results
 	Targets   map[string]PostNewResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postNewResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostNewResponseMetrics `json:"metrics"`
+	JSON    postNewResponseJSON    `json:"-"`
 }
 
 // postNewResponseJSON contains the JSON metadata for the struct [PostNewResponse]
@@ -160,6 +162,7 @@ type postNewResponseJSON struct {
 	Status         apijson.Field
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -431,6 +434,44 @@ func (r postNewResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostNewResponseMetrics struct {
+	Clicks         float64                    `json:"clicks"`
+	Comments       float64                    `json:"comments"`
+	EngagementRate float64                    `json:"engagement_rate"`
+	Impressions    float64                    `json:"impressions"`
+	Likes          float64                    `json:"likes"`
+	Reach          float64                    `json:"reach"`
+	Saves          float64                    `json:"saves"`
+	Shares         float64                    `json:"shares"`
+	Views          float64                    `json:"views"`
+	JSON           postNewResponseMetricsJSON `json:"-"`
+}
+
+// postNewResponseMetricsJSON contains the JSON metadata for the struct
+// [PostNewResponseMetrics]
+type postNewResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostNewResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postNewResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostGetResponse struct {
 	// Post ID
 	ID        string                 `json:"id" api:"required"`
@@ -448,7 +489,9 @@ type PostGetResponse struct {
 	// Per-target results
 	Targets   map[string]PostGetResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postGetResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostGetResponseMetrics `json:"metrics"`
+	JSON    postGetResponseJSON    `json:"-"`
 }
 
 // postGetResponseJSON contains the JSON metadata for the struct [PostGetResponse]
@@ -464,6 +507,7 @@ type postGetResponseJSON struct {
 	Status         apijson.Field
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -735,6 +779,44 @@ func (r postGetResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostGetResponseMetrics struct {
+	Clicks         float64                    `json:"clicks"`
+	Comments       float64                    `json:"comments"`
+	EngagementRate float64                    `json:"engagement_rate"`
+	Impressions    float64                    `json:"impressions"`
+	Likes          float64                    `json:"likes"`
+	Reach          float64                    `json:"reach"`
+	Saves          float64                    `json:"saves"`
+	Shares         float64                    `json:"shares"`
+	Views          float64                    `json:"views"`
+	JSON           postGetResponseMetricsJSON `json:"-"`
+}
+
+// postGetResponseMetricsJSON contains the JSON metadata for the struct
+// [PostGetResponseMetrics]
+type postGetResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostGetResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postGetResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostUpdateResponse struct {
 	// Post ID
 	ID        string                    `json:"id" api:"required"`
@@ -752,7 +834,9 @@ type PostUpdateResponse struct {
 	// Per-target results
 	Targets   map[string]PostUpdateResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                           `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postUpdateResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostUpdateResponseMetrics `json:"metrics"`
+	JSON    postUpdateResponseJSON    `json:"-"`
 }
 
 // postUpdateResponseJSON contains the JSON metadata for the struct
@@ -769,6 +853,7 @@ type postUpdateResponseJSON struct {
 	Status         apijson.Field
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -1040,6 +1125,44 @@ func (r postUpdateResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostUpdateResponseMetrics struct {
+	Clicks         float64                       `json:"clicks"`
+	Comments       float64                       `json:"comments"`
+	EngagementRate float64                       `json:"engagement_rate"`
+	Impressions    float64                       `json:"impressions"`
+	Likes          float64                       `json:"likes"`
+	Reach          float64                       `json:"reach"`
+	Saves          float64                       `json:"saves"`
+	Shares         float64                       `json:"shares"`
+	Views          float64                       `json:"views"`
+	JSON           postUpdateResponseMetricsJSON `json:"-"`
+}
+
+// postUpdateResponseMetricsJSON contains the JSON metadata for the struct
+// [PostUpdateResponseMetrics]
+type postUpdateResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostUpdateResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUpdateResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostListResponse struct {
 	Data []PostListResponseData `json:"data" api:"required"`
 	// Whether more items exist
@@ -1084,7 +1207,9 @@ type PostListResponseData struct {
 	// Per-target results
 	Targets   map[string]PostListResponseDataTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                             `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postListResponseDataJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostListResponseDataMetrics `json:"metrics"`
+	JSON    postListResponseDataJSON    `json:"-"`
 }
 
 // postListResponseDataJSON contains the JSON metadata for the struct
@@ -1101,6 +1226,7 @@ type postListResponseDataJSON struct {
 	Status         apijson.Field
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -1372,6 +1498,44 @@ func (r postListResponseDataTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostListResponseDataMetrics struct {
+	Clicks         float64                         `json:"clicks"`
+	Comments       float64                         `json:"comments"`
+	EngagementRate float64                         `json:"engagement_rate"`
+	Impressions    float64                         `json:"impressions"`
+	Likes          float64                         `json:"likes"`
+	Reach          float64                         `json:"reach"`
+	Saves          float64                         `json:"saves"`
+	Shares         float64                         `json:"shares"`
+	Views          float64                         `json:"views"`
+	JSON           postListResponseDataMetricsJSON `json:"-"`
+}
+
+// postListResponseDataMetricsJSON contains the JSON metadata for the struct
+// [PostListResponseDataMetrics]
+type postListResponseDataMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostListResponseDataMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postListResponseDataMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostBulkNewResponse struct {
 	Data    []PostBulkNewResponseData  `json:"data" api:"required"`
 	Summary PostBulkNewResponseSummary `json:"summary" api:"required"`
@@ -1412,7 +1576,9 @@ type PostBulkNewResponseData struct {
 	// Per-target results
 	Targets   map[string]PostBulkNewResponseDataTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                                `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postBulkNewResponseDataJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostBulkNewResponseDataMetrics `json:"metrics"`
+	JSON    postBulkNewResponseDataJSON    `json:"-"`
 }
 
 // postBulkNewResponseDataJSON contains the JSON metadata for the struct
@@ -1429,6 +1595,7 @@ type postBulkNewResponseDataJSON struct {
 	Status         apijson.Field
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -1700,6 +1867,44 @@ func (r postBulkNewResponseDataTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostBulkNewResponseDataMetrics struct {
+	Clicks         float64                            `json:"clicks"`
+	Comments       float64                            `json:"comments"`
+	EngagementRate float64                            `json:"engagement_rate"`
+	Impressions    float64                            `json:"impressions"`
+	Likes          float64                            `json:"likes"`
+	Reach          float64                            `json:"reach"`
+	Saves          float64                            `json:"saves"`
+	Shares         float64                            `json:"shares"`
+	Views          float64                            `json:"views"`
+	JSON           postBulkNewResponseDataMetricsJSON `json:"-"`
+}
+
+// postBulkNewResponseDataMetricsJSON contains the JSON metadata for the struct
+// [PostBulkNewResponseDataMetrics]
+type postBulkNewResponseDataMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostBulkNewResponseDataMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postBulkNewResponseDataMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostBulkNewResponseSummary struct {
 	Failed    float64                        `json:"failed" api:"required"`
 	Succeeded float64                        `json:"succeeded" api:"required"`
@@ -1742,7 +1947,9 @@ type PostRetryResponse struct {
 	// Per-target results
 	Targets   map[string]PostRetryResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                          `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postRetryResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostRetryResponseMetrics `json:"metrics"`
+	JSON    postRetryResponseJSON    `json:"-"`
 }
 
 // postRetryResponseJSON contains the JSON metadata for the struct
@@ -1759,6 +1966,7 @@ type postRetryResponseJSON struct {
 	Status         apijson.Field
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -2030,6 +2238,44 @@ func (r postRetryResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostRetryResponseMetrics struct {
+	Clicks         float64                      `json:"clicks"`
+	Comments       float64                      `json:"comments"`
+	EngagementRate float64                      `json:"engagement_rate"`
+	Impressions    float64                      `json:"impressions"`
+	Likes          float64                      `json:"likes"`
+	Reach          float64                      `json:"reach"`
+	Saves          float64                      `json:"saves"`
+	Shares         float64                      `json:"shares"`
+	Views          float64                      `json:"views"`
+	JSON           postRetryResponseMetricsJSON `json:"-"`
+}
+
+// postRetryResponseMetricsJSON contains the JSON metadata for the struct
+// [PostRetryResponseMetrics]
+type postRetryResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostRetryResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postRetryResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostUnpublishResponse struct {
 	// Post ID
 	ID        string                       `json:"id" api:"required"`
@@ -2047,7 +2293,9 @@ type PostUnpublishResponse struct {
 	// Per-target results
 	Targets   map[string]PostUnpublishResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                              `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postUnpublishResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostUnpublishResponseMetrics `json:"metrics"`
+	JSON    postUnpublishResponseJSON    `json:"-"`
 }
 
 // postUnpublishResponseJSON contains the JSON metadata for the struct
@@ -2064,6 +2312,7 @@ type postUnpublishResponseJSON struct {
 	Status         apijson.Field
 	Targets        apijson.Field
 	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -2335,6 +2584,44 @@ func (r postUnpublishResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostUnpublishResponseMetrics struct {
+	Clicks         float64                          `json:"clicks"`
+	Comments       float64                          `json:"comments"`
+	EngagementRate float64                          `json:"engagement_rate"`
+	Impressions    float64                          `json:"impressions"`
+	Likes          float64                          `json:"likes"`
+	Reach          float64                          `json:"reach"`
+	Saves          float64                          `json:"saves"`
+	Shares         float64                          `json:"shares"`
+	Views          float64                          `json:"views"`
+	JSON           postUnpublishResponseMetricsJSON `json:"-"`
+}
+
+// postUnpublishResponseMetricsJSON contains the JSON metadata for the struct
+// [PostUnpublishResponseMetrics]
+type postUnpublishResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostUnpublishResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUnpublishResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostNewParams struct {
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
 	// an ISO 8601 timestamp to schedule.
@@ -2526,6 +2813,9 @@ type PostListParams struct {
 	From param.Field[time.Time] `query:"from" format:"date-time"`
 	// Comma-separated list of fields to include in the response (e.g. 'targets,media')
 	Include param.Field[string] `query:"include"`
+	// When true and status=published, also return external posts merged by
+	// published_at
+	IncludeExternal param.Field[PostListParamsIncludeExternal] `query:"include_external"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
 	// Filter by post status
@@ -2542,6 +2832,23 @@ func (r PostListParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// When true and status=published, also return external posts merged by
+// published_at
+type PostListParamsIncludeExternal string
+
+const (
+	PostListParamsIncludeExternalTrue  PostListParamsIncludeExternal = "true"
+	PostListParamsIncludeExternalFalse PostListParamsIncludeExternal = "false"
+)
+
+func (r PostListParamsIncludeExternal) IsKnown() bool {
+	switch r {
+	case PostListParamsIncludeExternalTrue, PostListParamsIncludeExternalFalse:
+		return true
+	}
+	return false
 }
 
 // Filter by post status
