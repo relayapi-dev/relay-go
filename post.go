@@ -2763,6 +2763,8 @@ type PostUpdateParams struct {
 	Content param.Field[string] `json:"content"`
 	// Updated media
 	Media param.Field[[]PostUpdateParamsMedia] `json:"media"`
+	// Internal notes for this post
+	Notes param.Field[string] `json:"notes"`
 	// Recycling configuration (Pro plan only)
 	Recycling param.Field[PostUpdateParamsRecycling] `json:"recycling"`
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
