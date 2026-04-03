@@ -106,6 +106,7 @@ func TestPostUpdateWithOptionalParams(t *testing.T) {
 				URL:  relaygo.F("https://example.com"),
 				Type: relaygo.F(relaygo.PostUpdateParamsMediaTypeImage),
 			}}),
+			Notes: relaygo.F("notes"),
 			Recycling: relaygo.F(relaygo.PostUpdateParamsRecycling{
 				Gap:               relaygo.F(int64(1)),
 				GapFreq:           relaygo.F(relaygo.PostUpdateParamsRecyclingGapFreqDay),
