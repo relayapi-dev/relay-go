@@ -131,11 +131,15 @@ const (
 	InboxReviewListResponseDataPlatformMastodon       InboxReviewListResponseDataPlatform = "mastodon"
 	InboxReviewListResponseDataPlatformDiscord        InboxReviewListResponseDataPlatform = "discord"
 	InboxReviewListResponseDataPlatformSMS            InboxReviewListResponseDataPlatform = "sms"
+	InboxReviewListResponseDataPlatformBeehiiv        InboxReviewListResponseDataPlatform = "beehiiv"
+	InboxReviewListResponseDataPlatformConvertkit     InboxReviewListResponseDataPlatform = "convertkit"
+	InboxReviewListResponseDataPlatformMailchimp      InboxReviewListResponseDataPlatform = "mailchimp"
+	InboxReviewListResponseDataPlatformListmonk       InboxReviewListResponseDataPlatform = "listmonk"
 )
 
 func (r InboxReviewListResponseDataPlatform) IsKnown() bool {
 	switch r {
-	case InboxReviewListResponseDataPlatformTwitter, InboxReviewListResponseDataPlatformInstagram, InboxReviewListResponseDataPlatformFacebook, InboxReviewListResponseDataPlatformLinkedin, InboxReviewListResponseDataPlatformTiktok, InboxReviewListResponseDataPlatformYoutube, InboxReviewListResponseDataPlatformPinterest, InboxReviewListResponseDataPlatformReddit, InboxReviewListResponseDataPlatformBluesky, InboxReviewListResponseDataPlatformThreads, InboxReviewListResponseDataPlatformTelegram, InboxReviewListResponseDataPlatformSnapchat, InboxReviewListResponseDataPlatformGooglebusiness, InboxReviewListResponseDataPlatformWhatsapp, InboxReviewListResponseDataPlatformMastodon, InboxReviewListResponseDataPlatformDiscord, InboxReviewListResponseDataPlatformSMS:
+	case InboxReviewListResponseDataPlatformTwitter, InboxReviewListResponseDataPlatformInstagram, InboxReviewListResponseDataPlatformFacebook, InboxReviewListResponseDataPlatformLinkedin, InboxReviewListResponseDataPlatformTiktok, InboxReviewListResponseDataPlatformYoutube, InboxReviewListResponseDataPlatformPinterest, InboxReviewListResponseDataPlatformReddit, InboxReviewListResponseDataPlatformBluesky, InboxReviewListResponseDataPlatformThreads, InboxReviewListResponseDataPlatformTelegram, InboxReviewListResponseDataPlatformSnapchat, InboxReviewListResponseDataPlatformGooglebusiness, InboxReviewListResponseDataPlatformWhatsapp, InboxReviewListResponseDataPlatformMastodon, InboxReviewListResponseDataPlatformDiscord, InboxReviewListResponseDataPlatformSMS, InboxReviewListResponseDataPlatformBeehiiv, InboxReviewListResponseDataPlatformConvertkit, InboxReviewListResponseDataPlatformMailchimp, InboxReviewListResponseDataPlatformListmonk:
 		return true
 	}
 	return false
@@ -183,11 +187,15 @@ const (
 	InboxReviewListParamsPlatformMastodon       InboxReviewListParamsPlatform = "mastodon"
 	InboxReviewListParamsPlatformDiscord        InboxReviewListParamsPlatform = "discord"
 	InboxReviewListParamsPlatformSMS            InboxReviewListParamsPlatform = "sms"
+	InboxReviewListParamsPlatformBeehiiv        InboxReviewListParamsPlatform = "beehiiv"
+	InboxReviewListParamsPlatformConvertkit     InboxReviewListParamsPlatform = "convertkit"
+	InboxReviewListParamsPlatformMailchimp      InboxReviewListParamsPlatform = "mailchimp"
+	InboxReviewListParamsPlatformListmonk       InboxReviewListParamsPlatform = "listmonk"
 )
 
 func (r InboxReviewListParamsPlatform) IsKnown() bool {
 	switch r {
-	case InboxReviewListParamsPlatformTwitter, InboxReviewListParamsPlatformInstagram, InboxReviewListParamsPlatformFacebook, InboxReviewListParamsPlatformLinkedin, InboxReviewListParamsPlatformTiktok, InboxReviewListParamsPlatformYoutube, InboxReviewListParamsPlatformPinterest, InboxReviewListParamsPlatformReddit, InboxReviewListParamsPlatformBluesky, InboxReviewListParamsPlatformThreads, InboxReviewListParamsPlatformTelegram, InboxReviewListParamsPlatformSnapchat, InboxReviewListParamsPlatformGooglebusiness, InboxReviewListParamsPlatformWhatsapp, InboxReviewListParamsPlatformMastodon, InboxReviewListParamsPlatformDiscord, InboxReviewListParamsPlatformSMS:
+	case InboxReviewListParamsPlatformTwitter, InboxReviewListParamsPlatformInstagram, InboxReviewListParamsPlatformFacebook, InboxReviewListParamsPlatformLinkedin, InboxReviewListParamsPlatformTiktok, InboxReviewListParamsPlatformYoutube, InboxReviewListParamsPlatformPinterest, InboxReviewListParamsPlatformReddit, InboxReviewListParamsPlatformBluesky, InboxReviewListParamsPlatformThreads, InboxReviewListParamsPlatformTelegram, InboxReviewListParamsPlatformSnapchat, InboxReviewListParamsPlatformGooglebusiness, InboxReviewListParamsPlatformWhatsapp, InboxReviewListParamsPlatformMastodon, InboxReviewListParamsPlatformDiscord, InboxReviewListParamsPlatformSMS, InboxReviewListParamsPlatformBeehiiv, InboxReviewListParamsPlatformConvertkit, InboxReviewListParamsPlatformMailchimp, InboxReviewListParamsPlatformListmonk:
 		return true
 	}
 	return false
