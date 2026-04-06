@@ -337,20 +337,25 @@ func (r WebhookNewParams) MarshalJSON() (data []byte, err error) {
 type WebhookNewParamsEvent string
 
 const (
-	WebhookNewParamsEventPostPublished       WebhookNewParamsEvent = "post.published"
-	WebhookNewParamsEventPostPartial         WebhookNewParamsEvent = "post.partial"
-	WebhookNewParamsEventPostFailed          WebhookNewParamsEvent = "post.failed"
-	WebhookNewParamsEventPostScheduled       WebhookNewParamsEvent = "post.scheduled"
-	WebhookNewParamsEventPostRecycled        WebhookNewParamsEvent = "post.recycled"
-	WebhookNewParamsEventAccountConnected    WebhookNewParamsEvent = "account.connected"
-	WebhookNewParamsEventAccountDisconnected WebhookNewParamsEvent = "account.disconnected"
-	WebhookNewParamsEventCommentReceived     WebhookNewParamsEvent = "comment.received"
-	WebhookNewParamsEventMessageReceived     WebhookNewParamsEvent = "message.received"
+	WebhookNewParamsEventPostPublished           WebhookNewParamsEvent = "post.published"
+	WebhookNewParamsEventPostPartial             WebhookNewParamsEvent = "post.partial"
+	WebhookNewParamsEventPostFailed              WebhookNewParamsEvent = "post.failed"
+	WebhookNewParamsEventPostScheduled           WebhookNewParamsEvent = "post.scheduled"
+	WebhookNewParamsEventPostRecycled            WebhookNewParamsEvent = "post.recycled"
+	WebhookNewParamsEventAccountConnected        WebhookNewParamsEvent = "account.connected"
+	WebhookNewParamsEventAccountDisconnected     WebhookNewParamsEvent = "account.disconnected"
+	WebhookNewParamsEventCommentReceived         WebhookNewParamsEvent = "comment.received"
+	WebhookNewParamsEventMessageReceived         WebhookNewParamsEvent = "message.received"
+	WebhookNewParamsEventAutoPostCreated         WebhookNewParamsEvent = "auto_post.created"
+	WebhookNewParamsEventAutoPostError           WebhookNewParamsEvent = "auto_post.error"
+	WebhookNewParamsEventEngagementRuleTriggered WebhookNewParamsEvent = "engagement_rule.triggered"
+	WebhookNewParamsEventCrossPostActionExecuted WebhookNewParamsEvent = "cross_post_action.executed"
+	WebhookNewParamsEventCrossPostActionFailed   WebhookNewParamsEvent = "cross_post_action.failed"
 )
 
 func (r WebhookNewParamsEvent) IsKnown() bool {
 	switch r {
-	case WebhookNewParamsEventPostPublished, WebhookNewParamsEventPostPartial, WebhookNewParamsEventPostFailed, WebhookNewParamsEventPostScheduled, WebhookNewParamsEventPostRecycled, WebhookNewParamsEventAccountConnected, WebhookNewParamsEventAccountDisconnected, WebhookNewParamsEventCommentReceived, WebhookNewParamsEventMessageReceived:
+	case WebhookNewParamsEventPostPublished, WebhookNewParamsEventPostPartial, WebhookNewParamsEventPostFailed, WebhookNewParamsEventPostScheduled, WebhookNewParamsEventPostRecycled, WebhookNewParamsEventAccountConnected, WebhookNewParamsEventAccountDisconnected, WebhookNewParamsEventCommentReceived, WebhookNewParamsEventMessageReceived, WebhookNewParamsEventAutoPostCreated, WebhookNewParamsEventAutoPostError, WebhookNewParamsEventEngagementRuleTriggered, WebhookNewParamsEventCrossPostActionExecuted, WebhookNewParamsEventCrossPostActionFailed:
 		return true
 	}
 	return false
@@ -372,20 +377,25 @@ func (r WebhookUpdateParams) MarshalJSON() (data []byte, err error) {
 type WebhookUpdateParamsEvent string
 
 const (
-	WebhookUpdateParamsEventPostPublished       WebhookUpdateParamsEvent = "post.published"
-	WebhookUpdateParamsEventPostPartial         WebhookUpdateParamsEvent = "post.partial"
-	WebhookUpdateParamsEventPostFailed          WebhookUpdateParamsEvent = "post.failed"
-	WebhookUpdateParamsEventPostScheduled       WebhookUpdateParamsEvent = "post.scheduled"
-	WebhookUpdateParamsEventPostRecycled        WebhookUpdateParamsEvent = "post.recycled"
-	WebhookUpdateParamsEventAccountConnected    WebhookUpdateParamsEvent = "account.connected"
-	WebhookUpdateParamsEventAccountDisconnected WebhookUpdateParamsEvent = "account.disconnected"
-	WebhookUpdateParamsEventCommentReceived     WebhookUpdateParamsEvent = "comment.received"
-	WebhookUpdateParamsEventMessageReceived     WebhookUpdateParamsEvent = "message.received"
+	WebhookUpdateParamsEventPostPublished           WebhookUpdateParamsEvent = "post.published"
+	WebhookUpdateParamsEventPostPartial             WebhookUpdateParamsEvent = "post.partial"
+	WebhookUpdateParamsEventPostFailed              WebhookUpdateParamsEvent = "post.failed"
+	WebhookUpdateParamsEventPostScheduled           WebhookUpdateParamsEvent = "post.scheduled"
+	WebhookUpdateParamsEventPostRecycled            WebhookUpdateParamsEvent = "post.recycled"
+	WebhookUpdateParamsEventAccountConnected        WebhookUpdateParamsEvent = "account.connected"
+	WebhookUpdateParamsEventAccountDisconnected     WebhookUpdateParamsEvent = "account.disconnected"
+	WebhookUpdateParamsEventCommentReceived         WebhookUpdateParamsEvent = "comment.received"
+	WebhookUpdateParamsEventMessageReceived         WebhookUpdateParamsEvent = "message.received"
+	WebhookUpdateParamsEventAutoPostCreated         WebhookUpdateParamsEvent = "auto_post.created"
+	WebhookUpdateParamsEventAutoPostError           WebhookUpdateParamsEvent = "auto_post.error"
+	WebhookUpdateParamsEventEngagementRuleTriggered WebhookUpdateParamsEvent = "engagement_rule.triggered"
+	WebhookUpdateParamsEventCrossPostActionExecuted WebhookUpdateParamsEvent = "cross_post_action.executed"
+	WebhookUpdateParamsEventCrossPostActionFailed   WebhookUpdateParamsEvent = "cross_post_action.failed"
 )
 
 func (r WebhookUpdateParamsEvent) IsKnown() bool {
 	switch r {
-	case WebhookUpdateParamsEventPostPublished, WebhookUpdateParamsEventPostPartial, WebhookUpdateParamsEventPostFailed, WebhookUpdateParamsEventPostScheduled, WebhookUpdateParamsEventPostRecycled, WebhookUpdateParamsEventAccountConnected, WebhookUpdateParamsEventAccountDisconnected, WebhookUpdateParamsEventCommentReceived, WebhookUpdateParamsEventMessageReceived:
+	case WebhookUpdateParamsEventPostPublished, WebhookUpdateParamsEventPostPartial, WebhookUpdateParamsEventPostFailed, WebhookUpdateParamsEventPostScheduled, WebhookUpdateParamsEventPostRecycled, WebhookUpdateParamsEventAccountConnected, WebhookUpdateParamsEventAccountDisconnected, WebhookUpdateParamsEventCommentReceived, WebhookUpdateParamsEventMessageReceived, WebhookUpdateParamsEventAutoPostCreated, WebhookUpdateParamsEventAutoPostError, WebhookUpdateParamsEventEngagementRuleTriggered, WebhookUpdateParamsEventCrossPostActionExecuted, WebhookUpdateParamsEventCrossPostActionFailed:
 		return true
 	}
 	return false

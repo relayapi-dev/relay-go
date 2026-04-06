@@ -1383,14 +1383,28 @@ type ToolValidateValidatePostParams struct {
 	Targets param.Field[[]string] `json:"targets" api:"required"`
 	// Post text. Optional if target_options provide per-target content.
 	Content param.Field[string] `json:"content"`
+	// Cross-post actions to execute after publishing (e.g., repost from another
+	// account, comment from another account)
+	CrossPostActions param.Field[[]ToolValidateValidatePostParamsCrossPostAction] `json:"cross_post_actions"`
 	// Media attachments
 	Media param.Field[[]ToolValidateValidatePostParamsMedia] `json:"media"`
 	// Recycling configuration for evergreen content (Pro plan only)
 	Recycling param.Field[ToolValidateValidatePostParamsRecycling] `json:"recycling"`
+	// Shorten URLs in post content. Only relevant when short link mode is 'ask'.
+	// Ignored when mode is 'always' or 'never'. (Pro plan only)
+	ShortenURLs param.Field[bool] `json:"shorten_urls"`
+	// When true, the default signature is not auto-appended even if one is configured.
+	SkipSignature param.Field[bool] `json:"skip_signature"`
 	// Per-target customizations keyed by target value (account ID or platform name).
 	// Supports platform-specific features such as Twitter polls (poll.options,
 	// poll.duration_minutes), threads, reply_to, and reply_settings.
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
+	// Content template ID. When provided, the template content is used as the base for
+	// the post. Explicit 'content' field takes precedence.
+	TemplateID param.Field[string] `json:"template_id"`
+	// Variables to interpolate in the template (e.g., { "promo_code": "SUMMER25" }).
+	// Built-in variables: {{date}}, {{account_name}}.
+	TemplateVariables param.Field[map[string]string] `json:"template_variables"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
 	// Workspace ID to scope this post to
@@ -1399,6 +1413,38 @@ type ToolValidateValidatePostParams struct {
 
 func (r ToolValidateValidatePostParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type ToolValidateValidatePostParamsCrossPostAction struct {
+	// Type of cross-post action
+	ActionType param.Field[ToolValidateValidatePostParamsCrossPostActionsActionType] `json:"action_type" api:"required"`
+	// Account to perform the action from
+	TargetAccountID param.Field[string] `json:"target_account_id" api:"required"`
+	// Text content for comment/quote actions (required for comment and quote)
+	Content param.Field[string] `json:"content"`
+	// Delay in minutes after publishing
+	DelayMinutes param.Field[int64] `json:"delay_minutes"`
+}
+
+func (r ToolValidateValidatePostParamsCrossPostAction) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Type of cross-post action
+type ToolValidateValidatePostParamsCrossPostActionsActionType string
+
+const (
+	ToolValidateValidatePostParamsCrossPostActionsActionTypeRepost  ToolValidateValidatePostParamsCrossPostActionsActionType = "repost"
+	ToolValidateValidatePostParamsCrossPostActionsActionTypeComment ToolValidateValidatePostParamsCrossPostActionsActionType = "comment"
+	ToolValidateValidatePostParamsCrossPostActionsActionTypeQuote   ToolValidateValidatePostParamsCrossPostActionsActionType = "quote"
+)
+
+func (r ToolValidateValidatePostParamsCrossPostActionsActionType) IsKnown() bool {
+	switch r {
+	case ToolValidateValidatePostParamsCrossPostActionsActionTypeRepost, ToolValidateValidatePostParamsCrossPostActionsActionTypeComment, ToolValidateValidatePostParamsCrossPostActionsActionTypeQuote:
+		return true
+	}
+	return false
 }
 
 type ToolValidateValidatePostParamsMedia struct {
