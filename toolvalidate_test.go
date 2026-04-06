@@ -106,6 +106,12 @@ func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
 		ScheduledAt: relaygo.F("now"),
 		Targets:     relaygo.F([]string{"string"}),
 		Content:     relaygo.F("content"),
+		CrossPostActions: relaygo.F([]relaygo.ToolValidateValidatePostParamsCrossPostAction{{
+			ActionType:      relaygo.F(relaygo.ToolValidateValidatePostParamsCrossPostActionsActionTypeRepost),
+			TargetAccountID: relaygo.F("target_account_id"),
+			Content:         relaygo.F("content"),
+			DelayMinutes:    relaygo.F(int64(0)),
+		}}),
 		Media: relaygo.F([]relaygo.ToolValidateValidatePostParamsMedia{{
 			URL:  relaygo.F("https://example.com"),
 			Type: relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
@@ -119,10 +125,16 @@ func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
 			ExpireCount:       relaygo.F(int64(1)),
 			ExpireDate:        relaygo.F(time.Now()),
 		}),
+		ShortenURLs:   relaygo.F(true),
+		SkipSignature: relaygo.F(true),
 		TargetOptions: relaygo.F(map[string]map[string]interface{}{
 			"foo": {
 				"foo": "bar",
 			},
+		}),
+		TemplateID: relaygo.F("template_id"),
+		TemplateVariables: relaygo.F(map[string]string{
+			"foo": "string",
 		}),
 		Timezone:    relaygo.F("timezone"),
 		WorkspaceID: relaygo.F("workspace_id"),
