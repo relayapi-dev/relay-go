@@ -213,11 +213,15 @@ const (
 	InboxCommentGetResponseDataPlatformMastodon       InboxCommentGetResponseDataPlatform = "mastodon"
 	InboxCommentGetResponseDataPlatformDiscord        InboxCommentGetResponseDataPlatform = "discord"
 	InboxCommentGetResponseDataPlatformSMS            InboxCommentGetResponseDataPlatform = "sms"
+	InboxCommentGetResponseDataPlatformBeehiiv        InboxCommentGetResponseDataPlatform = "beehiiv"
+	InboxCommentGetResponseDataPlatformConvertkit     InboxCommentGetResponseDataPlatform = "convertkit"
+	InboxCommentGetResponseDataPlatformMailchimp      InboxCommentGetResponseDataPlatform = "mailchimp"
+	InboxCommentGetResponseDataPlatformListmonk       InboxCommentGetResponseDataPlatform = "listmonk"
 )
 
 func (r InboxCommentGetResponseDataPlatform) IsKnown() bool {
 	switch r {
-	case InboxCommentGetResponseDataPlatformTwitter, InboxCommentGetResponseDataPlatformInstagram, InboxCommentGetResponseDataPlatformFacebook, InboxCommentGetResponseDataPlatformLinkedin, InboxCommentGetResponseDataPlatformTiktok, InboxCommentGetResponseDataPlatformYoutube, InboxCommentGetResponseDataPlatformPinterest, InboxCommentGetResponseDataPlatformReddit, InboxCommentGetResponseDataPlatformBluesky, InboxCommentGetResponseDataPlatformThreads, InboxCommentGetResponseDataPlatformTelegram, InboxCommentGetResponseDataPlatformSnapchat, InboxCommentGetResponseDataPlatformGooglebusiness, InboxCommentGetResponseDataPlatformWhatsapp, InboxCommentGetResponseDataPlatformMastodon, InboxCommentGetResponseDataPlatformDiscord, InboxCommentGetResponseDataPlatformSMS:
+	case InboxCommentGetResponseDataPlatformTwitter, InboxCommentGetResponseDataPlatformInstagram, InboxCommentGetResponseDataPlatformFacebook, InboxCommentGetResponseDataPlatformLinkedin, InboxCommentGetResponseDataPlatformTiktok, InboxCommentGetResponseDataPlatformYoutube, InboxCommentGetResponseDataPlatformPinterest, InboxCommentGetResponseDataPlatformReddit, InboxCommentGetResponseDataPlatformBluesky, InboxCommentGetResponseDataPlatformThreads, InboxCommentGetResponseDataPlatformTelegram, InboxCommentGetResponseDataPlatformSnapchat, InboxCommentGetResponseDataPlatformGooglebusiness, InboxCommentGetResponseDataPlatformWhatsapp, InboxCommentGetResponseDataPlatformMastodon, InboxCommentGetResponseDataPlatformDiscord, InboxCommentGetResponseDataPlatformSMS, InboxCommentGetResponseDataPlatformBeehiiv, InboxCommentGetResponseDataPlatformConvertkit, InboxCommentGetResponseDataPlatformMailchimp, InboxCommentGetResponseDataPlatformListmonk:
 		return true
 	}
 	return false
@@ -243,11 +247,15 @@ const (
 	InboxCommentGetResponsePlatformMastodon       InboxCommentGetResponsePlatform = "mastodon"
 	InboxCommentGetResponsePlatformDiscord        InboxCommentGetResponsePlatform = "discord"
 	InboxCommentGetResponsePlatformSMS            InboxCommentGetResponsePlatform = "sms"
+	InboxCommentGetResponsePlatformBeehiiv        InboxCommentGetResponsePlatform = "beehiiv"
+	InboxCommentGetResponsePlatformConvertkit     InboxCommentGetResponsePlatform = "convertkit"
+	InboxCommentGetResponsePlatformMailchimp      InboxCommentGetResponsePlatform = "mailchimp"
+	InboxCommentGetResponsePlatformListmonk       InboxCommentGetResponsePlatform = "listmonk"
 )
 
 func (r InboxCommentGetResponsePlatform) IsKnown() bool {
 	switch r {
-	case InboxCommentGetResponsePlatformTwitter, InboxCommentGetResponsePlatformInstagram, InboxCommentGetResponsePlatformFacebook, InboxCommentGetResponsePlatformLinkedin, InboxCommentGetResponsePlatformTiktok, InboxCommentGetResponsePlatformYoutube, InboxCommentGetResponsePlatformPinterest, InboxCommentGetResponsePlatformReddit, InboxCommentGetResponsePlatformBluesky, InboxCommentGetResponsePlatformThreads, InboxCommentGetResponsePlatformTelegram, InboxCommentGetResponsePlatformSnapchat, InboxCommentGetResponsePlatformGooglebusiness, InboxCommentGetResponsePlatformWhatsapp, InboxCommentGetResponsePlatformMastodon, InboxCommentGetResponsePlatformDiscord, InboxCommentGetResponsePlatformSMS:
+	case InboxCommentGetResponsePlatformTwitter, InboxCommentGetResponsePlatformInstagram, InboxCommentGetResponsePlatformFacebook, InboxCommentGetResponsePlatformLinkedin, InboxCommentGetResponsePlatformTiktok, InboxCommentGetResponsePlatformYoutube, InboxCommentGetResponsePlatformPinterest, InboxCommentGetResponsePlatformReddit, InboxCommentGetResponsePlatformBluesky, InboxCommentGetResponsePlatformThreads, InboxCommentGetResponsePlatformTelegram, InboxCommentGetResponsePlatformSnapchat, InboxCommentGetResponsePlatformGooglebusiness, InboxCommentGetResponsePlatformWhatsapp, InboxCommentGetResponsePlatformMastodon, InboxCommentGetResponsePlatformDiscord, InboxCommentGetResponsePlatformSMS, InboxCommentGetResponsePlatformBeehiiv, InboxCommentGetResponsePlatformConvertkit, InboxCommentGetResponsePlatformMailchimp, InboxCommentGetResponsePlatformListmonk:
 		return true
 	}
 	return false
@@ -369,11 +377,15 @@ const (
 	InboxCommentListResponseDataPlatformMastodon       InboxCommentListResponseDataPlatform = "mastodon"
 	InboxCommentListResponseDataPlatformDiscord        InboxCommentListResponseDataPlatform = "discord"
 	InboxCommentListResponseDataPlatformSMS            InboxCommentListResponseDataPlatform = "sms"
+	InboxCommentListResponseDataPlatformBeehiiv        InboxCommentListResponseDataPlatform = "beehiiv"
+	InboxCommentListResponseDataPlatformConvertkit     InboxCommentListResponseDataPlatform = "convertkit"
+	InboxCommentListResponseDataPlatformMailchimp      InboxCommentListResponseDataPlatform = "mailchimp"
+	InboxCommentListResponseDataPlatformListmonk       InboxCommentListResponseDataPlatform = "listmonk"
 )
 
 func (r InboxCommentListResponseDataPlatform) IsKnown() bool {
 	switch r {
-	case InboxCommentListResponseDataPlatformTwitter, InboxCommentListResponseDataPlatformInstagram, InboxCommentListResponseDataPlatformFacebook, InboxCommentListResponseDataPlatformLinkedin, InboxCommentListResponseDataPlatformTiktok, InboxCommentListResponseDataPlatformYoutube, InboxCommentListResponseDataPlatformPinterest, InboxCommentListResponseDataPlatformReddit, InboxCommentListResponseDataPlatformBluesky, InboxCommentListResponseDataPlatformThreads, InboxCommentListResponseDataPlatformTelegram, InboxCommentListResponseDataPlatformSnapchat, InboxCommentListResponseDataPlatformGooglebusiness, InboxCommentListResponseDataPlatformWhatsapp, InboxCommentListResponseDataPlatformMastodon, InboxCommentListResponseDataPlatformDiscord, InboxCommentListResponseDataPlatformSMS:
+	case InboxCommentListResponseDataPlatformTwitter, InboxCommentListResponseDataPlatformInstagram, InboxCommentListResponseDataPlatformFacebook, InboxCommentListResponseDataPlatformLinkedin, InboxCommentListResponseDataPlatformTiktok, InboxCommentListResponseDataPlatformYoutube, InboxCommentListResponseDataPlatformPinterest, InboxCommentListResponseDataPlatformReddit, InboxCommentListResponseDataPlatformBluesky, InboxCommentListResponseDataPlatformThreads, InboxCommentListResponseDataPlatformTelegram, InboxCommentListResponseDataPlatformSnapchat, InboxCommentListResponseDataPlatformGooglebusiness, InboxCommentListResponseDataPlatformWhatsapp, InboxCommentListResponseDataPlatformMastodon, InboxCommentListResponseDataPlatformDiscord, InboxCommentListResponseDataPlatformSMS, InboxCommentListResponseDataPlatformBeehiiv, InboxCommentListResponseDataPlatformConvertkit, InboxCommentListResponseDataPlatformMailchimp, InboxCommentListResponseDataPlatformListmonk:
 		return true
 	}
 	return false
@@ -399,11 +411,15 @@ const (
 	InboxCommentListResponsePlatformMastodon       InboxCommentListResponsePlatform = "mastodon"
 	InboxCommentListResponsePlatformDiscord        InboxCommentListResponsePlatform = "discord"
 	InboxCommentListResponsePlatformSMS            InboxCommentListResponsePlatform = "sms"
+	InboxCommentListResponsePlatformBeehiiv        InboxCommentListResponsePlatform = "beehiiv"
+	InboxCommentListResponsePlatformConvertkit     InboxCommentListResponsePlatform = "convertkit"
+	InboxCommentListResponsePlatformMailchimp      InboxCommentListResponsePlatform = "mailchimp"
+	InboxCommentListResponsePlatformListmonk       InboxCommentListResponsePlatform = "listmonk"
 )
 
 func (r InboxCommentListResponsePlatform) IsKnown() bool {
 	switch r {
-	case InboxCommentListResponsePlatformTwitter, InboxCommentListResponsePlatformInstagram, InboxCommentListResponsePlatformFacebook, InboxCommentListResponsePlatformLinkedin, InboxCommentListResponsePlatformTiktok, InboxCommentListResponsePlatformYoutube, InboxCommentListResponsePlatformPinterest, InboxCommentListResponsePlatformReddit, InboxCommentListResponsePlatformBluesky, InboxCommentListResponsePlatformThreads, InboxCommentListResponsePlatformTelegram, InboxCommentListResponsePlatformSnapchat, InboxCommentListResponsePlatformGooglebusiness, InboxCommentListResponsePlatformWhatsapp, InboxCommentListResponsePlatformMastodon, InboxCommentListResponsePlatformDiscord, InboxCommentListResponsePlatformSMS:
+	case InboxCommentListResponsePlatformTwitter, InboxCommentListResponsePlatformInstagram, InboxCommentListResponsePlatformFacebook, InboxCommentListResponsePlatformLinkedin, InboxCommentListResponsePlatformTiktok, InboxCommentListResponsePlatformYoutube, InboxCommentListResponsePlatformPinterest, InboxCommentListResponsePlatformReddit, InboxCommentListResponsePlatformBluesky, InboxCommentListResponsePlatformThreads, InboxCommentListResponsePlatformTelegram, InboxCommentListResponsePlatformSnapchat, InboxCommentListResponsePlatformGooglebusiness, InboxCommentListResponsePlatformWhatsapp, InboxCommentListResponsePlatformMastodon, InboxCommentListResponsePlatformDiscord, InboxCommentListResponsePlatformSMS, InboxCommentListResponsePlatformBeehiiv, InboxCommentListResponsePlatformConvertkit, InboxCommentListResponsePlatformMailchimp, InboxCommentListResponsePlatformListmonk:
 		return true
 	}
 	return false
@@ -524,11 +540,15 @@ const (
 	InboxCommentGetParamsPlatformMastodon       InboxCommentGetParamsPlatform = "mastodon"
 	InboxCommentGetParamsPlatformDiscord        InboxCommentGetParamsPlatform = "discord"
 	InboxCommentGetParamsPlatformSMS            InboxCommentGetParamsPlatform = "sms"
+	InboxCommentGetParamsPlatformBeehiiv        InboxCommentGetParamsPlatform = "beehiiv"
+	InboxCommentGetParamsPlatformConvertkit     InboxCommentGetParamsPlatform = "convertkit"
+	InboxCommentGetParamsPlatformMailchimp      InboxCommentGetParamsPlatform = "mailchimp"
+	InboxCommentGetParamsPlatformListmonk       InboxCommentGetParamsPlatform = "listmonk"
 )
 
 func (r InboxCommentGetParamsPlatform) IsKnown() bool {
 	switch r {
-	case InboxCommentGetParamsPlatformTwitter, InboxCommentGetParamsPlatformInstagram, InboxCommentGetParamsPlatformFacebook, InboxCommentGetParamsPlatformLinkedin, InboxCommentGetParamsPlatformTiktok, InboxCommentGetParamsPlatformYoutube, InboxCommentGetParamsPlatformPinterest, InboxCommentGetParamsPlatformReddit, InboxCommentGetParamsPlatformBluesky, InboxCommentGetParamsPlatformThreads, InboxCommentGetParamsPlatformTelegram, InboxCommentGetParamsPlatformSnapchat, InboxCommentGetParamsPlatformGooglebusiness, InboxCommentGetParamsPlatformWhatsapp, InboxCommentGetParamsPlatformMastodon, InboxCommentGetParamsPlatformDiscord, InboxCommentGetParamsPlatformSMS:
+	case InboxCommentGetParamsPlatformTwitter, InboxCommentGetParamsPlatformInstagram, InboxCommentGetParamsPlatformFacebook, InboxCommentGetParamsPlatformLinkedin, InboxCommentGetParamsPlatformTiktok, InboxCommentGetParamsPlatformYoutube, InboxCommentGetParamsPlatformPinterest, InboxCommentGetParamsPlatformReddit, InboxCommentGetParamsPlatformBluesky, InboxCommentGetParamsPlatformThreads, InboxCommentGetParamsPlatformTelegram, InboxCommentGetParamsPlatformSnapchat, InboxCommentGetParamsPlatformGooglebusiness, InboxCommentGetParamsPlatformWhatsapp, InboxCommentGetParamsPlatformMastodon, InboxCommentGetParamsPlatformDiscord, InboxCommentGetParamsPlatformSMS, InboxCommentGetParamsPlatformBeehiiv, InboxCommentGetParamsPlatformConvertkit, InboxCommentGetParamsPlatformMailchimp, InboxCommentGetParamsPlatformListmonk:
 		return true
 	}
 	return false
@@ -574,11 +594,15 @@ const (
 	InboxCommentListParamsPlatformMastodon       InboxCommentListParamsPlatform = "mastodon"
 	InboxCommentListParamsPlatformDiscord        InboxCommentListParamsPlatform = "discord"
 	InboxCommentListParamsPlatformSMS            InboxCommentListParamsPlatform = "sms"
+	InboxCommentListParamsPlatformBeehiiv        InboxCommentListParamsPlatform = "beehiiv"
+	InboxCommentListParamsPlatformConvertkit     InboxCommentListParamsPlatform = "convertkit"
+	InboxCommentListParamsPlatformMailchimp      InboxCommentListParamsPlatform = "mailchimp"
+	InboxCommentListParamsPlatformListmonk       InboxCommentListParamsPlatform = "listmonk"
 )
 
 func (r InboxCommentListParamsPlatform) IsKnown() bool {
 	switch r {
-	case InboxCommentListParamsPlatformTwitter, InboxCommentListParamsPlatformInstagram, InboxCommentListParamsPlatformFacebook, InboxCommentListParamsPlatformLinkedin, InboxCommentListParamsPlatformTiktok, InboxCommentListParamsPlatformYoutube, InboxCommentListParamsPlatformPinterest, InboxCommentListParamsPlatformReddit, InboxCommentListParamsPlatformBluesky, InboxCommentListParamsPlatformThreads, InboxCommentListParamsPlatformTelegram, InboxCommentListParamsPlatformSnapchat, InboxCommentListParamsPlatformGooglebusiness, InboxCommentListParamsPlatformWhatsapp, InboxCommentListParamsPlatformMastodon, InboxCommentListParamsPlatformDiscord, InboxCommentListParamsPlatformSMS:
+	case InboxCommentListParamsPlatformTwitter, InboxCommentListParamsPlatformInstagram, InboxCommentListParamsPlatformFacebook, InboxCommentListParamsPlatformLinkedin, InboxCommentListParamsPlatformTiktok, InboxCommentListParamsPlatformYoutube, InboxCommentListParamsPlatformPinterest, InboxCommentListParamsPlatformReddit, InboxCommentListParamsPlatformBluesky, InboxCommentListParamsPlatformThreads, InboxCommentListParamsPlatformTelegram, InboxCommentListParamsPlatformSnapchat, InboxCommentListParamsPlatformGooglebusiness, InboxCommentListParamsPlatformWhatsapp, InboxCommentListParamsPlatformMastodon, InboxCommentListParamsPlatformDiscord, InboxCommentListParamsPlatformSMS, InboxCommentListParamsPlatformBeehiiv, InboxCommentListParamsPlatformConvertkit, InboxCommentListParamsPlatformMailchimp, InboxCommentListParamsPlatformListmonk:
 		return true
 	}
 	return false

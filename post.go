@@ -148,6 +148,10 @@ type PostNewResponse struct {
 	Metrics PostNewResponseMetrics `json:"metrics"`
 	// Per-target customizations
 	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
 	// IANA timezone
 	Timezone string              `json:"timezone" api:"nullable"`
 	JSON     postNewResponseJSON `json:"-"`
@@ -168,6 +172,8 @@ type postNewResponseJSON struct {
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
 	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
 	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -354,11 +360,15 @@ const (
 	PostNewResponseTargetsPlatformMastodon       PostNewResponseTargetsPlatform = "mastodon"
 	PostNewResponseTargetsPlatformDiscord        PostNewResponseTargetsPlatform = "discord"
 	PostNewResponseTargetsPlatformSMS            PostNewResponseTargetsPlatform = "sms"
+	PostNewResponseTargetsPlatformBeehiiv        PostNewResponseTargetsPlatform = "beehiiv"
+	PostNewResponseTargetsPlatformConvertkit     PostNewResponseTargetsPlatform = "convertkit"
+	PostNewResponseTargetsPlatformMailchimp      PostNewResponseTargetsPlatform = "mailchimp"
+	PostNewResponseTargetsPlatformListmonk       PostNewResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostNewResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostNewResponseTargetsPlatformTwitter, PostNewResponseTargetsPlatformInstagram, PostNewResponseTargetsPlatformFacebook, PostNewResponseTargetsPlatformLinkedin, PostNewResponseTargetsPlatformTiktok, PostNewResponseTargetsPlatformYoutube, PostNewResponseTargetsPlatformPinterest, PostNewResponseTargetsPlatformReddit, PostNewResponseTargetsPlatformBluesky, PostNewResponseTargetsPlatformThreads, PostNewResponseTargetsPlatformTelegram, PostNewResponseTargetsPlatformSnapchat, PostNewResponseTargetsPlatformGooglebusiness, PostNewResponseTargetsPlatformWhatsapp, PostNewResponseTargetsPlatformMastodon, PostNewResponseTargetsPlatformDiscord, PostNewResponseTargetsPlatformSMS:
+	case PostNewResponseTargetsPlatformTwitter, PostNewResponseTargetsPlatformInstagram, PostNewResponseTargetsPlatformFacebook, PostNewResponseTargetsPlatformLinkedin, PostNewResponseTargetsPlatformTiktok, PostNewResponseTargetsPlatformYoutube, PostNewResponseTargetsPlatformPinterest, PostNewResponseTargetsPlatformReddit, PostNewResponseTargetsPlatformBluesky, PostNewResponseTargetsPlatformThreads, PostNewResponseTargetsPlatformTelegram, PostNewResponseTargetsPlatformSnapchat, PostNewResponseTargetsPlatformGooglebusiness, PostNewResponseTargetsPlatformWhatsapp, PostNewResponseTargetsPlatformMastodon, PostNewResponseTargetsPlatformDiscord, PostNewResponseTargetsPlatformSMS, PostNewResponseTargetsPlatformBeehiiv, PostNewResponseTargetsPlatformConvertkit, PostNewResponseTargetsPlatformMailchimp, PostNewResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -499,6 +509,10 @@ type PostGetResponse struct {
 	Metrics PostGetResponseMetrics `json:"metrics"`
 	// Per-target customizations
 	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
 	// IANA timezone
 	Timezone string              `json:"timezone" api:"nullable"`
 	JSON     postGetResponseJSON `json:"-"`
@@ -519,6 +533,8 @@ type postGetResponseJSON struct {
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
 	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
 	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -705,11 +721,15 @@ const (
 	PostGetResponseTargetsPlatformMastodon       PostGetResponseTargetsPlatform = "mastodon"
 	PostGetResponseTargetsPlatformDiscord        PostGetResponseTargetsPlatform = "discord"
 	PostGetResponseTargetsPlatformSMS            PostGetResponseTargetsPlatform = "sms"
+	PostGetResponseTargetsPlatformBeehiiv        PostGetResponseTargetsPlatform = "beehiiv"
+	PostGetResponseTargetsPlatformConvertkit     PostGetResponseTargetsPlatform = "convertkit"
+	PostGetResponseTargetsPlatformMailchimp      PostGetResponseTargetsPlatform = "mailchimp"
+	PostGetResponseTargetsPlatformListmonk       PostGetResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostGetResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostGetResponseTargetsPlatformTwitter, PostGetResponseTargetsPlatformInstagram, PostGetResponseTargetsPlatformFacebook, PostGetResponseTargetsPlatformLinkedin, PostGetResponseTargetsPlatformTiktok, PostGetResponseTargetsPlatformYoutube, PostGetResponseTargetsPlatformPinterest, PostGetResponseTargetsPlatformReddit, PostGetResponseTargetsPlatformBluesky, PostGetResponseTargetsPlatformThreads, PostGetResponseTargetsPlatformTelegram, PostGetResponseTargetsPlatformSnapchat, PostGetResponseTargetsPlatformGooglebusiness, PostGetResponseTargetsPlatformWhatsapp, PostGetResponseTargetsPlatformMastodon, PostGetResponseTargetsPlatformDiscord, PostGetResponseTargetsPlatformSMS:
+	case PostGetResponseTargetsPlatformTwitter, PostGetResponseTargetsPlatformInstagram, PostGetResponseTargetsPlatformFacebook, PostGetResponseTargetsPlatformLinkedin, PostGetResponseTargetsPlatformTiktok, PostGetResponseTargetsPlatformYoutube, PostGetResponseTargetsPlatformPinterest, PostGetResponseTargetsPlatformReddit, PostGetResponseTargetsPlatformBluesky, PostGetResponseTargetsPlatformThreads, PostGetResponseTargetsPlatformTelegram, PostGetResponseTargetsPlatformSnapchat, PostGetResponseTargetsPlatformGooglebusiness, PostGetResponseTargetsPlatformWhatsapp, PostGetResponseTargetsPlatformMastodon, PostGetResponseTargetsPlatformDiscord, PostGetResponseTargetsPlatformSMS, PostGetResponseTargetsPlatformBeehiiv, PostGetResponseTargetsPlatformConvertkit, PostGetResponseTargetsPlatformMailchimp, PostGetResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -850,6 +870,10 @@ type PostUpdateResponse struct {
 	Metrics PostUpdateResponseMetrics `json:"metrics"`
 	// Per-target customizations
 	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
 	// IANA timezone
 	Timezone string                 `json:"timezone" api:"nullable"`
 	JSON     postUpdateResponseJSON `json:"-"`
@@ -871,6 +895,8 @@ type postUpdateResponseJSON struct {
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
 	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
 	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -1057,11 +1083,15 @@ const (
 	PostUpdateResponseTargetsPlatformMastodon       PostUpdateResponseTargetsPlatform = "mastodon"
 	PostUpdateResponseTargetsPlatformDiscord        PostUpdateResponseTargetsPlatform = "discord"
 	PostUpdateResponseTargetsPlatformSMS            PostUpdateResponseTargetsPlatform = "sms"
+	PostUpdateResponseTargetsPlatformBeehiiv        PostUpdateResponseTargetsPlatform = "beehiiv"
+	PostUpdateResponseTargetsPlatformConvertkit     PostUpdateResponseTargetsPlatform = "convertkit"
+	PostUpdateResponseTargetsPlatformMailchimp      PostUpdateResponseTargetsPlatform = "mailchimp"
+	PostUpdateResponseTargetsPlatformListmonk       PostUpdateResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostUpdateResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostUpdateResponseTargetsPlatformTwitter, PostUpdateResponseTargetsPlatformInstagram, PostUpdateResponseTargetsPlatformFacebook, PostUpdateResponseTargetsPlatformLinkedin, PostUpdateResponseTargetsPlatformTiktok, PostUpdateResponseTargetsPlatformYoutube, PostUpdateResponseTargetsPlatformPinterest, PostUpdateResponseTargetsPlatformReddit, PostUpdateResponseTargetsPlatformBluesky, PostUpdateResponseTargetsPlatformThreads, PostUpdateResponseTargetsPlatformTelegram, PostUpdateResponseTargetsPlatformSnapchat, PostUpdateResponseTargetsPlatformGooglebusiness, PostUpdateResponseTargetsPlatformWhatsapp, PostUpdateResponseTargetsPlatformMastodon, PostUpdateResponseTargetsPlatformDiscord, PostUpdateResponseTargetsPlatformSMS:
+	case PostUpdateResponseTargetsPlatformTwitter, PostUpdateResponseTargetsPlatformInstagram, PostUpdateResponseTargetsPlatformFacebook, PostUpdateResponseTargetsPlatformLinkedin, PostUpdateResponseTargetsPlatformTiktok, PostUpdateResponseTargetsPlatformYoutube, PostUpdateResponseTargetsPlatformPinterest, PostUpdateResponseTargetsPlatformReddit, PostUpdateResponseTargetsPlatformBluesky, PostUpdateResponseTargetsPlatformThreads, PostUpdateResponseTargetsPlatformTelegram, PostUpdateResponseTargetsPlatformSnapchat, PostUpdateResponseTargetsPlatformGooglebusiness, PostUpdateResponseTargetsPlatformWhatsapp, PostUpdateResponseTargetsPlatformMastodon, PostUpdateResponseTargetsPlatformDiscord, PostUpdateResponseTargetsPlatformSMS, PostUpdateResponseTargetsPlatformBeehiiv, PostUpdateResponseTargetsPlatformConvertkit, PostUpdateResponseTargetsPlatformMailchimp, PostUpdateResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -1229,6 +1259,10 @@ type PostListResponseData struct {
 	Metrics PostListResponseDataMetrics `json:"metrics"`
 	// Per-target customizations
 	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
 	// IANA timezone
 	Timezone string                   `json:"timezone" api:"nullable"`
 	JSON     postListResponseDataJSON `json:"-"`
@@ -1250,6 +1284,8 @@ type postListResponseDataJSON struct {
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
 	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
 	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -1436,11 +1472,15 @@ const (
 	PostListResponseDataTargetsPlatformMastodon       PostListResponseDataTargetsPlatform = "mastodon"
 	PostListResponseDataTargetsPlatformDiscord        PostListResponseDataTargetsPlatform = "discord"
 	PostListResponseDataTargetsPlatformSMS            PostListResponseDataTargetsPlatform = "sms"
+	PostListResponseDataTargetsPlatformBeehiiv        PostListResponseDataTargetsPlatform = "beehiiv"
+	PostListResponseDataTargetsPlatformConvertkit     PostListResponseDataTargetsPlatform = "convertkit"
+	PostListResponseDataTargetsPlatformMailchimp      PostListResponseDataTargetsPlatform = "mailchimp"
+	PostListResponseDataTargetsPlatformListmonk       PostListResponseDataTargetsPlatform = "listmonk"
 )
 
 func (r PostListResponseDataTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostListResponseDataTargetsPlatformTwitter, PostListResponseDataTargetsPlatformInstagram, PostListResponseDataTargetsPlatformFacebook, PostListResponseDataTargetsPlatformLinkedin, PostListResponseDataTargetsPlatformTiktok, PostListResponseDataTargetsPlatformYoutube, PostListResponseDataTargetsPlatformPinterest, PostListResponseDataTargetsPlatformReddit, PostListResponseDataTargetsPlatformBluesky, PostListResponseDataTargetsPlatformThreads, PostListResponseDataTargetsPlatformTelegram, PostListResponseDataTargetsPlatformSnapchat, PostListResponseDataTargetsPlatformGooglebusiness, PostListResponseDataTargetsPlatformWhatsapp, PostListResponseDataTargetsPlatformMastodon, PostListResponseDataTargetsPlatformDiscord, PostListResponseDataTargetsPlatformSMS:
+	case PostListResponseDataTargetsPlatformTwitter, PostListResponseDataTargetsPlatformInstagram, PostListResponseDataTargetsPlatformFacebook, PostListResponseDataTargetsPlatformLinkedin, PostListResponseDataTargetsPlatformTiktok, PostListResponseDataTargetsPlatformYoutube, PostListResponseDataTargetsPlatformPinterest, PostListResponseDataTargetsPlatformReddit, PostListResponseDataTargetsPlatformBluesky, PostListResponseDataTargetsPlatformThreads, PostListResponseDataTargetsPlatformTelegram, PostListResponseDataTargetsPlatformSnapchat, PostListResponseDataTargetsPlatformGooglebusiness, PostListResponseDataTargetsPlatformWhatsapp, PostListResponseDataTargetsPlatformMastodon, PostListResponseDataTargetsPlatformDiscord, PostListResponseDataTargetsPlatformSMS, PostListResponseDataTargetsPlatformBeehiiv, PostListResponseDataTargetsPlatformConvertkit, PostListResponseDataTargetsPlatformMailchimp, PostListResponseDataTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -1604,6 +1644,10 @@ type PostBulkNewResponseData struct {
 	Metrics PostBulkNewResponseDataMetrics `json:"metrics"`
 	// Per-target customizations
 	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
 	// IANA timezone
 	Timezone string                      `json:"timezone" api:"nullable"`
 	JSON     postBulkNewResponseDataJSON `json:"-"`
@@ -1625,6 +1669,8 @@ type postBulkNewResponseDataJSON struct {
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
 	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
 	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -1811,11 +1857,15 @@ const (
 	PostBulkNewResponseDataTargetsPlatformMastodon       PostBulkNewResponseDataTargetsPlatform = "mastodon"
 	PostBulkNewResponseDataTargetsPlatformDiscord        PostBulkNewResponseDataTargetsPlatform = "discord"
 	PostBulkNewResponseDataTargetsPlatformSMS            PostBulkNewResponseDataTargetsPlatform = "sms"
+	PostBulkNewResponseDataTargetsPlatformBeehiiv        PostBulkNewResponseDataTargetsPlatform = "beehiiv"
+	PostBulkNewResponseDataTargetsPlatformConvertkit     PostBulkNewResponseDataTargetsPlatform = "convertkit"
+	PostBulkNewResponseDataTargetsPlatformMailchimp      PostBulkNewResponseDataTargetsPlatform = "mailchimp"
+	PostBulkNewResponseDataTargetsPlatformListmonk       PostBulkNewResponseDataTargetsPlatform = "listmonk"
 )
 
 func (r PostBulkNewResponseDataTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostBulkNewResponseDataTargetsPlatformTwitter, PostBulkNewResponseDataTargetsPlatformInstagram, PostBulkNewResponseDataTargetsPlatformFacebook, PostBulkNewResponseDataTargetsPlatformLinkedin, PostBulkNewResponseDataTargetsPlatformTiktok, PostBulkNewResponseDataTargetsPlatformYoutube, PostBulkNewResponseDataTargetsPlatformPinterest, PostBulkNewResponseDataTargetsPlatformReddit, PostBulkNewResponseDataTargetsPlatformBluesky, PostBulkNewResponseDataTargetsPlatformThreads, PostBulkNewResponseDataTargetsPlatformTelegram, PostBulkNewResponseDataTargetsPlatformSnapchat, PostBulkNewResponseDataTargetsPlatformGooglebusiness, PostBulkNewResponseDataTargetsPlatformWhatsapp, PostBulkNewResponseDataTargetsPlatformMastodon, PostBulkNewResponseDataTargetsPlatformDiscord, PostBulkNewResponseDataTargetsPlatformSMS:
+	case PostBulkNewResponseDataTargetsPlatformTwitter, PostBulkNewResponseDataTargetsPlatformInstagram, PostBulkNewResponseDataTargetsPlatformFacebook, PostBulkNewResponseDataTargetsPlatformLinkedin, PostBulkNewResponseDataTargetsPlatformTiktok, PostBulkNewResponseDataTargetsPlatformYoutube, PostBulkNewResponseDataTargetsPlatformPinterest, PostBulkNewResponseDataTargetsPlatformReddit, PostBulkNewResponseDataTargetsPlatformBluesky, PostBulkNewResponseDataTargetsPlatformThreads, PostBulkNewResponseDataTargetsPlatformTelegram, PostBulkNewResponseDataTargetsPlatformSnapchat, PostBulkNewResponseDataTargetsPlatformGooglebusiness, PostBulkNewResponseDataTargetsPlatformWhatsapp, PostBulkNewResponseDataTargetsPlatformMastodon, PostBulkNewResponseDataTargetsPlatformDiscord, PostBulkNewResponseDataTargetsPlatformSMS, PostBulkNewResponseDataTargetsPlatformBeehiiv, PostBulkNewResponseDataTargetsPlatformConvertkit, PostBulkNewResponseDataTargetsPlatformMailchimp, PostBulkNewResponseDataTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -1981,6 +2031,10 @@ type PostRetryResponse struct {
 	Metrics PostRetryResponseMetrics `json:"metrics"`
 	// Per-target customizations
 	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
 	// IANA timezone
 	Timezone string                `json:"timezone" api:"nullable"`
 	JSON     postRetryResponseJSON `json:"-"`
@@ -2002,6 +2056,8 @@ type postRetryResponseJSON struct {
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
 	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
 	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -2188,11 +2244,15 @@ const (
 	PostRetryResponseTargetsPlatformMastodon       PostRetryResponseTargetsPlatform = "mastodon"
 	PostRetryResponseTargetsPlatformDiscord        PostRetryResponseTargetsPlatform = "discord"
 	PostRetryResponseTargetsPlatformSMS            PostRetryResponseTargetsPlatform = "sms"
+	PostRetryResponseTargetsPlatformBeehiiv        PostRetryResponseTargetsPlatform = "beehiiv"
+	PostRetryResponseTargetsPlatformConvertkit     PostRetryResponseTargetsPlatform = "convertkit"
+	PostRetryResponseTargetsPlatformMailchimp      PostRetryResponseTargetsPlatform = "mailchimp"
+	PostRetryResponseTargetsPlatformListmonk       PostRetryResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostRetryResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostRetryResponseTargetsPlatformTwitter, PostRetryResponseTargetsPlatformInstagram, PostRetryResponseTargetsPlatformFacebook, PostRetryResponseTargetsPlatformLinkedin, PostRetryResponseTargetsPlatformTiktok, PostRetryResponseTargetsPlatformYoutube, PostRetryResponseTargetsPlatformPinterest, PostRetryResponseTargetsPlatformReddit, PostRetryResponseTargetsPlatformBluesky, PostRetryResponseTargetsPlatformThreads, PostRetryResponseTargetsPlatformTelegram, PostRetryResponseTargetsPlatformSnapchat, PostRetryResponseTargetsPlatformGooglebusiness, PostRetryResponseTargetsPlatformWhatsapp, PostRetryResponseTargetsPlatformMastodon, PostRetryResponseTargetsPlatformDiscord, PostRetryResponseTargetsPlatformSMS:
+	case PostRetryResponseTargetsPlatformTwitter, PostRetryResponseTargetsPlatformInstagram, PostRetryResponseTargetsPlatformFacebook, PostRetryResponseTargetsPlatformLinkedin, PostRetryResponseTargetsPlatformTiktok, PostRetryResponseTargetsPlatformYoutube, PostRetryResponseTargetsPlatformPinterest, PostRetryResponseTargetsPlatformReddit, PostRetryResponseTargetsPlatformBluesky, PostRetryResponseTargetsPlatformThreads, PostRetryResponseTargetsPlatformTelegram, PostRetryResponseTargetsPlatformSnapchat, PostRetryResponseTargetsPlatformGooglebusiness, PostRetryResponseTargetsPlatformWhatsapp, PostRetryResponseTargetsPlatformMastodon, PostRetryResponseTargetsPlatformDiscord, PostRetryResponseTargetsPlatformSMS, PostRetryResponseTargetsPlatformBeehiiv, PostRetryResponseTargetsPlatformConvertkit, PostRetryResponseTargetsPlatformMailchimp, PostRetryResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -2333,6 +2393,10 @@ type PostUnpublishResponse struct {
 	Metrics PostUnpublishResponseMetrics `json:"metrics"`
 	// Per-target customizations
 	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
 	// IANA timezone
 	Timezone string                    `json:"timezone" api:"nullable"`
 	JSON     postUnpublishResponseJSON `json:"-"`
@@ -2354,6 +2418,8 @@ type postUnpublishResponseJSON struct {
 	UpdatedAt      apijson.Field
 	Metrics        apijson.Field
 	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
 	Timezone       apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
@@ -2540,11 +2606,15 @@ const (
 	PostUnpublishResponseTargetsPlatformMastodon       PostUnpublishResponseTargetsPlatform = "mastodon"
 	PostUnpublishResponseTargetsPlatformDiscord        PostUnpublishResponseTargetsPlatform = "discord"
 	PostUnpublishResponseTargetsPlatformSMS            PostUnpublishResponseTargetsPlatform = "sms"
+	PostUnpublishResponseTargetsPlatformBeehiiv        PostUnpublishResponseTargetsPlatform = "beehiiv"
+	PostUnpublishResponseTargetsPlatformConvertkit     PostUnpublishResponseTargetsPlatform = "convertkit"
+	PostUnpublishResponseTargetsPlatformMailchimp      PostUnpublishResponseTargetsPlatform = "mailchimp"
+	PostUnpublishResponseTargetsPlatformListmonk       PostUnpublishResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostUnpublishResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostUnpublishResponseTargetsPlatformTwitter, PostUnpublishResponseTargetsPlatformInstagram, PostUnpublishResponseTargetsPlatformFacebook, PostUnpublishResponseTargetsPlatformLinkedin, PostUnpublishResponseTargetsPlatformTiktok, PostUnpublishResponseTargetsPlatformYoutube, PostUnpublishResponseTargetsPlatformPinterest, PostUnpublishResponseTargetsPlatformReddit, PostUnpublishResponseTargetsPlatformBluesky, PostUnpublishResponseTargetsPlatformThreads, PostUnpublishResponseTargetsPlatformTelegram, PostUnpublishResponseTargetsPlatformSnapchat, PostUnpublishResponseTargetsPlatformGooglebusiness, PostUnpublishResponseTargetsPlatformWhatsapp, PostUnpublishResponseTargetsPlatformMastodon, PostUnpublishResponseTargetsPlatformDiscord, PostUnpublishResponseTargetsPlatformSMS:
+	case PostUnpublishResponseTargetsPlatformTwitter, PostUnpublishResponseTargetsPlatformInstagram, PostUnpublishResponseTargetsPlatformFacebook, PostUnpublishResponseTargetsPlatformLinkedin, PostUnpublishResponseTargetsPlatformTiktok, PostUnpublishResponseTargetsPlatformYoutube, PostUnpublishResponseTargetsPlatformPinterest, PostUnpublishResponseTargetsPlatformReddit, PostUnpublishResponseTargetsPlatformBluesky, PostUnpublishResponseTargetsPlatformThreads, PostUnpublishResponseTargetsPlatformTelegram, PostUnpublishResponseTargetsPlatformSnapchat, PostUnpublishResponseTargetsPlatformGooglebusiness, PostUnpublishResponseTargetsPlatformWhatsapp, PostUnpublishResponseTargetsPlatformMastodon, PostUnpublishResponseTargetsPlatformDiscord, PostUnpublishResponseTargetsPlatformSMS, PostUnpublishResponseTargetsPlatformBeehiiv, PostUnpublishResponseTargetsPlatformConvertkit, PostUnpublishResponseTargetsPlatformMailchimp, PostUnpublishResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -2665,8 +2735,9 @@ func (r postUnpublishResponseMetricsJSON) RawJSON() string {
 }
 
 type PostNewParams struct {
-	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
-	// an ISO 8601 timestamp to schedule.
+	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
+	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
+	// schedule.
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
 	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
@@ -2813,8 +2884,9 @@ type PostUpdateParams struct {
 	Notes param.Field[string] `json:"notes"`
 	// Recycling configuration (Pro plan only)
 	Recycling param.Field[PostUpdateParamsRecycling] `json:"recycling"`
-	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
-	// an ISO 8601 timestamp to schedule.
+	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
+	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
+	// schedule.
 	ScheduledAt   param.Field[string]                            `json:"scheduled_at"`
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// Updated targets
@@ -2970,8 +3042,9 @@ func (r PostBulkNewParams) MarshalJSON() (data []byte, err error) {
 }
 
 type PostBulkNewParamsPost struct {
-	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
-	// an ISO 8601 timestamp to schedule.
+	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
+	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
+	// schedule.
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
 	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`

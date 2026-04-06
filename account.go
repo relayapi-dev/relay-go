@@ -181,11 +181,15 @@ const (
 	AccountGetResponsePlatformMastodon       AccountGetResponsePlatform = "mastodon"
 	AccountGetResponsePlatformDiscord        AccountGetResponsePlatform = "discord"
 	AccountGetResponsePlatformSMS            AccountGetResponsePlatform = "sms"
+	AccountGetResponsePlatformBeehiiv        AccountGetResponsePlatform = "beehiiv"
+	AccountGetResponsePlatformConvertkit     AccountGetResponsePlatform = "convertkit"
+	AccountGetResponsePlatformMailchimp      AccountGetResponsePlatform = "mailchimp"
+	AccountGetResponsePlatformListmonk       AccountGetResponsePlatform = "listmonk"
 )
 
 func (r AccountGetResponsePlatform) IsKnown() bool {
 	switch r {
-	case AccountGetResponsePlatformTwitter, AccountGetResponsePlatformInstagram, AccountGetResponsePlatformFacebook, AccountGetResponsePlatformLinkedin, AccountGetResponsePlatformTiktok, AccountGetResponsePlatformYoutube, AccountGetResponsePlatformPinterest, AccountGetResponsePlatformReddit, AccountGetResponsePlatformBluesky, AccountGetResponsePlatformThreads, AccountGetResponsePlatformTelegram, AccountGetResponsePlatformSnapchat, AccountGetResponsePlatformGooglebusiness, AccountGetResponsePlatformWhatsapp, AccountGetResponsePlatformMastodon, AccountGetResponsePlatformDiscord, AccountGetResponsePlatformSMS:
+	case AccountGetResponsePlatformTwitter, AccountGetResponsePlatformInstagram, AccountGetResponsePlatformFacebook, AccountGetResponsePlatformLinkedin, AccountGetResponsePlatformTiktok, AccountGetResponsePlatformYoutube, AccountGetResponsePlatformPinterest, AccountGetResponsePlatformReddit, AccountGetResponsePlatformBluesky, AccountGetResponsePlatformThreads, AccountGetResponsePlatformTelegram, AccountGetResponsePlatformSnapchat, AccountGetResponsePlatformGooglebusiness, AccountGetResponsePlatformWhatsapp, AccountGetResponsePlatformMastodon, AccountGetResponsePlatformDiscord, AccountGetResponsePlatformSMS, AccountGetResponsePlatformBeehiiv, AccountGetResponsePlatformConvertkit, AccountGetResponsePlatformMailchimp, AccountGetResponsePlatformListmonk:
 		return true
 	}
 	return false
@@ -276,11 +280,15 @@ const (
 	AccountUpdateResponsePlatformMastodon       AccountUpdateResponsePlatform = "mastodon"
 	AccountUpdateResponsePlatformDiscord        AccountUpdateResponsePlatform = "discord"
 	AccountUpdateResponsePlatformSMS            AccountUpdateResponsePlatform = "sms"
+	AccountUpdateResponsePlatformBeehiiv        AccountUpdateResponsePlatform = "beehiiv"
+	AccountUpdateResponsePlatformConvertkit     AccountUpdateResponsePlatform = "convertkit"
+	AccountUpdateResponsePlatformMailchimp      AccountUpdateResponsePlatform = "mailchimp"
+	AccountUpdateResponsePlatformListmonk       AccountUpdateResponsePlatform = "listmonk"
 )
 
 func (r AccountUpdateResponsePlatform) IsKnown() bool {
 	switch r {
-	case AccountUpdateResponsePlatformTwitter, AccountUpdateResponsePlatformInstagram, AccountUpdateResponsePlatformFacebook, AccountUpdateResponsePlatformLinkedin, AccountUpdateResponsePlatformTiktok, AccountUpdateResponsePlatformYoutube, AccountUpdateResponsePlatformPinterest, AccountUpdateResponsePlatformReddit, AccountUpdateResponsePlatformBluesky, AccountUpdateResponsePlatformThreads, AccountUpdateResponsePlatformTelegram, AccountUpdateResponsePlatformSnapchat, AccountUpdateResponsePlatformGooglebusiness, AccountUpdateResponsePlatformWhatsapp, AccountUpdateResponsePlatformMastodon, AccountUpdateResponsePlatformDiscord, AccountUpdateResponsePlatformSMS:
+	case AccountUpdateResponsePlatformTwitter, AccountUpdateResponsePlatformInstagram, AccountUpdateResponsePlatformFacebook, AccountUpdateResponsePlatformLinkedin, AccountUpdateResponsePlatformTiktok, AccountUpdateResponsePlatformYoutube, AccountUpdateResponsePlatformPinterest, AccountUpdateResponsePlatformReddit, AccountUpdateResponsePlatformBluesky, AccountUpdateResponsePlatformThreads, AccountUpdateResponsePlatformTelegram, AccountUpdateResponsePlatformSnapchat, AccountUpdateResponsePlatformGooglebusiness, AccountUpdateResponsePlatformWhatsapp, AccountUpdateResponsePlatformMastodon, AccountUpdateResponsePlatformDiscord, AccountUpdateResponsePlatformSMS, AccountUpdateResponsePlatformBeehiiv, AccountUpdateResponsePlatformConvertkit, AccountUpdateResponsePlatformMailchimp, AccountUpdateResponsePlatformListmonk:
 		return true
 	}
 	return false
@@ -398,11 +406,15 @@ const (
 	AccountListResponseDataPlatformMastodon       AccountListResponseDataPlatform = "mastodon"
 	AccountListResponseDataPlatformDiscord        AccountListResponseDataPlatform = "discord"
 	AccountListResponseDataPlatformSMS            AccountListResponseDataPlatform = "sms"
+	AccountListResponseDataPlatformBeehiiv        AccountListResponseDataPlatform = "beehiiv"
+	AccountListResponseDataPlatformConvertkit     AccountListResponseDataPlatform = "convertkit"
+	AccountListResponseDataPlatformMailchimp      AccountListResponseDataPlatform = "mailchimp"
+	AccountListResponseDataPlatformListmonk       AccountListResponseDataPlatform = "listmonk"
 )
 
 func (r AccountListResponseDataPlatform) IsKnown() bool {
 	switch r {
-	case AccountListResponseDataPlatformTwitter, AccountListResponseDataPlatformInstagram, AccountListResponseDataPlatformFacebook, AccountListResponseDataPlatformLinkedin, AccountListResponseDataPlatformTiktok, AccountListResponseDataPlatformYoutube, AccountListResponseDataPlatformPinterest, AccountListResponseDataPlatformReddit, AccountListResponseDataPlatformBluesky, AccountListResponseDataPlatformThreads, AccountListResponseDataPlatformTelegram, AccountListResponseDataPlatformSnapchat, AccountListResponseDataPlatformGooglebusiness, AccountListResponseDataPlatformWhatsapp, AccountListResponseDataPlatformMastodon, AccountListResponseDataPlatformDiscord, AccountListResponseDataPlatformSMS:
+	case AccountListResponseDataPlatformTwitter, AccountListResponseDataPlatformInstagram, AccountListResponseDataPlatformFacebook, AccountListResponseDataPlatformLinkedin, AccountListResponseDataPlatformTiktok, AccountListResponseDataPlatformYoutube, AccountListResponseDataPlatformPinterest, AccountListResponseDataPlatformReddit, AccountListResponseDataPlatformBluesky, AccountListResponseDataPlatformThreads, AccountListResponseDataPlatformTelegram, AccountListResponseDataPlatformSnapchat, AccountListResponseDataPlatformGooglebusiness, AccountListResponseDataPlatformWhatsapp, AccountListResponseDataPlatformMastodon, AccountListResponseDataPlatformDiscord, AccountListResponseDataPlatformSMS, AccountListResponseDataPlatformBeehiiv, AccountListResponseDataPlatformConvertkit, AccountListResponseDataPlatformMailchimp, AccountListResponseDataPlatformListmonk:
 		return true
 	}
 	return false
