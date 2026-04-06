@@ -189,8 +189,8 @@ func (r usageGetResponseSubscriptionJSON) RawJSON() string {
 }
 
 type UsageGetResponseUsage struct {
-	// API calls remaining this cycle (Infinity for pro overage)
-	APICallsRemaining float64 `json:"api_calls_remaining" api:"required"`
+	// API calls remaining this cycle. Null for pro plan (unlimited, overage billed).
+	APICallsRemaining float64 `json:"api_calls_remaining" api:"required,nullable"`
 	// API calls used this cycle
 	APICallsUsed float64 `json:"api_calls_used" api:"required"`
 	// Current billing cycle end
