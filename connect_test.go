@@ -32,6 +32,7 @@ func TestConnectCompleteOAuthCallbackWithOptionalParams(t *testing.T) {
 		relaygo.ConnectCompleteOAuthCallbackParams{
 			Code:        relaygo.F("code"),
 			RedirectURL: relaygo.F("https://example.com"),
+			State:       relaygo.F("state"),
 		},
 	)
 	if err != nil {
