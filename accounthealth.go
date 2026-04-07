@@ -67,6 +67,7 @@ type AccountHealthGetResponse struct {
 	TokenExpiresAt string                        `json:"token_expires_at" api:"required,nullable"`
 	Username       string                        `json:"username" api:"required,nullable"`
 	Error          AccountHealthGetResponseError `json:"error"`
+	Sync           AccountHealthGetResponseSync  `json:"sync" api:"nullable"`
 	JSON           accountHealthGetResponseJSON  `json:"-"`
 }
 
@@ -82,6 +83,7 @@ type accountHealthGetResponseJSON struct {
 	TokenExpiresAt apijson.Field
 	Username       apijson.Field
 	Error          apijson.Field
+	Sync           apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -114,6 +116,43 @@ func (r *AccountHealthGetResponseError) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r accountHealthGetResponseErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+type AccountHealthGetResponseSync struct {
+	ConsecutiveErrors float64                          `json:"consecutive_errors" api:"required"`
+	Enabled           bool                             `json:"enabled" api:"required"`
+	LastError         string                           `json:"last_error" api:"required,nullable"`
+	LastErrorAt       string                           `json:"last_error_at" api:"required,nullable"`
+	LastSyncAt        string                           `json:"last_sync_at" api:"required,nullable"`
+	NextSyncAt        string                           `json:"next_sync_at" api:"required,nullable"`
+	RateLimitResetAt  string                           `json:"rate_limit_reset_at" api:"required,nullable"`
+	TotalPostsSynced  float64                          `json:"total_posts_synced" api:"required"`
+	TotalSyncRuns     float64                          `json:"total_sync_runs" api:"required"`
+	JSON              accountHealthGetResponseSyncJSON `json:"-"`
+}
+
+// accountHealthGetResponseSyncJSON contains the JSON metadata for the struct
+// [AccountHealthGetResponseSync]
+type accountHealthGetResponseSyncJSON struct {
+	ConsecutiveErrors apijson.Field
+	Enabled           apijson.Field
+	LastError         apijson.Field
+	LastErrorAt       apijson.Field
+	LastSyncAt        apijson.Field
+	NextSyncAt        apijson.Field
+	RateLimitResetAt  apijson.Field
+	TotalPostsSynced  apijson.Field
+	TotalSyncRuns     apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *AccountHealthGetResponseSync) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountHealthGetResponseSyncJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -155,6 +194,7 @@ type AccountHealthListResponseData struct {
 	Username       string                                 `json:"username" api:"required,nullable"`
 	Workspace      AccountHealthListResponseDataWorkspace `json:"workspace" api:"required,nullable"`
 	Error          AccountHealthListResponseDataError     `json:"error"`
+	Sync           AccountHealthListResponseDataSync      `json:"sync" api:"nullable"`
 	JSON           accountHealthListResponseDataJSON      `json:"-"`
 }
 
@@ -171,6 +211,7 @@ type accountHealthListResponseDataJSON struct {
 	Username       apijson.Field
 	Workspace      apijson.Field
 	Error          apijson.Field
+	Sync           apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -260,6 +301,43 @@ func (r *AccountHealthListResponseDataError) UnmarshalJSON(data []byte) (err err
 }
 
 func (r accountHealthListResponseDataErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+type AccountHealthListResponseDataSync struct {
+	ConsecutiveErrors float64                               `json:"consecutive_errors" api:"required"`
+	Enabled           bool                                  `json:"enabled" api:"required"`
+	LastError         string                                `json:"last_error" api:"required,nullable"`
+	LastErrorAt       time.Time                             `json:"last_error_at" api:"required,nullable" format:"date-time"`
+	LastSyncAt        time.Time                             `json:"last_sync_at" api:"required,nullable" format:"date-time"`
+	NextSyncAt        time.Time                             `json:"next_sync_at" api:"required,nullable" format:"date-time"`
+	RateLimitResetAt  time.Time                             `json:"rate_limit_reset_at" api:"required,nullable" format:"date-time"`
+	TotalPostsSynced  float64                               `json:"total_posts_synced" api:"required"`
+	TotalSyncRuns     float64                               `json:"total_sync_runs" api:"required"`
+	JSON              accountHealthListResponseDataSyncJSON `json:"-"`
+}
+
+// accountHealthListResponseDataSyncJSON contains the JSON metadata for the struct
+// [AccountHealthListResponseDataSync]
+type accountHealthListResponseDataSyncJSON struct {
+	ConsecutiveErrors apijson.Field
+	Enabled           apijson.Field
+	LastError         apijson.Field
+	LastErrorAt       apijson.Field
+	LastSyncAt        apijson.Field
+	NextSyncAt        apijson.Field
+	RateLimitResetAt  apijson.Field
+	TotalPostsSynced  apijson.Field
+	TotalSyncRuns     apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *AccountHealthListResponseDataSync) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountHealthListResponseDataSyncJSON) RawJSON() string {
 	return r.raw
 }
 
