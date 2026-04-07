@@ -446,7 +446,7 @@ type AccountListParams struct {
 	To param.Field[time.Time] `query:"to" format:"date-time"`
 	// Only show ungrouped accounts
 	Ungrouped param.Field[bool] `query:"ungrouped"`
-	// Filter by group ID
+	// Filter by workspace ID
 	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 

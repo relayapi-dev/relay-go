@@ -453,6 +453,8 @@ type ConnectCompleteOAuthCallbackParams struct {
 	Code param.Field[string] `json:"code" api:"required"`
 	// Redirect URL used during the OAuth flow (must match)
 	RedirectURL param.Field[string] `json:"redirect_url" format:"uri"`
+	// OAuth state token for direct KV lookup
+	State param.Field[string] `json:"state"`
 }
 
 func (r ConnectCompleteOAuthCallbackParams) MarshalJSON() (data []byte, err error) {
