@@ -2737,7 +2737,7 @@ func (r postUnpublishResponseMetricsJSON) RawJSON() string {
 type PostNewParams struct {
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
 	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
-	// schedule.
+	// schedule (max 30 days ahead).
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
 	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
@@ -2886,7 +2886,7 @@ type PostUpdateParams struct {
 	Recycling param.Field[PostUpdateParamsRecycling] `json:"recycling"`
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
 	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
-	// schedule.
+	// schedule (max 30 days ahead).
 	ScheduledAt   param.Field[string]                            `json:"scheduled_at"`
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// Updated targets
@@ -3044,7 +3044,7 @@ func (r PostBulkNewParams) MarshalJSON() (data []byte, err error) {
 type PostBulkNewParamsPost struct {
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
 	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
-	// schedule.
+	// schedule (max 30 days ahead).
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
 	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`

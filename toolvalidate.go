@@ -1621,7 +1621,7 @@ func (r ToolValidateValidateMediaParams) MarshalJSON() (data []byte, err error) 
 type ToolValidateValidatePostParams struct {
 	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
 	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
-	// schedule.
+	// schedule (max 30 days ahead).
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
 	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
