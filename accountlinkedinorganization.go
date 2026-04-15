@@ -107,18 +107,18 @@ func (r accountLinkedinOrganizationGetResponseDataJSON) RawJSON() string {
 
 type AccountLinkedinOrganizationSwitchTypeResponse struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountLinkedinOrganizationSwitchTypeResponseGroup    `json:"group" api:"required,nullable"`
+	ID                string                                                `json:"id" api:"required"`
+	AvatarURL         string                                                `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                             `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                                `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                                `json:"metadata" api:"required,nullable"`
 	Platform          AccountLinkedinOrganizationSwitchTypeResponsePlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                             `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                                `json:"username" api:"required,nullable"`
-	JSON              accountLinkedinOrganizationSwitchTypeResponseJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountLinkedinOrganizationSwitchTypeResponseWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountLinkedinOrganizationSwitchTypeResponseJSON      `json:"-"`
 }
 
 // accountLinkedinOrganizationSwitchTypeResponseJSON contains the JSON metadata for
@@ -128,12 +128,12 @@ type accountLinkedinOrganizationSwitchTypeResponseJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -143,30 +143,6 @@ func (r *AccountLinkedinOrganizationSwitchTypeResponse) UnmarshalJSON(data []byt
 }
 
 func (r accountLinkedinOrganizationSwitchTypeResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountLinkedinOrganizationSwitchTypeResponseGroup struct {
-	ID   string                                                 `json:"id" api:"required"`
-	Name string                                                 `json:"name" api:"required"`
-	JSON accountLinkedinOrganizationSwitchTypeResponseGroupJSON `json:"-"`
-}
-
-// accountLinkedinOrganizationSwitchTypeResponseGroupJSON contains the JSON
-// metadata for the struct [AccountLinkedinOrganizationSwitchTypeResponseGroup]
-type accountLinkedinOrganizationSwitchTypeResponseGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountLinkedinOrganizationSwitchTypeResponseGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountLinkedinOrganizationSwitchTypeResponseGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -202,6 +178,30 @@ func (r AccountLinkedinOrganizationSwitchTypeResponsePlatform) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type AccountLinkedinOrganizationSwitchTypeResponseWorkspace struct {
+	ID   string                                                     `json:"id" api:"required"`
+	Name string                                                     `json:"name" api:"required"`
+	JSON accountLinkedinOrganizationSwitchTypeResponseWorkspaceJSON `json:"-"`
+}
+
+// accountLinkedinOrganizationSwitchTypeResponseWorkspaceJSON contains the JSON
+// metadata for the struct [AccountLinkedinOrganizationSwitchTypeResponseWorkspace]
+type accountLinkedinOrganizationSwitchTypeResponseWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountLinkedinOrganizationSwitchTypeResponseWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountLinkedinOrganizationSwitchTypeResponseWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type AccountLinkedinOrganizationSwitchTypeParams struct {
