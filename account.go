@@ -98,18 +98,18 @@ func (r *AccountService) Delete(ctx context.Context, id string, opts ...option.R
 
 type AccountGetResponse struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountGetResponseGroup    `json:"group" api:"required,nullable"`
+	ID                string                     `json:"id" api:"required"`
+	AvatarURL         string                     `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                  `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                     `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}     `json:"metadata" api:"required,nullable"`
 	Platform          AccountGetResponsePlatform `json:"platform" api:"required"`
 	PlatformAccountID string                     `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                  `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                     `json:"username" api:"required,nullable"`
-	JSON              accountGetResponseJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountGetResponseWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountGetResponseJSON      `json:"-"`
 }
 
 // accountGetResponseJSON contains the JSON metadata for the struct
@@ -119,12 +119,12 @@ type accountGetResponseJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -134,30 +134,6 @@ func (r *AccountGetResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r accountGetResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountGetResponseGroup struct {
-	ID   string                      `json:"id" api:"required"`
-	Name string                      `json:"name" api:"required"`
-	JSON accountGetResponseGroupJSON `json:"-"`
-}
-
-// accountGetResponseGroupJSON contains the JSON metadata for the struct
-// [AccountGetResponseGroup]
-type accountGetResponseGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountGetResponseGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountGetResponseGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -195,20 +171,44 @@ func (r AccountGetResponsePlatform) IsKnown() bool {
 	return false
 }
 
+// Account workspace
+type AccountGetResponseWorkspace struct {
+	ID   string                          `json:"id" api:"required"`
+	Name string                          `json:"name" api:"required"`
+	JSON accountGetResponseWorkspaceJSON `json:"-"`
+}
+
+// accountGetResponseWorkspaceJSON contains the JSON metadata for the struct
+// [AccountGetResponseWorkspace]
+type accountGetResponseWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountGetResponseWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountGetResponseWorkspaceJSON) RawJSON() string {
+	return r.raw
+}
+
 type AccountUpdateResponse struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountUpdateResponseGroup    `json:"group" api:"required,nullable"`
+	ID                string                        `json:"id" api:"required"`
+	AvatarURL         string                        `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                     `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                        `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}        `json:"metadata" api:"required,nullable"`
 	Platform          AccountUpdateResponsePlatform `json:"platform" api:"required"`
 	PlatformAccountID string                        `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                     `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                        `json:"username" api:"required,nullable"`
-	JSON              accountUpdateResponseJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountUpdateResponseWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountUpdateResponseJSON      `json:"-"`
 }
 
 // accountUpdateResponseJSON contains the JSON metadata for the struct
@@ -218,12 +218,12 @@ type accountUpdateResponseJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -233,30 +233,6 @@ func (r *AccountUpdateResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r accountUpdateResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountUpdateResponseGroup struct {
-	ID   string                         `json:"id" api:"required"`
-	Name string                         `json:"name" api:"required"`
-	JSON accountUpdateResponseGroupJSON `json:"-"`
-}
-
-// accountUpdateResponseGroupJSON contains the JSON metadata for the struct
-// [AccountUpdateResponseGroup]
-type accountUpdateResponseGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountUpdateResponseGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountUpdateResponseGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -294,6 +270,30 @@ func (r AccountUpdateResponsePlatform) IsKnown() bool {
 	return false
 }
 
+// Account workspace
+type AccountUpdateResponseWorkspace struct {
+	ID   string                             `json:"id" api:"required"`
+	Name string                             `json:"name" api:"required"`
+	JSON accountUpdateResponseWorkspaceJSON `json:"-"`
+}
+
+// accountUpdateResponseWorkspaceJSON contains the JSON metadata for the struct
+// [AccountUpdateResponseWorkspace]
+type accountUpdateResponseWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountUpdateResponseWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountUpdateResponseWorkspaceJSON) RawJSON() string {
+	return r.raw
+}
+
 type AccountListResponse struct {
 	Data []AccountListResponseData `json:"data" api:"required"`
 	// Whether more items exist
@@ -323,18 +323,18 @@ func (r accountListResponseJSON) RawJSON() string {
 
 type AccountListResponseData struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountListResponseDataGroup    `json:"group" api:"required,nullable"`
+	ID                string                          `json:"id" api:"required"`
+	AvatarURL         string                          `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                       `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                          `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}          `json:"metadata" api:"required,nullable"`
 	Platform          AccountListResponseDataPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                          `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                       `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                          `json:"username" api:"required,nullable"`
-	JSON              accountListResponseDataJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountListResponseDataWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountListResponseDataJSON      `json:"-"`
 }
 
 // accountListResponseDataJSON contains the JSON metadata for the struct
@@ -344,12 +344,12 @@ type accountListResponseDataJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -359,30 +359,6 @@ func (r *AccountListResponseData) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r accountListResponseDataJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountListResponseDataGroup struct {
-	ID   string                           `json:"id" api:"required"`
-	Name string                           `json:"name" api:"required"`
-	JSON accountListResponseDataGroupJSON `json:"-"`
-}
-
-// accountListResponseDataGroupJSON contains the JSON metadata for the struct
-// [AccountListResponseDataGroup]
-type accountListResponseDataGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountListResponseDataGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountListResponseDataGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -418,6 +394,30 @@ func (r AccountListResponseDataPlatform) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type AccountListResponseDataWorkspace struct {
+	ID   string                               `json:"id" api:"required"`
+	Name string                               `json:"name" api:"required"`
+	JSON accountListResponseDataWorkspaceJSON `json:"-"`
+}
+
+// accountListResponseDataWorkspaceJSON contains the JSON metadata for the struct
+// [AccountListResponseDataWorkspace]
+type accountListResponseDataWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountListResponseDataWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountListResponseDataWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type AccountUpdateParams struct {

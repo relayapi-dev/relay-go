@@ -80,18 +80,18 @@ func (r connectWhatsappCompleteEmbeddedSignupResponseJSON) RawJSON() string {
 
 type ConnectWhatsappCompleteEmbeddedSignupResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectWhatsappCompleteEmbeddedSignupResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                                       `json:"id" api:"required"`
+	AvatarURL         string                                                       `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                                    `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                                       `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                                       `json:"metadata" api:"required,nullable"`
 	Platform          ConnectWhatsappCompleteEmbeddedSignupResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                       `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                                    `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                                       `json:"username" api:"required,nullable"`
-	JSON              connectWhatsappCompleteEmbeddedSignupResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectWhatsappCompleteEmbeddedSignupResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectWhatsappCompleteEmbeddedSignupResponseAccountJSON      `json:"-"`
 }
 
 // connectWhatsappCompleteEmbeddedSignupResponseAccountJSON contains the JSON
@@ -101,12 +101,12 @@ type connectWhatsappCompleteEmbeddedSignupResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -116,31 +116,6 @@ func (r *ConnectWhatsappCompleteEmbeddedSignupResponseAccount) UnmarshalJSON(dat
 }
 
 func (r connectWhatsappCompleteEmbeddedSignupResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectWhatsappCompleteEmbeddedSignupResponseAccountGroup struct {
-	ID   string                                                        `json:"id" api:"required"`
-	Name string                                                        `json:"name" api:"required"`
-	JSON connectWhatsappCompleteEmbeddedSignupResponseAccountGroupJSON `json:"-"`
-}
-
-// connectWhatsappCompleteEmbeddedSignupResponseAccountGroupJSON contains the JSON
-// metadata for the struct
-// [ConnectWhatsappCompleteEmbeddedSignupResponseAccountGroup]
-type connectWhatsappCompleteEmbeddedSignupResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectWhatsappCompleteEmbeddedSignupResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectWhatsappCompleteEmbeddedSignupResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -178,6 +153,31 @@ func (r ConnectWhatsappCompleteEmbeddedSignupResponseAccountPlatform) IsKnown() 
 	return false
 }
 
+// Account workspace
+type ConnectWhatsappCompleteEmbeddedSignupResponseAccountWorkspace struct {
+	ID   string                                                            `json:"id" api:"required"`
+	Name string                                                            `json:"name" api:"required"`
+	JSON connectWhatsappCompleteEmbeddedSignupResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectWhatsappCompleteEmbeddedSignupResponseAccountWorkspaceJSON contains the
+// JSON metadata for the struct
+// [ConnectWhatsappCompleteEmbeddedSignupResponseAccountWorkspace]
+type connectWhatsappCompleteEmbeddedSignupResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectWhatsappCompleteEmbeddedSignupResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectWhatsappCompleteEmbeddedSignupResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
+}
+
 type ConnectWhatsappConnectViaCredentialsResponse struct {
 	Account ConnectWhatsappConnectViaCredentialsResponseAccount `json:"account" api:"required"`
 	JSON    connectWhatsappConnectViaCredentialsResponseJSON    `json:"-"`
@@ -201,18 +201,18 @@ func (r connectWhatsappConnectViaCredentialsResponseJSON) RawJSON() string {
 
 type ConnectWhatsappConnectViaCredentialsResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectWhatsappConnectViaCredentialsResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                                      `json:"id" api:"required"`
+	AvatarURL         string                                                      `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                                   `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                                      `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                                      `json:"metadata" api:"required,nullable"`
 	Platform          ConnectWhatsappConnectViaCredentialsResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                      `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                                   `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                                      `json:"username" api:"required,nullable"`
-	JSON              connectWhatsappConnectViaCredentialsResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectWhatsappConnectViaCredentialsResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectWhatsappConnectViaCredentialsResponseAccountJSON      `json:"-"`
 }
 
 // connectWhatsappConnectViaCredentialsResponseAccountJSON contains the JSON
@@ -222,12 +222,12 @@ type connectWhatsappConnectViaCredentialsResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -237,31 +237,6 @@ func (r *ConnectWhatsappConnectViaCredentialsResponseAccount) UnmarshalJSON(data
 }
 
 func (r connectWhatsappConnectViaCredentialsResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectWhatsappConnectViaCredentialsResponseAccountGroup struct {
-	ID   string                                                       `json:"id" api:"required"`
-	Name string                                                       `json:"name" api:"required"`
-	JSON connectWhatsappConnectViaCredentialsResponseAccountGroupJSON `json:"-"`
-}
-
-// connectWhatsappConnectViaCredentialsResponseAccountGroupJSON contains the JSON
-// metadata for the struct
-// [ConnectWhatsappConnectViaCredentialsResponseAccountGroup]
-type connectWhatsappConnectViaCredentialsResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectWhatsappConnectViaCredentialsResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectWhatsappConnectViaCredentialsResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -297,6 +272,31 @@ func (r ConnectWhatsappConnectViaCredentialsResponseAccountPlatform) IsKnown() b
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type ConnectWhatsappConnectViaCredentialsResponseAccountWorkspace struct {
+	ID   string                                                           `json:"id" api:"required"`
+	Name string                                                           `json:"name" api:"required"`
+	JSON connectWhatsappConnectViaCredentialsResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectWhatsappConnectViaCredentialsResponseAccountWorkspaceJSON contains the
+// JSON metadata for the struct
+// [ConnectWhatsappConnectViaCredentialsResponseAccountWorkspace]
+type connectWhatsappConnectViaCredentialsResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectWhatsappConnectViaCredentialsResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectWhatsappConnectViaCredentialsResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type ConnectWhatsappGetSDKConfigResponse struct {

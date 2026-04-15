@@ -107,18 +107,18 @@ func (r accountRedditSubredditGetResponseDataJSON) RawJSON() string {
 
 type AccountRedditSubredditSetDefaultResponse struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountRedditSubredditSetDefaultResponseGroup    `json:"group" api:"required,nullable"`
+	ID                string                                           `json:"id" api:"required"`
+	AvatarURL         string                                           `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                        `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                           `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                           `json:"metadata" api:"required,nullable"`
 	Platform          AccountRedditSubredditSetDefaultResponsePlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                           `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                        `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                           `json:"username" api:"required,nullable"`
-	JSON              accountRedditSubredditSetDefaultResponseJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountRedditSubredditSetDefaultResponseWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountRedditSubredditSetDefaultResponseJSON      `json:"-"`
 }
 
 // accountRedditSubredditSetDefaultResponseJSON contains the JSON metadata for the
@@ -128,12 +128,12 @@ type accountRedditSubredditSetDefaultResponseJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -143,30 +143,6 @@ func (r *AccountRedditSubredditSetDefaultResponse) UnmarshalJSON(data []byte) (e
 }
 
 func (r accountRedditSubredditSetDefaultResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountRedditSubredditSetDefaultResponseGroup struct {
-	ID   string                                            `json:"id" api:"required"`
-	Name string                                            `json:"name" api:"required"`
-	JSON accountRedditSubredditSetDefaultResponseGroupJSON `json:"-"`
-}
-
-// accountRedditSubredditSetDefaultResponseGroupJSON contains the JSON metadata for
-// the struct [AccountRedditSubredditSetDefaultResponseGroup]
-type accountRedditSubredditSetDefaultResponseGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountRedditSubredditSetDefaultResponseGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountRedditSubredditSetDefaultResponseGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -202,6 +178,30 @@ func (r AccountRedditSubredditSetDefaultResponsePlatform) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type AccountRedditSubredditSetDefaultResponseWorkspace struct {
+	ID   string                                                `json:"id" api:"required"`
+	Name string                                                `json:"name" api:"required"`
+	JSON accountRedditSubredditSetDefaultResponseWorkspaceJSON `json:"-"`
+}
+
+// accountRedditSubredditSetDefaultResponseWorkspaceJSON contains the JSON metadata
+// for the struct [AccountRedditSubredditSetDefaultResponseWorkspace]
+type accountRedditSubredditSetDefaultResponseWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountRedditSubredditSetDefaultResponseWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountRedditSubredditSetDefaultResponseWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type AccountRedditSubredditSetDefaultParams struct {

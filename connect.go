@@ -105,18 +105,18 @@ func (r connectCompleteOAuthCallbackResponseJSON) RawJSON() string {
 
 type ConnectCompleteOAuthCallbackResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectCompleteOAuthCallbackResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                              `json:"id" api:"required"`
+	AvatarURL         string                                              `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                           `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                              `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                              `json:"metadata" api:"required,nullable"`
 	Platform          ConnectCompleteOAuthCallbackResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                              `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                           `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                              `json:"username" api:"required,nullable"`
-	JSON              connectCompleteOAuthCallbackResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectCompleteOAuthCallbackResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectCompleteOAuthCallbackResponseAccountJSON      `json:"-"`
 }
 
 // connectCompleteOAuthCallbackResponseAccountJSON contains the JSON metadata for
@@ -126,12 +126,12 @@ type connectCompleteOAuthCallbackResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -141,30 +141,6 @@ func (r *ConnectCompleteOAuthCallbackResponseAccount) UnmarshalJSON(data []byte)
 }
 
 func (r connectCompleteOAuthCallbackResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectCompleteOAuthCallbackResponseAccountGroup struct {
-	ID   string                                               `json:"id" api:"required"`
-	Name string                                               `json:"name" api:"required"`
-	JSON connectCompleteOAuthCallbackResponseAccountGroupJSON `json:"-"`
-}
-
-// connectCompleteOAuthCallbackResponseAccountGroupJSON contains the JSON metadata
-// for the struct [ConnectCompleteOAuthCallbackResponseAccountGroup]
-type connectCompleteOAuthCallbackResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectCompleteOAuthCallbackResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectCompleteOAuthCallbackResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -202,6 +178,30 @@ func (r ConnectCompleteOAuthCallbackResponseAccountPlatform) IsKnown() bool {
 	return false
 }
 
+// Account workspace
+type ConnectCompleteOAuthCallbackResponseAccountWorkspace struct {
+	ID   string                                                   `json:"id" api:"required"`
+	Name string                                                   `json:"name" api:"required"`
+	JSON connectCompleteOAuthCallbackResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectCompleteOAuthCallbackResponseAccountWorkspaceJSON contains the JSON
+// metadata for the struct [ConnectCompleteOAuthCallbackResponseAccountWorkspace]
+type connectCompleteOAuthCallbackResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectCompleteOAuthCallbackResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectCompleteOAuthCallbackResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
+}
+
 type ConnectNewBlueskyConnectionResponse struct {
 	Account ConnectNewBlueskyConnectionResponseAccount `json:"account" api:"required"`
 	JSON    connectNewBlueskyConnectionResponseJSON    `json:"-"`
@@ -225,18 +225,18 @@ func (r connectNewBlueskyConnectionResponseJSON) RawJSON() string {
 
 type ConnectNewBlueskyConnectionResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectNewBlueskyConnectionResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                             `json:"id" api:"required"`
+	AvatarURL         string                                             `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                          `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                             `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                             `json:"metadata" api:"required,nullable"`
 	Platform          ConnectNewBlueskyConnectionResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                             `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                          `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                             `json:"username" api:"required,nullable"`
-	JSON              connectNewBlueskyConnectionResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectNewBlueskyConnectionResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectNewBlueskyConnectionResponseAccountJSON      `json:"-"`
 }
 
 // connectNewBlueskyConnectionResponseAccountJSON contains the JSON metadata for
@@ -246,12 +246,12 @@ type connectNewBlueskyConnectionResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -261,30 +261,6 @@ func (r *ConnectNewBlueskyConnectionResponseAccount) UnmarshalJSON(data []byte) 
 }
 
 func (r connectNewBlueskyConnectionResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectNewBlueskyConnectionResponseAccountGroup struct {
-	ID   string                                              `json:"id" api:"required"`
-	Name string                                              `json:"name" api:"required"`
-	JSON connectNewBlueskyConnectionResponseAccountGroupJSON `json:"-"`
-}
-
-// connectNewBlueskyConnectionResponseAccountGroupJSON contains the JSON metadata
-// for the struct [ConnectNewBlueskyConnectionResponseAccountGroup]
-type connectNewBlueskyConnectionResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectNewBlueskyConnectionResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectNewBlueskyConnectionResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -320,6 +296,30 @@ func (r ConnectNewBlueskyConnectionResponseAccountPlatform) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type ConnectNewBlueskyConnectionResponseAccountWorkspace struct {
+	ID   string                                                  `json:"id" api:"required"`
+	Name string                                                  `json:"name" api:"required"`
+	JSON connectNewBlueskyConnectionResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectNewBlueskyConnectionResponseAccountWorkspaceJSON contains the JSON
+// metadata for the struct [ConnectNewBlueskyConnectionResponseAccountWorkspace]
+type connectNewBlueskyConnectionResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectNewBlueskyConnectionResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectNewBlueskyConnectionResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type ConnectFetchPendingDataResponse struct {
