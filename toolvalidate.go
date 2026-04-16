@@ -1630,6 +1630,9 @@ type ToolValidateValidatePostParams struct {
 	// Cross-post actions to execute after publishing (e.g., repost from another
 	// account, comment from another account)
 	CrossPostActions param.Field[[]ToolValidateValidatePostParamsCrossPostAction] `json:"cross_post_actions"`
+	// Create post from an idea. Pre-fills content from the idea. Explicit 'content'
+	// field takes precedence.
+	IdeaID param.Field[string] `json:"idea_id"`
 	// Media attachments
 	Media param.Field[[]ToolValidateValidatePostParamsMedia] `json:"media"`
 	// Recycling configuration for evergreen content (Pro plan only)

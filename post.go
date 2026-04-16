@@ -2746,6 +2746,9 @@ type PostNewParams struct {
 	// Cross-post actions to execute after publishing (e.g., repost from another
 	// account, comment from another account)
 	CrossPostActions param.Field[[]PostNewParamsCrossPostAction] `json:"cross_post_actions"`
+	// Create post from an idea. Pre-fills content from the idea. Explicit 'content'
+	// field takes precedence.
+	IdeaID param.Field[string] `json:"idea_id"`
 	// Media attachments
 	Media param.Field[[]PostNewParamsMedia] `json:"media"`
 	// Recycling configuration for evergreen content (Pro plan only)
@@ -3053,6 +3056,9 @@ type PostBulkNewParamsPost struct {
 	// Cross-post actions to execute after publishing (e.g., repost from another
 	// account, comment from another account)
 	CrossPostActions param.Field[[]PostBulkNewParamsPostsCrossPostAction] `json:"cross_post_actions"`
+	// Create post from an idea. Pre-fills content from the idea. Explicit 'content'
+	// field takes precedence.
+	IdeaID param.Field[string] `json:"idea_id"`
 	// Media attachments
 	Media param.Field[[]PostBulkNewParamsPostsMedia] `json:"media"`
 	// Recycling configuration for evergreen content (Pro plan only)
