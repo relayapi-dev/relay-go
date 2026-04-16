@@ -37,6 +37,7 @@ func TestPostNewWithOptionalParams(t *testing.T) {
 			Content:         relaygo.F("content"),
 			DelayMinutes:    relaygo.F(int64(0)),
 		}}),
+		IdeaID: relaygo.F("idea_id"),
 		Media: relaygo.F([]relaygo.PostNewParamsMedia{{
 			URL:  relaygo.F("https://example.com"),
 			Type: relaygo.F(relaygo.PostNewParamsMediaTypeImage),
@@ -227,6 +228,7 @@ func TestPostBulkNew(t *testing.T) {
 				Content:         relaygo.F("content"),
 				DelayMinutes:    relaygo.F(int64(0)),
 			}}),
+			IdeaID: relaygo.F("idea_id"),
 			Media: relaygo.F([]relaygo.PostBulkNewParamsPostsMedia{{
 				URL:  relaygo.F("https://example.com"),
 				Type: relaygo.F(relaygo.PostBulkNewParamsPostsMediaTypeImage),

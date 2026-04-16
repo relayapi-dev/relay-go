@@ -112,6 +112,7 @@ func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
 			Content:         relaygo.F("content"),
 			DelayMinutes:    relaygo.F(int64(0)),
 		}}),
+		IdeaID: relaygo.F("idea_id"),
 		Media: relaygo.F([]relaygo.ToolValidateValidatePostParamsMedia{{
 			URL:  relaygo.F("https://example.com"),
 			Type: relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
