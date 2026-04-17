@@ -88,7 +88,10 @@ func (r *AnalyticsService) ListDailyMetrics(ctx context.Context, query Analytics
 type AnalyticsGetResponse struct {
 	Data     []AnalyticsGetResponseData   `json:"data" api:"required"`
 	Overview AnalyticsGetResponseOverview `json:"overview"`
-	JSON     analyticsGetResponseJSON     `json:"-"`
+	// True when the matching target set exceeds the per-response cap. Narrow by
+	// from_date/to_date/platform to see the full set.
+	Truncated bool                     `json:"truncated"`
+	JSON      analyticsGetResponseJSON `json:"-"`
 }
 
 // analyticsGetResponseJSON contains the JSON metadata for the struct
@@ -96,6 +99,7 @@ type AnalyticsGetResponse struct {
 type analyticsGetResponseJSON struct {
 	Data        apijson.Field
 	Overview    apijson.Field
+	Truncated   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
