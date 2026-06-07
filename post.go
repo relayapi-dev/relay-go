@@ -382,11 +382,12 @@ const (
 	PostNewResponseTargetsStatusPublishing PostNewResponseTargetsStatus = "publishing"
 	PostNewResponseTargetsStatusPublished  PostNewResponseTargetsStatus = "published"
 	PostNewResponseTargetsStatusFailed     PostNewResponseTargetsStatus = "failed"
+	PostNewResponseTargetsStatusPartial    PostNewResponseTargetsStatus = "partial"
 )
 
 func (r PostNewResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostNewResponseTargetsStatusDraft, PostNewResponseTargetsStatusScheduled, PostNewResponseTargetsStatusPublishing, PostNewResponseTargetsStatusPublished, PostNewResponseTargetsStatusFailed:
+	case PostNewResponseTargetsStatusDraft, PostNewResponseTargetsStatusScheduled, PostNewResponseTargetsStatusPublishing, PostNewResponseTargetsStatusPublished, PostNewResponseTargetsStatusFailed, PostNewResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -400,6 +401,8 @@ type PostNewResponseTargetsAccount struct {
 	DisplayName string `json:"display_name" api:"required,nullable"`
 	// Platform-native post ID
 	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                            `json:"url" api:"required,nullable"`
 	Username string                            `json:"username" api:"required,nullable"`
@@ -413,6 +416,7 @@ type postNewResponseTargetsAccountJSON struct {
 	AvatarURL      apijson.Field
 	DisplayName    apijson.Field
 	PlatformPostID apijson.Field
+	TargetID       apijson.Field
 	URL            apijson.Field
 	Username       apijson.Field
 	raw            string
@@ -428,9 +432,11 @@ func (r postNewResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostNewResponseTargetsError struct {
-	Code    string                          `json:"code" api:"required"`
-	Message string                          `json:"message" api:"required"`
-	JSON    postNewResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                          `json:"detail"`
+	JSON   postNewResponseTargetsErrorJSON `json:"-"`
 }
 
 // postNewResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -438,6 +444,7 @@ type PostNewResponseTargetsError struct {
 type postNewResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -743,11 +750,12 @@ const (
 	PostGetResponseTargetsStatusPublishing PostGetResponseTargetsStatus = "publishing"
 	PostGetResponseTargetsStatusPublished  PostGetResponseTargetsStatus = "published"
 	PostGetResponseTargetsStatusFailed     PostGetResponseTargetsStatus = "failed"
+	PostGetResponseTargetsStatusPartial    PostGetResponseTargetsStatus = "partial"
 )
 
 func (r PostGetResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostGetResponseTargetsStatusDraft, PostGetResponseTargetsStatusScheduled, PostGetResponseTargetsStatusPublishing, PostGetResponseTargetsStatusPublished, PostGetResponseTargetsStatusFailed:
+	case PostGetResponseTargetsStatusDraft, PostGetResponseTargetsStatusScheduled, PostGetResponseTargetsStatusPublishing, PostGetResponseTargetsStatusPublished, PostGetResponseTargetsStatusFailed, PostGetResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -761,6 +769,8 @@ type PostGetResponseTargetsAccount struct {
 	DisplayName string `json:"display_name" api:"required,nullable"`
 	// Platform-native post ID
 	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                            `json:"url" api:"required,nullable"`
 	Username string                            `json:"username" api:"required,nullable"`
@@ -774,6 +784,7 @@ type postGetResponseTargetsAccountJSON struct {
 	AvatarURL      apijson.Field
 	DisplayName    apijson.Field
 	PlatformPostID apijson.Field
+	TargetID       apijson.Field
 	URL            apijson.Field
 	Username       apijson.Field
 	raw            string
@@ -789,9 +800,11 @@ func (r postGetResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostGetResponseTargetsError struct {
-	Code    string                          `json:"code" api:"required"`
-	Message string                          `json:"message" api:"required"`
-	JSON    postGetResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                          `json:"detail"`
+	JSON   postGetResponseTargetsErrorJSON `json:"-"`
 }
 
 // postGetResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -799,6 +812,7 @@ type PostGetResponseTargetsError struct {
 type postGetResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1105,11 +1119,12 @@ const (
 	PostUpdateResponseTargetsStatusPublishing PostUpdateResponseTargetsStatus = "publishing"
 	PostUpdateResponseTargetsStatusPublished  PostUpdateResponseTargetsStatus = "published"
 	PostUpdateResponseTargetsStatusFailed     PostUpdateResponseTargetsStatus = "failed"
+	PostUpdateResponseTargetsStatusPartial    PostUpdateResponseTargetsStatus = "partial"
 )
 
 func (r PostUpdateResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostUpdateResponseTargetsStatusDraft, PostUpdateResponseTargetsStatusScheduled, PostUpdateResponseTargetsStatusPublishing, PostUpdateResponseTargetsStatusPublished, PostUpdateResponseTargetsStatusFailed:
+	case PostUpdateResponseTargetsStatusDraft, PostUpdateResponseTargetsStatusScheduled, PostUpdateResponseTargetsStatusPublishing, PostUpdateResponseTargetsStatusPublished, PostUpdateResponseTargetsStatusFailed, PostUpdateResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -1123,6 +1138,8 @@ type PostUpdateResponseTargetsAccount struct {
 	DisplayName string `json:"display_name" api:"required,nullable"`
 	// Platform-native post ID
 	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                               `json:"url" api:"required,nullable"`
 	Username string                               `json:"username" api:"required,nullable"`
@@ -1136,6 +1153,7 @@ type postUpdateResponseTargetsAccountJSON struct {
 	AvatarURL      apijson.Field
 	DisplayName    apijson.Field
 	PlatformPostID apijson.Field
+	TargetID       apijson.Field
 	URL            apijson.Field
 	Username       apijson.Field
 	raw            string
@@ -1151,9 +1169,11 @@ func (r postUpdateResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostUpdateResponseTargetsError struct {
-	Code    string                             `json:"code" api:"required"`
-	Message string                             `json:"message" api:"required"`
-	JSON    postUpdateResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                             `json:"detail"`
+	JSON   postUpdateResponseTargetsErrorJSON `json:"-"`
 }
 
 // postUpdateResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -1161,6 +1181,7 @@ type PostUpdateResponseTargetsError struct {
 type postUpdateResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1494,11 +1515,12 @@ const (
 	PostListResponseDataTargetsStatusPublishing PostListResponseDataTargetsStatus = "publishing"
 	PostListResponseDataTargetsStatusPublished  PostListResponseDataTargetsStatus = "published"
 	PostListResponseDataTargetsStatusFailed     PostListResponseDataTargetsStatus = "failed"
+	PostListResponseDataTargetsStatusPartial    PostListResponseDataTargetsStatus = "partial"
 )
 
 func (r PostListResponseDataTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostListResponseDataTargetsStatusDraft, PostListResponseDataTargetsStatusScheduled, PostListResponseDataTargetsStatusPublishing, PostListResponseDataTargetsStatusPublished, PostListResponseDataTargetsStatusFailed:
+	case PostListResponseDataTargetsStatusDraft, PostListResponseDataTargetsStatusScheduled, PostListResponseDataTargetsStatusPublishing, PostListResponseDataTargetsStatusPublished, PostListResponseDataTargetsStatusFailed, PostListResponseDataTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -1512,6 +1534,8 @@ type PostListResponseDataTargetsAccount struct {
 	DisplayName string `json:"display_name" api:"required,nullable"`
 	// Platform-native post ID
 	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                 `json:"url" api:"required,nullable"`
 	Username string                                 `json:"username" api:"required,nullable"`
@@ -1525,6 +1549,7 @@ type postListResponseDataTargetsAccountJSON struct {
 	AvatarURL      apijson.Field
 	DisplayName    apijson.Field
 	PlatformPostID apijson.Field
+	TargetID       apijson.Field
 	URL            apijson.Field
 	Username       apijson.Field
 	raw            string
@@ -1540,9 +1565,11 @@ func (r postListResponseDataTargetsAccountJSON) RawJSON() string {
 }
 
 type PostListResponseDataTargetsError struct {
-	Code    string                               `json:"code" api:"required"`
-	Message string                               `json:"message" api:"required"`
-	JSON    postListResponseDataTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                               `json:"detail"`
+	JSON   postListResponseDataTargetsErrorJSON `json:"-"`
 }
 
 // postListResponseDataTargetsErrorJSON contains the JSON metadata for the struct
@@ -1550,6 +1577,7 @@ type PostListResponseDataTargetsError struct {
 type postListResponseDataTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1879,11 +1907,12 @@ const (
 	PostBulkNewResponseDataTargetsStatusPublishing PostBulkNewResponseDataTargetsStatus = "publishing"
 	PostBulkNewResponseDataTargetsStatusPublished  PostBulkNewResponseDataTargetsStatus = "published"
 	PostBulkNewResponseDataTargetsStatusFailed     PostBulkNewResponseDataTargetsStatus = "failed"
+	PostBulkNewResponseDataTargetsStatusPartial    PostBulkNewResponseDataTargetsStatus = "partial"
 )
 
 func (r PostBulkNewResponseDataTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostBulkNewResponseDataTargetsStatusDraft, PostBulkNewResponseDataTargetsStatusScheduled, PostBulkNewResponseDataTargetsStatusPublishing, PostBulkNewResponseDataTargetsStatusPublished, PostBulkNewResponseDataTargetsStatusFailed:
+	case PostBulkNewResponseDataTargetsStatusDraft, PostBulkNewResponseDataTargetsStatusScheduled, PostBulkNewResponseDataTargetsStatusPublishing, PostBulkNewResponseDataTargetsStatusPublished, PostBulkNewResponseDataTargetsStatusFailed, PostBulkNewResponseDataTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -1897,6 +1926,8 @@ type PostBulkNewResponseDataTargetsAccount struct {
 	DisplayName string `json:"display_name" api:"required,nullable"`
 	// Platform-native post ID
 	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                    `json:"url" api:"required,nullable"`
 	Username string                                    `json:"username" api:"required,nullable"`
@@ -1910,6 +1941,7 @@ type postBulkNewResponseDataTargetsAccountJSON struct {
 	AvatarURL      apijson.Field
 	DisplayName    apijson.Field
 	PlatformPostID apijson.Field
+	TargetID       apijson.Field
 	URL            apijson.Field
 	Username       apijson.Field
 	raw            string
@@ -1925,9 +1957,11 @@ func (r postBulkNewResponseDataTargetsAccountJSON) RawJSON() string {
 }
 
 type PostBulkNewResponseDataTargetsError struct {
-	Code    string                                  `json:"code" api:"required"`
-	Message string                                  `json:"message" api:"required"`
-	JSON    postBulkNewResponseDataTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                                  `json:"detail"`
+	JSON   postBulkNewResponseDataTargetsErrorJSON `json:"-"`
 }
 
 // postBulkNewResponseDataTargetsErrorJSON contains the JSON metadata for the
@@ -1935,6 +1969,7 @@ type PostBulkNewResponseDataTargetsError struct {
 type postBulkNewResponseDataTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -2266,11 +2301,12 @@ const (
 	PostRetryResponseTargetsStatusPublishing PostRetryResponseTargetsStatus = "publishing"
 	PostRetryResponseTargetsStatusPublished  PostRetryResponseTargetsStatus = "published"
 	PostRetryResponseTargetsStatusFailed     PostRetryResponseTargetsStatus = "failed"
+	PostRetryResponseTargetsStatusPartial    PostRetryResponseTargetsStatus = "partial"
 )
 
 func (r PostRetryResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostRetryResponseTargetsStatusDraft, PostRetryResponseTargetsStatusScheduled, PostRetryResponseTargetsStatusPublishing, PostRetryResponseTargetsStatusPublished, PostRetryResponseTargetsStatusFailed:
+	case PostRetryResponseTargetsStatusDraft, PostRetryResponseTargetsStatusScheduled, PostRetryResponseTargetsStatusPublishing, PostRetryResponseTargetsStatusPublished, PostRetryResponseTargetsStatusFailed, PostRetryResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -2284,6 +2320,8 @@ type PostRetryResponseTargetsAccount struct {
 	DisplayName string `json:"display_name" api:"required,nullable"`
 	// Platform-native post ID
 	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                              `json:"url" api:"required,nullable"`
 	Username string                              `json:"username" api:"required,nullable"`
@@ -2297,6 +2335,7 @@ type postRetryResponseTargetsAccountJSON struct {
 	AvatarURL      apijson.Field
 	DisplayName    apijson.Field
 	PlatformPostID apijson.Field
+	TargetID       apijson.Field
 	URL            apijson.Field
 	Username       apijson.Field
 	raw            string
@@ -2312,9 +2351,11 @@ func (r postRetryResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostRetryResponseTargetsError struct {
-	Code    string                            `json:"code" api:"required"`
-	Message string                            `json:"message" api:"required"`
-	JSON    postRetryResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                            `json:"detail"`
+	JSON   postRetryResponseTargetsErrorJSON `json:"-"`
 }
 
 // postRetryResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -2322,6 +2363,7 @@ type PostRetryResponseTargetsError struct {
 type postRetryResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -2628,11 +2670,12 @@ const (
 	PostUnpublishResponseTargetsStatusPublishing PostUnpublishResponseTargetsStatus = "publishing"
 	PostUnpublishResponseTargetsStatusPublished  PostUnpublishResponseTargetsStatus = "published"
 	PostUnpublishResponseTargetsStatusFailed     PostUnpublishResponseTargetsStatus = "failed"
+	PostUnpublishResponseTargetsStatusPartial    PostUnpublishResponseTargetsStatus = "partial"
 )
 
 func (r PostUnpublishResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostUnpublishResponseTargetsStatusDraft, PostUnpublishResponseTargetsStatusScheduled, PostUnpublishResponseTargetsStatusPublishing, PostUnpublishResponseTargetsStatusPublished, PostUnpublishResponseTargetsStatusFailed:
+	case PostUnpublishResponseTargetsStatusDraft, PostUnpublishResponseTargetsStatusScheduled, PostUnpublishResponseTargetsStatusPublishing, PostUnpublishResponseTargetsStatusPublished, PostUnpublishResponseTargetsStatusFailed, PostUnpublishResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -2646,6 +2689,8 @@ type PostUnpublishResponseTargetsAccount struct {
 	DisplayName string `json:"display_name" api:"required,nullable"`
 	// Platform-native post ID
 	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                  `json:"url" api:"required,nullable"`
 	Username string                                  `json:"username" api:"required,nullable"`
@@ -2659,6 +2704,7 @@ type postUnpublishResponseTargetsAccountJSON struct {
 	AvatarURL      apijson.Field
 	DisplayName    apijson.Field
 	PlatformPostID apijson.Field
+	TargetID       apijson.Field
 	URL            apijson.Field
 	Username       apijson.Field
 	raw            string
@@ -2674,9 +2720,11 @@ func (r postUnpublishResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostUnpublishResponseTargetsError struct {
-	Code    string                                `json:"code" api:"required"`
-	Message string                                `json:"message" api:"required"`
-	JSON    postUnpublishResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                                `json:"detail"`
+	JSON   postUnpublishResponseTargetsErrorJSON `json:"-"`
 }
 
 // postUnpublishResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -2684,6 +2732,7 @@ type PostUnpublishResponseTargetsError struct {
 type postUnpublishResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
