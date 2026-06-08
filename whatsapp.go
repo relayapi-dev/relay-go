@@ -62,18 +62,44 @@ func (r *WhatsappService) ListPhoneNumbers(ctx context.Context, query WhatsappLi
 }
 
 type WhatsappBulkSendResponse struct {
-	Results []WhatsappBulkSendResponseResult `json:"results" api:"required"`
-	Summary WhatsappBulkSendResponseSummary  `json:"summary" api:"required"`
-	JSON    whatsappBulkSendResponseJSON     `json:"-"`
+	ID               string                         `json:"id" api:"required"`
+	AccountID        string                         `json:"account_id" api:"required"`
+	CompletedAt      time.Time                      `json:"completed_at" api:"required,nullable" format:"date-time"`
+	CreatedAt        time.Time                      `json:"created_at" api:"required" format:"date-time"`
+	Description      string                         `json:"description" api:"required,nullable"`
+	FailedCount      int64                          `json:"failed_count" api:"required"`
+	MessageText      string                         `json:"message_text" api:"required,nullable"`
+	Name             string                         `json:"name" api:"required,nullable"`
+	Platform         string                         `json:"platform" api:"required"`
+	RecipientCount   int64                          `json:"recipient_count" api:"required"`
+	ScheduledAt      time.Time                      `json:"scheduled_at" api:"required,nullable" format:"date-time"`
+	SentCount        int64                          `json:"sent_count" api:"required"`
+	Status           WhatsappBulkSendResponseStatus `json:"status" api:"required"`
+	TemplateLanguage string                         `json:"template_language" api:"required,nullable"`
+	TemplateName     string                         `json:"template_name" api:"required,nullable"`
+	JSON             whatsappBulkSendResponseJSON   `json:"-"`
 }
 
 // whatsappBulkSendResponseJSON contains the JSON metadata for the struct
 // [WhatsappBulkSendResponse]
 type whatsappBulkSendResponseJSON struct {
-	Results     apijson.Field
-	Summary     apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID               apijson.Field
+	AccountID        apijson.Field
+	CompletedAt      apijson.Field
+	CreatedAt        apijson.Field
+	Description      apijson.Field
+	FailedCount      apijson.Field
+	MessageText      apijson.Field
+	Name             apijson.Field
+	Platform         apijson.Field
+	RecipientCount   apijson.Field
+	ScheduledAt      apijson.Field
+	SentCount        apijson.Field
+	Status           apijson.Field
+	TemplateLanguage apijson.Field
+	TemplateName     apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *WhatsappBulkSendResponse) UnmarshalJSON(data []byte) (err error) {
@@ -84,73 +110,24 @@ func (r whatsappBulkSendResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type WhatsappBulkSendResponseResult struct {
-	// Recipient phone number
-	Phone string `json:"phone" api:"required"`
-	// Send status
-	Status WhatsappBulkSendResponseResultsStatus `json:"status" api:"required"`
-	// Error message if failed
-	Error string                             `json:"error" api:"nullable"`
-	JSON  whatsappBulkSendResponseResultJSON `json:"-"`
-}
-
-// whatsappBulkSendResponseResultJSON contains the JSON metadata for the struct
-// [WhatsappBulkSendResponseResult]
-type whatsappBulkSendResponseResultJSON struct {
-	Phone       apijson.Field
-	Status      apijson.Field
-	Error       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *WhatsappBulkSendResponseResult) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r whatsappBulkSendResponseResultJSON) RawJSON() string {
-	return r.raw
-}
-
-// Send status
-type WhatsappBulkSendResponseResultsStatus string
+type WhatsappBulkSendResponseStatus string
 
 const (
-	WhatsappBulkSendResponseResultsStatusSent   WhatsappBulkSendResponseResultsStatus = "sent"
-	WhatsappBulkSendResponseResultsStatusFailed WhatsappBulkSendResponseResultsStatus = "failed"
+	WhatsappBulkSendResponseStatusDraft           WhatsappBulkSendResponseStatus = "draft"
+	WhatsappBulkSendResponseStatusScheduled       WhatsappBulkSendResponseStatus = "scheduled"
+	WhatsappBulkSendResponseStatusSending         WhatsappBulkSendResponseStatus = "sending"
+	WhatsappBulkSendResponseStatusSent            WhatsappBulkSendResponseStatus = "sent"
+	WhatsappBulkSendResponseStatusPartiallyFailed WhatsappBulkSendResponseStatus = "partially_failed"
+	WhatsappBulkSendResponseStatusFailed          WhatsappBulkSendResponseStatus = "failed"
+	WhatsappBulkSendResponseStatusCancelled       WhatsappBulkSendResponseStatus = "cancelled"
 )
 
-func (r WhatsappBulkSendResponseResultsStatus) IsKnown() bool {
+func (r WhatsappBulkSendResponseStatus) IsKnown() bool {
 	switch r {
-	case WhatsappBulkSendResponseResultsStatusSent, WhatsappBulkSendResponseResultsStatusFailed:
+	case WhatsappBulkSendResponseStatusDraft, WhatsappBulkSendResponseStatusScheduled, WhatsappBulkSendResponseStatusSending, WhatsappBulkSendResponseStatusSent, WhatsappBulkSendResponseStatusPartiallyFailed, WhatsappBulkSendResponseStatusFailed, WhatsappBulkSendResponseStatusCancelled:
 		return true
 	}
 	return false
-}
-
-type WhatsappBulkSendResponseSummary struct {
-	// Failed count
-	Failed float64 `json:"failed" api:"required"`
-	// Successfully sent count
-	Sent float64                             `json:"sent" api:"required"`
-	JSON whatsappBulkSendResponseSummaryJSON `json:"-"`
-}
-
-// whatsappBulkSendResponseSummaryJSON contains the JSON metadata for the struct
-// [WhatsappBulkSendResponseSummary]
-type whatsappBulkSendResponseSummaryJSON struct {
-	Failed      apijson.Field
-	Sent        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *WhatsappBulkSendResponseSummary) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r whatsappBulkSendResponseSummaryJSON) RawJSON() string {
-	return r.raw
 }
 
 type WhatsappListPhoneNumbersResponse struct {
