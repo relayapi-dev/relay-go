@@ -163,6 +163,7 @@ func TestPostListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Posts.List(context.TODO(), relaygo.PostListParams{
 		AccountID:       relaygo.F("account_id"),
+		AccountIDs:      relaygo.F("account_ids"),
 		Cursor:          relaygo.F("cursor"),
 		From:            relaygo.F(time.Now()),
 		Include:         relaygo.F("include"),

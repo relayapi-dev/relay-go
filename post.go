@@ -3021,6 +3021,9 @@ func (r PostUpdateParamsRecyclingGapFreq) IsKnown() bool {
 type PostListParams struct {
 	// Filter by specific account ID
 	AccountID param.Field[string] `query:"account_id"`
+	// Filter by any of several account IDs (comma-separated). Takes precedence over
+	// account_id.
+	AccountIDs param.Field[string] `query:"account_ids"`
 	// Pagination cursor
 	Cursor param.Field[string] `query:"cursor"`
 	// Filter: start date (ISO 8601)
