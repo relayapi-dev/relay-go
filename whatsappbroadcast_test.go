@@ -79,7 +79,7 @@ func TestWhatsappBroadcastGet(t *testing.T) {
 	}
 }
 
-func TestWhatsappBroadcastList(t *testing.T) {
+func TestWhatsappBroadcastListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -94,6 +94,8 @@ func TestWhatsappBroadcastList(t *testing.T) {
 	)
 	_, err := client.Whatsapp.Broadcasts.List(context.TODO(), relaygo.WhatsappBroadcastListParams{
 		AccountID: relaygo.F("account_id"),
+		Cursor:    relaygo.F("cursor"),
+		Limit:     relaygo.F(int64(1)),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

@@ -7,9 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
+	"github.com/relayapi-dev/relay-go/internal/apiquery"
+	"github.com/relayapi-dev/relay-go/internal/param"
 	"github.com/relayapi-dev/relay-go/internal/requestconfig"
 	"github.com/relayapi-dev/relay-go/option"
 )
@@ -34,26 +37,26 @@ func NewInboxCommentHideService(opts ...option.RequestOption) (r *InboxCommentHi
 }
 
 // Hide a comment
-func (r *InboxCommentHideService) New(ctx context.Context, commentID string, opts ...option.RequestOption) (res *InboxCommentHideNewResponse, err error) {
+func (r *InboxCommentHideService) New(ctx context.Context, commentID string, body InboxCommentHideNewParams, opts ...option.RequestOption) (res *InboxCommentHideNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if commentID == "" {
 		err = errors.New("missing required comment_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("v1/inbox/comments/%s/hide", commentID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
 
 // Unhide a comment
-func (r *InboxCommentHideService) Delete(ctx context.Context, commentID string, opts ...option.RequestOption) (res *InboxCommentHideDeleteResponse, err error) {
+func (r *InboxCommentHideService) Delete(ctx context.Context, commentID string, body InboxCommentHideDeleteParams, opts ...option.RequestOption) (res *InboxCommentHideDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if commentID == "" {
 		err = errors.New("missing required comment_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("v1/inbox/comments/%s/hide", commentID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
 	return res, err
 }
 
@@ -105,4 +108,32 @@ func (r *InboxCommentHideDeleteResponse) UnmarshalJSON(data []byte) (err error) 
 
 func (r inboxCommentHideDeleteResponseJSON) RawJSON() string {
 	return r.raw
+}
+
+type InboxCommentHideNewParams struct {
+	// Target a specific account instead of fanning out to all org accounts
+	AccountID param.Field[string] `query:"account_id"`
+}
+
+// URLQuery serializes [InboxCommentHideNewParams]'s query parameters as
+// `url.Values`.
+func (r InboxCommentHideNewParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxCommentHideDeleteParams struct {
+	// Target a specific account instead of fanning out to all org accounts
+	AccountID param.Field[string] `query:"account_id"`
+}
+
+// URLQuery serializes [InboxCommentHideDeleteParams]'s query parameters as
+// `url.Values`.
+func (r InboxCommentHideDeleteParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

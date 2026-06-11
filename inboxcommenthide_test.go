@@ -13,7 +13,7 @@ import (
 	"github.com/relayapi-dev/relay-go/option"
 )
 
-func TestInboxCommentHideNew(t *testing.T) {
+func TestInboxCommentHideNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,13 @@ func TestInboxCommentHideNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Inbox.Comments.Hide.New(context.TODO(), "comment_id")
+	_, err := client.Inbox.Comments.Hide.New(
+		context.TODO(),
+		"comment_id",
+		relaygo.InboxCommentHideNewParams{
+			AccountID: relaygo.F("account_id"),
+		},
+	)
 	if err != nil {
 		var apierr *relaygo.Error
 		if errors.As(err, &apierr) {
@@ -36,7 +42,7 @@ func TestInboxCommentHideNew(t *testing.T) {
 	}
 }
 
-func TestInboxCommentHideDelete(t *testing.T) {
+func TestInboxCommentHideDeleteWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -49,7 +55,13 @@ func TestInboxCommentHideDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Inbox.Comments.Hide.Delete(context.TODO(), "comment_id")
+	_, err := client.Inbox.Comments.Hide.Delete(
+		context.TODO(),
+		"comment_id",
+		relaygo.InboxCommentHideDeleteParams{
+			AccountID: relaygo.F("account_id"),
+		},
+	)
 	if err != nil {
 		var apierr *relaygo.Error
 		if errors.As(err, &apierr) {

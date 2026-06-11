@@ -62,14 +62,14 @@ func (r *InboxCommentService) List(ctx context.Context, query InboxCommentListPa
 }
 
 // Delete a comment
-func (r *InboxCommentService) Delete(ctx context.Context, commentID string, opts ...option.RequestOption) (res *InboxCommentDeleteResponse, err error) {
+func (r *InboxCommentService) Delete(ctx context.Context, commentID string, body InboxCommentDeleteParams, opts ...option.RequestOption) (res *InboxCommentDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if commentID == "" {
 		err = errors.New("missing required comment_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("v1/inbox/comments/%s", commentID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
 	return res, err
 }
 
@@ -606,6 +606,20 @@ func (r InboxCommentListParamsPlatform) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+type InboxCommentDeleteParams struct {
+	// Target a specific account instead of fanning out to all org accounts
+	AccountID param.Field[string] `query:"account_id"`
+}
+
+// URLQuery serializes [InboxCommentDeleteParams]'s query parameters as
+// `url.Values`.
+func (r InboxCommentDeleteParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type InboxCommentPrivateReplyParams struct {

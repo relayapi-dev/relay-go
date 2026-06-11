@@ -76,7 +76,9 @@ func (r *MediaService) GetPresignURL(ctx context.Context, body MediaGetPresignUR
 }
 
 // Upload a raw file body. Pass the filename as a query parameter and set the
-// Content-Type header.
+// Content-Type header to the file's actual MIME type (e.g. image/png, video/mp4).
+// The Content-Type is validated against an allowlist; application/octet-stream is
+// rejected.
 func (r *MediaService) Upload(ctx context.Context, body io.Reader, params MediaUploadParams, opts ...option.RequestOption) (res *MediaUploadResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithRequestBody("application/octet-stream", body)}, opts...)
