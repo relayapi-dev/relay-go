@@ -248,13 +248,19 @@ func (r WhatsappBroadcastGetResponseStatus) IsKnown() bool {
 
 type WhatsappBroadcastListResponse struct {
 	Data []WhatsappBroadcastListResponseData `json:"data" api:"required"`
-	JSON whatsappBroadcastListResponseJSON   `json:"-"`
+	// Whether more items exist
+	HasMore bool `json:"has_more"`
+	// Cursor for next page
+	NextCursor string                            `json:"next_cursor" api:"nullable"`
+	JSON       whatsappBroadcastListResponseJSON `json:"-"`
 }
 
 // whatsappBroadcastListResponseJSON contains the JSON metadata for the struct
 // [WhatsappBroadcastListResponse]
 type whatsappBroadcastListResponseJSON struct {
 	Data        apijson.Field
+	HasMore     apijson.Field
+	NextCursor  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -535,6 +541,10 @@ func (r WhatsappBroadcastNewParamsTemplateComponentsType) IsKnown() bool {
 type WhatsappBroadcastListParams struct {
 	// WhatsApp account ID
 	AccountID param.Field[string] `query:"account_id" api:"required"`
+	// Pagination cursor
+	Cursor param.Field[string] `query:"cursor"`
+	// Number of items per page
+	Limit param.Field[int64] `query:"limit"`
 }
 
 // URLQuery serializes [WhatsappBroadcastListParams]'s query parameters as

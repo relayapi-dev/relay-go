@@ -324,36 +324,34 @@ func (r connectNewBlueskyConnectionResponseAccountWorkspaceJSON) RawJSON() strin
 
 type ConnectFetchPendingDataResponse struct {
 	Platform ConnectFetchPendingDataResponsePlatform `json:"platform" api:"required"`
-	// Token to use for secondary selection
-	TempToken string `json:"temp_token" api:"required"`
-	// Basic user profile from the platform
-	UserProfile ConnectFetchPendingDataResponseUserProfile `json:"user_profile" api:"required"`
-	// Pinterest boards available
-	Boards []map[string]interface{} `json:"boards"`
-	// Google Business locations available
-	Locations []map[string]interface{} `json:"locations"`
-	// LinkedIn organizations available
-	Organizations []map[string]interface{} `json:"organizations"`
-	// Facebook pages available
-	Pages []map[string]interface{} `json:"pages"`
-	// Snapchat profiles available
-	Profiles []map[string]interface{}            `json:"profiles"`
-	JSON     connectFetchPendingDataResponseJSON `json:"-"`
+	// Outcome of the headless OAuth exchange. 'pending_selection' means a secondary
+	// selection step (e.g. Facebook page) is required.
+	Status ConnectFetchPendingDataResponseStatus `json:"status" api:"required"`
+	// Connected account — present when status is 'success'
+	Account ConnectFetchPendingDataResponseAccount `json:"account"`
+	// Provider error code (status 'error')
+	Error string `json:"error"`
+	// RelayAPI error code (status 'error')
+	ErrorCode string `json:"error_code"`
+	// Provider error description (status 'error')
+	ErrorDescription string `json:"error_description" api:"nullable"`
+	// RelayAPI error message (status 'error')
+	ErrorMessage string                              `json:"error_message"`
+	JSON         connectFetchPendingDataResponseJSON `json:"-"`
 }
 
 // connectFetchPendingDataResponseJSON contains the JSON metadata for the struct
 // [ConnectFetchPendingDataResponse]
 type connectFetchPendingDataResponseJSON struct {
-	Platform      apijson.Field
-	TempToken     apijson.Field
-	UserProfile   apijson.Field
-	Boards        apijson.Field
-	Locations     apijson.Field
-	Organizations apijson.Field
-	Pages         apijson.Field
-	Profiles      apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
+	Platform         apijson.Field
+	Status           apijson.Field
+	Account          apijson.Field
+	Error            apijson.Field
+	ErrorCode        apijson.Field
+	ErrorDescription apijson.Field
+	ErrorMessage     apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *ConnectFetchPendingDataResponse) UnmarshalJSON(data []byte) (err error) {
@@ -398,44 +396,138 @@ func (r ConnectFetchPendingDataResponsePlatform) IsKnown() bool {
 	return false
 }
 
-// Basic user profile from the platform
-type ConnectFetchPendingDataResponseUserProfile struct {
-	ID        string                                         `json:"id" api:"required"`
-	AvatarURL string                                         `json:"avatar_url" api:"required,nullable"`
-	Name      string                                         `json:"name" api:"required,nullable"`
-	Username  string                                         `json:"username" api:"required,nullable"`
-	JSON      connectFetchPendingDataResponseUserProfileJSON `json:"-"`
+// Outcome of the headless OAuth exchange. 'pending_selection' means a secondary
+// selection step (e.g. Facebook page) is required.
+type ConnectFetchPendingDataResponseStatus string
+
+const (
+	ConnectFetchPendingDataResponseStatusSuccess          ConnectFetchPendingDataResponseStatus = "success"
+	ConnectFetchPendingDataResponseStatusPendingSelection ConnectFetchPendingDataResponseStatus = "pending_selection"
+	ConnectFetchPendingDataResponseStatusError            ConnectFetchPendingDataResponseStatus = "error"
+)
+
+func (r ConnectFetchPendingDataResponseStatus) IsKnown() bool {
+	switch r {
+	case ConnectFetchPendingDataResponseStatusSuccess, ConnectFetchPendingDataResponseStatusPendingSelection, ConnectFetchPendingDataResponseStatusError:
+		return true
+	}
+	return false
 }
 
-// connectFetchPendingDataResponseUserProfileJSON contains the JSON metadata for
-// the struct [ConnectFetchPendingDataResponseUserProfile]
-type connectFetchPendingDataResponseUserProfileJSON struct {
+// Connected account — present when status is 'success'
+type ConnectFetchPendingDataResponseAccount struct {
+	// Account ID
+	ID                string                                         `json:"id" api:"required"`
+	AvatarURL         string                                         `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                      `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                         `json:"display_name" api:"required,nullable"`
+	Metadata          map[string]interface{}                         `json:"metadata" api:"required,nullable"`
+	Platform          ConnectFetchPendingDataResponseAccountPlatform `json:"platform" api:"required"`
+	PlatformAccountID string                                         `json:"platform_account_id" api:"required"`
+	UpdatedAt         time.Time                                      `json:"updated_at" api:"required" format:"date-time"`
+	Username          string                                         `json:"username" api:"required,nullable"`
+	// Account workspace
+	Workspace ConnectFetchPendingDataResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectFetchPendingDataResponseAccountJSON      `json:"-"`
+}
+
+// connectFetchPendingDataResponseAccountJSON contains the JSON metadata for the
+// struct [ConnectFetchPendingDataResponseAccount]
+type connectFetchPendingDataResponseAccountJSON struct {
+	ID                apijson.Field
+	AvatarURL         apijson.Field
+	ConnectedAt       apijson.Field
+	DisplayName       apijson.Field
+	Metadata          apijson.Field
+	Platform          apijson.Field
+	PlatformAccountID apijson.Field
+	UpdatedAt         apijson.Field
+	Username          apijson.Field
+	Workspace         apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ConnectFetchPendingDataResponseAccount) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectFetchPendingDataResponseAccountJSON) RawJSON() string {
+	return r.raw
+}
+
+type ConnectFetchPendingDataResponseAccountPlatform string
+
+const (
+	ConnectFetchPendingDataResponseAccountPlatformTwitter        ConnectFetchPendingDataResponseAccountPlatform = "twitter"
+	ConnectFetchPendingDataResponseAccountPlatformInstagram      ConnectFetchPendingDataResponseAccountPlatform = "instagram"
+	ConnectFetchPendingDataResponseAccountPlatformFacebook       ConnectFetchPendingDataResponseAccountPlatform = "facebook"
+	ConnectFetchPendingDataResponseAccountPlatformLinkedin       ConnectFetchPendingDataResponseAccountPlatform = "linkedin"
+	ConnectFetchPendingDataResponseAccountPlatformTiktok         ConnectFetchPendingDataResponseAccountPlatform = "tiktok"
+	ConnectFetchPendingDataResponseAccountPlatformYoutube        ConnectFetchPendingDataResponseAccountPlatform = "youtube"
+	ConnectFetchPendingDataResponseAccountPlatformPinterest      ConnectFetchPendingDataResponseAccountPlatform = "pinterest"
+	ConnectFetchPendingDataResponseAccountPlatformReddit         ConnectFetchPendingDataResponseAccountPlatform = "reddit"
+	ConnectFetchPendingDataResponseAccountPlatformBluesky        ConnectFetchPendingDataResponseAccountPlatform = "bluesky"
+	ConnectFetchPendingDataResponseAccountPlatformThreads        ConnectFetchPendingDataResponseAccountPlatform = "threads"
+	ConnectFetchPendingDataResponseAccountPlatformTelegram       ConnectFetchPendingDataResponseAccountPlatform = "telegram"
+	ConnectFetchPendingDataResponseAccountPlatformSnapchat       ConnectFetchPendingDataResponseAccountPlatform = "snapchat"
+	ConnectFetchPendingDataResponseAccountPlatformGooglebusiness ConnectFetchPendingDataResponseAccountPlatform = "googlebusiness"
+	ConnectFetchPendingDataResponseAccountPlatformWhatsapp       ConnectFetchPendingDataResponseAccountPlatform = "whatsapp"
+	ConnectFetchPendingDataResponseAccountPlatformMastodon       ConnectFetchPendingDataResponseAccountPlatform = "mastodon"
+	ConnectFetchPendingDataResponseAccountPlatformDiscord        ConnectFetchPendingDataResponseAccountPlatform = "discord"
+	ConnectFetchPendingDataResponseAccountPlatformSMS            ConnectFetchPendingDataResponseAccountPlatform = "sms"
+	ConnectFetchPendingDataResponseAccountPlatformBeehiiv        ConnectFetchPendingDataResponseAccountPlatform = "beehiiv"
+	ConnectFetchPendingDataResponseAccountPlatformConvertkit     ConnectFetchPendingDataResponseAccountPlatform = "convertkit"
+	ConnectFetchPendingDataResponseAccountPlatformMailchimp      ConnectFetchPendingDataResponseAccountPlatform = "mailchimp"
+	ConnectFetchPendingDataResponseAccountPlatformListmonk       ConnectFetchPendingDataResponseAccountPlatform = "listmonk"
+)
+
+func (r ConnectFetchPendingDataResponseAccountPlatform) IsKnown() bool {
+	switch r {
+	case ConnectFetchPendingDataResponseAccountPlatformTwitter, ConnectFetchPendingDataResponseAccountPlatformInstagram, ConnectFetchPendingDataResponseAccountPlatformFacebook, ConnectFetchPendingDataResponseAccountPlatformLinkedin, ConnectFetchPendingDataResponseAccountPlatformTiktok, ConnectFetchPendingDataResponseAccountPlatformYoutube, ConnectFetchPendingDataResponseAccountPlatformPinterest, ConnectFetchPendingDataResponseAccountPlatformReddit, ConnectFetchPendingDataResponseAccountPlatformBluesky, ConnectFetchPendingDataResponseAccountPlatformThreads, ConnectFetchPendingDataResponseAccountPlatformTelegram, ConnectFetchPendingDataResponseAccountPlatformSnapchat, ConnectFetchPendingDataResponseAccountPlatformGooglebusiness, ConnectFetchPendingDataResponseAccountPlatformWhatsapp, ConnectFetchPendingDataResponseAccountPlatformMastodon, ConnectFetchPendingDataResponseAccountPlatformDiscord, ConnectFetchPendingDataResponseAccountPlatformSMS, ConnectFetchPendingDataResponseAccountPlatformBeehiiv, ConnectFetchPendingDataResponseAccountPlatformConvertkit, ConnectFetchPendingDataResponseAccountPlatformMailchimp, ConnectFetchPendingDataResponseAccountPlatformListmonk:
+		return true
+	}
+	return false
+}
+
+// Account workspace
+type ConnectFetchPendingDataResponseAccountWorkspace struct {
+	ID   string                                              `json:"id" api:"required"`
+	Name string                                              `json:"name" api:"required"`
+	JSON connectFetchPendingDataResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectFetchPendingDataResponseAccountWorkspaceJSON contains the JSON metadata
+// for the struct [ConnectFetchPendingDataResponseAccountWorkspace]
+type connectFetchPendingDataResponseAccountWorkspaceJSON struct {
 	ID          apijson.Field
-	AvatarURL   apijson.Field
 	Name        apijson.Field
-	Username    apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ConnectFetchPendingDataResponseUserProfile) UnmarshalJSON(data []byte) (err error) {
+func (r *ConnectFetchPendingDataResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r connectFetchPendingDataResponseUserProfileJSON) RawJSON() string {
+func (r connectFetchPendingDataResponseAccountWorkspaceJSON) RawJSON() string {
 	return r.raw
 }
 
 type ConnectStartOAuthFlowResponse struct {
 	// URL to redirect the user for OAuth authorization
-	AuthURL string                            `json:"auth_url" api:"required" format:"uri"`
-	JSON    connectStartOAuthFlowResponseJSON `json:"-"`
+	AuthURL string `json:"auth_url" api:"required" format:"uri"`
+	// Headless mode only: one-time token to poll GET /connect/pending-data for the
+	// OAuth result once the user finishes provider authorization
+	TempToken string                            `json:"temp_token"`
+	JSON      connectStartOAuthFlowResponseJSON `json:"-"`
 }
 
 // connectStartOAuthFlowResponseJSON contains the JSON metadata for the struct
 // [ConnectStartOAuthFlowResponse]
 type connectStartOAuthFlowResponseJSON struct {
 	AuthURL     apijson.Field
+	TempToken   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
