@@ -47,7 +47,9 @@ type ConnectionListLogsResponse struct {
 	Data       []ConnectionListLogsResponseData `json:"data" api:"required"`
 	HasMore    bool                             `json:"has_more" api:"required"`
 	NextCursor string                           `json:"next_cursor" api:"required,nullable"`
-	JSON       connectionListLogsResponseJSON   `json:"-"`
+	// Total matching log entries (ignores pagination)
+	Total float64                        `json:"total" api:"required"`
+	JSON  connectionListLogsResponseJSON `json:"-"`
 }
 
 // connectionListLogsResponseJSON contains the JSON metadata for the struct
@@ -56,6 +58,7 @@ type connectionListLogsResponseJSON struct {
 	Data        apijson.Field
 	HasMore     apijson.Field
 	NextCursor  apijson.Field
+	Total       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -130,6 +133,9 @@ type ConnectionListLogsParams struct {
 	From param.Field[time.Time] `query:"from" format:"date-time"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
+	// Number of items to skip for offset-based pagination. Enables random access to
+	// any page; takes precedence over `cursor` when provided.
+	Offset param.Field[int64] `query:"offset"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
 }
