@@ -299,8 +299,10 @@ type AccountListResponse struct {
 	// Whether more items exist
 	HasMore bool `json:"has_more" api:"required"`
 	// Cursor for next page
-	NextCursor string                  `json:"next_cursor" api:"required,nullable"`
-	JSON       accountListResponseJSON `json:"-"`
+	NextCursor string `json:"next_cursor" api:"required,nullable"`
+	// Total accounts matching the filters
+	Total float64                 `json:"total" api:"required"`
+	JSON  accountListResponseJSON `json:"-"`
 }
 
 // accountListResponseJSON contains the JSON metadata for the struct
@@ -309,6 +311,7 @@ type accountListResponseJSON struct {
 	Data        apijson.Field
 	HasMore     apijson.Field
 	NextCursor  apijson.Field
+	Total       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
