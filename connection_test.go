@@ -31,6 +31,7 @@ func TestConnectionListLogsWithOptionalParams(t *testing.T) {
 		Cursor: relaygo.F("cursor"),
 		From:   relaygo.F(time.Now()),
 		Limit:  relaygo.F(int64(1)),
+		Offset: relaygo.F(int64(0)),
 		To:     relaygo.F(time.Now()),
 	})
 	if err != nil {
