@@ -114,8 +114,9 @@ func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
 		}}),
 		IdeaID: relaygo.F("idea_id"),
 		Media: relaygo.F([]relaygo.ToolValidateValidatePostParamsMedia{{
-			URL:  relaygo.F("https://example.com"),
-			Type: relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
+			URL:       relaygo.F("https://example.com"),
+			Thumbnail: relaygo.F("thumbnail"),
+			Type:      relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
 		}}),
 		Recycling: relaygo.F(relaygo.ToolValidateValidatePostParamsRecycling{
 			Gap:               relaygo.F(int64(1)),

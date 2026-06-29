@@ -1697,6 +1697,9 @@ func (r ToolValidateValidatePostParamsCrossPostActionsActionType) IsKnown() bool
 type ToolValidateValidatePostParamsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[ToolValidateValidatePostParamsMediaType] `json:"type"`
 }

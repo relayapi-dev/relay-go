@@ -190,6 +190,9 @@ func (r postNewResponseJSON) RawJSON() string {
 type PostNewResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostNewResponseMediaType `json:"type"`
 	JSON postNewResponseMediaJSON `json:"-"`
@@ -199,6 +202,7 @@ type PostNewResponseMedia struct {
 // [PostNewResponseMedia]
 type postNewResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -558,6 +562,9 @@ func (r postGetResponseJSON) RawJSON() string {
 type PostGetResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostGetResponseMediaType `json:"type"`
 	JSON postGetResponseMediaJSON `json:"-"`
@@ -567,6 +574,7 @@ type PostGetResponseMedia struct {
 // [PostGetResponseMedia]
 type postGetResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -927,6 +935,9 @@ func (r postUpdateResponseJSON) RawJSON() string {
 type PostUpdateResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostUpdateResponseMediaType `json:"type"`
 	JSON postUpdateResponseMediaJSON `json:"-"`
@@ -936,6 +947,7 @@ type PostUpdateResponseMedia struct {
 // [PostUpdateResponseMedia]
 type postUpdateResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -1323,6 +1335,9 @@ func (r postListResponseDataJSON) RawJSON() string {
 type PostListResponseDataMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostListResponseDataMediaType `json:"type"`
 	JSON postListResponseDataMediaJSON `json:"-"`
@@ -1332,6 +1347,7 @@ type PostListResponseDataMedia struct {
 // [PostListResponseDataMedia]
 type postListResponseDataMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -1715,6 +1731,9 @@ func (r postBulkNewResponseDataJSON) RawJSON() string {
 type PostBulkNewResponseDataMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostBulkNewResponseDataMediaType `json:"type"`
 	JSON postBulkNewResponseDataMediaJSON `json:"-"`
@@ -1724,6 +1743,7 @@ type PostBulkNewResponseDataMedia struct {
 // [PostBulkNewResponseDataMedia]
 type postBulkNewResponseDataMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -2109,6 +2129,9 @@ func (r postRetryResponseJSON) RawJSON() string {
 type PostRetryResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostRetryResponseMediaType `json:"type"`
 	JSON postRetryResponseMediaJSON `json:"-"`
@@ -2118,6 +2141,7 @@ type PostRetryResponseMedia struct {
 // [PostRetryResponseMedia]
 type postRetryResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -2478,6 +2502,9 @@ func (r postUnpublishResponseJSON) RawJSON() string {
 type PostUnpublishResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostUnpublishResponseMediaType `json:"type"`
 	JSON postUnpublishResponseMediaJSON `json:"-"`
@@ -2487,6 +2514,7 @@ type PostUnpublishResponseMedia struct {
 // [PostUnpublishResponseMedia]
 type postUnpublishResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -2862,6 +2890,9 @@ func (r PostNewParamsCrossPostActionsActionType) IsKnown() bool {
 type PostNewParamsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[PostNewParamsMediaType] `json:"type"`
 }
@@ -2953,6 +2984,9 @@ func (r PostUpdateParams) MarshalJSON() (data []byte, err error) {
 type PostUpdateParamsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[PostUpdateParamsMediaType] `json:"type"`
 }
@@ -3175,6 +3209,9 @@ func (r PostBulkNewParamsPostsCrossPostActionsActionType) IsKnown() bool {
 type PostBulkNewParamsPostsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[PostBulkNewParamsPostsMediaType] `json:"type"`
 }

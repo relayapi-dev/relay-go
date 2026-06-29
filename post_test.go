@@ -39,8 +39,9 @@ func TestPostNewWithOptionalParams(t *testing.T) {
 		}}),
 		IdeaID: relaygo.F("idea_id"),
 		Media: relaygo.F([]relaygo.PostNewParamsMedia{{
-			URL:  relaygo.F("https://example.com"),
-			Type: relaygo.F(relaygo.PostNewParamsMediaTypeImage),
+			URL:       relaygo.F("https://example.com"),
+			Thumbnail: relaygo.F("thumbnail"),
+			Type:      relaygo.F(relaygo.PostNewParamsMediaTypeImage),
 		}}),
 		Recycling: relaygo.F(relaygo.PostNewParamsRecycling{
 			Gap:               relaygo.F(int64(1)),
@@ -116,8 +117,9 @@ func TestPostUpdateWithOptionalParams(t *testing.T) {
 		relaygo.PostUpdateParams{
 			Content: relaygo.F("content"),
 			Media: relaygo.F([]relaygo.PostUpdateParamsMedia{{
-				URL:  relaygo.F("https://example.com"),
-				Type: relaygo.F(relaygo.PostUpdateParamsMediaTypeImage),
+				URL:       relaygo.F("https://example.com"),
+				Thumbnail: relaygo.F("thumbnail"),
+				Type:      relaygo.F(relaygo.PostUpdateParamsMediaTypeImage),
 			}}),
 			Notes: relaygo.F("notes"),
 			Recycling: relaygo.F(relaygo.PostUpdateParamsRecycling{
@@ -231,8 +233,9 @@ func TestPostBulkNew(t *testing.T) {
 			}}),
 			IdeaID: relaygo.F("idea_id"),
 			Media: relaygo.F([]relaygo.PostBulkNewParamsPostsMedia{{
-				URL:  relaygo.F("https://example.com"),
-				Type: relaygo.F(relaygo.PostBulkNewParamsPostsMediaTypeImage),
+				URL:       relaygo.F("https://example.com"),
+				Thumbnail: relaygo.F("thumbnail"),
+				Type:      relaygo.F(relaygo.PostBulkNewParamsPostsMediaTypeImage),
 			}}),
 			Recycling: relaygo.F(relaygo.PostBulkNewParamsPostsRecycling{
 				Gap:               relaygo.F(int64(1)),
