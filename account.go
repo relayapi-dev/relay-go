@@ -98,18 +98,18 @@ func (r *AccountService) Delete(ctx context.Context, id string, opts ...option.R
 
 type AccountGetResponse struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountGetResponseGroup    `json:"group" api:"required,nullable"`
+	ID                string                     `json:"id" api:"required"`
+	AvatarURL         string                     `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                  `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                     `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}     `json:"metadata" api:"required,nullable"`
 	Platform          AccountGetResponsePlatform `json:"platform" api:"required"`
 	PlatformAccountID string                     `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                  `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                     `json:"username" api:"required,nullable"`
-	JSON              accountGetResponseJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountGetResponseWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountGetResponseJSON      `json:"-"`
 }
 
 // accountGetResponseJSON contains the JSON metadata for the struct
@@ -119,12 +119,12 @@ type accountGetResponseJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -134,30 +134,6 @@ func (r *AccountGetResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r accountGetResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountGetResponseGroup struct {
-	ID   string                      `json:"id" api:"required"`
-	Name string                      `json:"name" api:"required"`
-	JSON accountGetResponseGroupJSON `json:"-"`
-}
-
-// accountGetResponseGroupJSON contains the JSON metadata for the struct
-// [AccountGetResponseGroup]
-type accountGetResponseGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountGetResponseGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountGetResponseGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -181,30 +157,58 @@ const (
 	AccountGetResponsePlatformMastodon       AccountGetResponsePlatform = "mastodon"
 	AccountGetResponsePlatformDiscord        AccountGetResponsePlatform = "discord"
 	AccountGetResponsePlatformSMS            AccountGetResponsePlatform = "sms"
+	AccountGetResponsePlatformBeehiiv        AccountGetResponsePlatform = "beehiiv"
+	AccountGetResponsePlatformConvertkit     AccountGetResponsePlatform = "convertkit"
+	AccountGetResponsePlatformMailchimp      AccountGetResponsePlatform = "mailchimp"
+	AccountGetResponsePlatformListmonk       AccountGetResponsePlatform = "listmonk"
 )
 
 func (r AccountGetResponsePlatform) IsKnown() bool {
 	switch r {
-	case AccountGetResponsePlatformTwitter, AccountGetResponsePlatformInstagram, AccountGetResponsePlatformFacebook, AccountGetResponsePlatformLinkedin, AccountGetResponsePlatformTiktok, AccountGetResponsePlatformYoutube, AccountGetResponsePlatformPinterest, AccountGetResponsePlatformReddit, AccountGetResponsePlatformBluesky, AccountGetResponsePlatformThreads, AccountGetResponsePlatformTelegram, AccountGetResponsePlatformSnapchat, AccountGetResponsePlatformGooglebusiness, AccountGetResponsePlatformWhatsapp, AccountGetResponsePlatformMastodon, AccountGetResponsePlatformDiscord, AccountGetResponsePlatformSMS:
+	case AccountGetResponsePlatformTwitter, AccountGetResponsePlatformInstagram, AccountGetResponsePlatformFacebook, AccountGetResponsePlatformLinkedin, AccountGetResponsePlatformTiktok, AccountGetResponsePlatformYoutube, AccountGetResponsePlatformPinterest, AccountGetResponsePlatformReddit, AccountGetResponsePlatformBluesky, AccountGetResponsePlatformThreads, AccountGetResponsePlatformTelegram, AccountGetResponsePlatformSnapchat, AccountGetResponsePlatformGooglebusiness, AccountGetResponsePlatformWhatsapp, AccountGetResponsePlatformMastodon, AccountGetResponsePlatformDiscord, AccountGetResponsePlatformSMS, AccountGetResponsePlatformBeehiiv, AccountGetResponsePlatformConvertkit, AccountGetResponsePlatformMailchimp, AccountGetResponsePlatformListmonk:
 		return true
 	}
 	return false
 }
 
+// Account workspace
+type AccountGetResponseWorkspace struct {
+	ID   string                          `json:"id" api:"required"`
+	Name string                          `json:"name" api:"required"`
+	JSON accountGetResponseWorkspaceJSON `json:"-"`
+}
+
+// accountGetResponseWorkspaceJSON contains the JSON metadata for the struct
+// [AccountGetResponseWorkspace]
+type accountGetResponseWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountGetResponseWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountGetResponseWorkspaceJSON) RawJSON() string {
+	return r.raw
+}
+
 type AccountUpdateResponse struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountUpdateResponseGroup    `json:"group" api:"required,nullable"`
+	ID                string                        `json:"id" api:"required"`
+	AvatarURL         string                        `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                     `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                        `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}        `json:"metadata" api:"required,nullable"`
 	Platform          AccountUpdateResponsePlatform `json:"platform" api:"required"`
 	PlatformAccountID string                        `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                     `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                        `json:"username" api:"required,nullable"`
-	JSON              accountUpdateResponseJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountUpdateResponseWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountUpdateResponseJSON      `json:"-"`
 }
 
 // accountUpdateResponseJSON contains the JSON metadata for the struct
@@ -214,12 +218,12 @@ type accountUpdateResponseJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -229,30 +233,6 @@ func (r *AccountUpdateResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r accountUpdateResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountUpdateResponseGroup struct {
-	ID   string                         `json:"id" api:"required"`
-	Name string                         `json:"name" api:"required"`
-	JSON accountUpdateResponseGroupJSON `json:"-"`
-}
-
-// accountUpdateResponseGroupJSON contains the JSON metadata for the struct
-// [AccountUpdateResponseGroup]
-type accountUpdateResponseGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountUpdateResponseGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountUpdateResponseGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -276,14 +256,42 @@ const (
 	AccountUpdateResponsePlatformMastodon       AccountUpdateResponsePlatform = "mastodon"
 	AccountUpdateResponsePlatformDiscord        AccountUpdateResponsePlatform = "discord"
 	AccountUpdateResponsePlatformSMS            AccountUpdateResponsePlatform = "sms"
+	AccountUpdateResponsePlatformBeehiiv        AccountUpdateResponsePlatform = "beehiiv"
+	AccountUpdateResponsePlatformConvertkit     AccountUpdateResponsePlatform = "convertkit"
+	AccountUpdateResponsePlatformMailchimp      AccountUpdateResponsePlatform = "mailchimp"
+	AccountUpdateResponsePlatformListmonk       AccountUpdateResponsePlatform = "listmonk"
 )
 
 func (r AccountUpdateResponsePlatform) IsKnown() bool {
 	switch r {
-	case AccountUpdateResponsePlatformTwitter, AccountUpdateResponsePlatformInstagram, AccountUpdateResponsePlatformFacebook, AccountUpdateResponsePlatformLinkedin, AccountUpdateResponsePlatformTiktok, AccountUpdateResponsePlatformYoutube, AccountUpdateResponsePlatformPinterest, AccountUpdateResponsePlatformReddit, AccountUpdateResponsePlatformBluesky, AccountUpdateResponsePlatformThreads, AccountUpdateResponsePlatformTelegram, AccountUpdateResponsePlatformSnapchat, AccountUpdateResponsePlatformGooglebusiness, AccountUpdateResponsePlatformWhatsapp, AccountUpdateResponsePlatformMastodon, AccountUpdateResponsePlatformDiscord, AccountUpdateResponsePlatformSMS:
+	case AccountUpdateResponsePlatformTwitter, AccountUpdateResponsePlatformInstagram, AccountUpdateResponsePlatformFacebook, AccountUpdateResponsePlatformLinkedin, AccountUpdateResponsePlatformTiktok, AccountUpdateResponsePlatformYoutube, AccountUpdateResponsePlatformPinterest, AccountUpdateResponsePlatformReddit, AccountUpdateResponsePlatformBluesky, AccountUpdateResponsePlatformThreads, AccountUpdateResponsePlatformTelegram, AccountUpdateResponsePlatformSnapchat, AccountUpdateResponsePlatformGooglebusiness, AccountUpdateResponsePlatformWhatsapp, AccountUpdateResponsePlatformMastodon, AccountUpdateResponsePlatformDiscord, AccountUpdateResponsePlatformSMS, AccountUpdateResponsePlatformBeehiiv, AccountUpdateResponsePlatformConvertkit, AccountUpdateResponsePlatformMailchimp, AccountUpdateResponsePlatformListmonk:
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type AccountUpdateResponseWorkspace struct {
+	ID   string                             `json:"id" api:"required"`
+	Name string                             `json:"name" api:"required"`
+	JSON accountUpdateResponseWorkspaceJSON `json:"-"`
+}
+
+// accountUpdateResponseWorkspaceJSON contains the JSON metadata for the struct
+// [AccountUpdateResponseWorkspace]
+type accountUpdateResponseWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountUpdateResponseWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountUpdateResponseWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type AccountListResponse struct {
@@ -291,8 +299,10 @@ type AccountListResponse struct {
 	// Whether more items exist
 	HasMore bool `json:"has_more" api:"required"`
 	// Cursor for next page
-	NextCursor string                  `json:"next_cursor" api:"required,nullable"`
-	JSON       accountListResponseJSON `json:"-"`
+	NextCursor string `json:"next_cursor" api:"required,nullable"`
+	// Total accounts matching the filters
+	Total float64                 `json:"total" api:"required"`
+	JSON  accountListResponseJSON `json:"-"`
 }
 
 // accountListResponseJSON contains the JSON metadata for the struct
@@ -301,6 +311,7 @@ type accountListResponseJSON struct {
 	Data        apijson.Field
 	HasMore     apijson.Field
 	NextCursor  apijson.Field
+	Total       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -315,18 +326,18 @@ func (r accountListResponseJSON) RawJSON() string {
 
 type AccountListResponseData struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             AccountListResponseDataGroup    `json:"group" api:"required,nullable"`
+	ID                string                          `json:"id" api:"required"`
+	AvatarURL         string                          `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                       `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                          `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}          `json:"metadata" api:"required,nullable"`
 	Platform          AccountListResponseDataPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                          `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                       `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                          `json:"username" api:"required,nullable"`
-	JSON              accountListResponseDataJSON     `json:"-"`
+	// Account workspace
+	Workspace AccountListResponseDataWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      accountListResponseDataJSON      `json:"-"`
 }
 
 // accountListResponseDataJSON contains the JSON metadata for the struct
@@ -336,12 +347,12 @@ type accountListResponseDataJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -351,30 +362,6 @@ func (r *AccountListResponseData) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r accountListResponseDataJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type AccountListResponseDataGroup struct {
-	ID   string                           `json:"id" api:"required"`
-	Name string                           `json:"name" api:"required"`
-	JSON accountListResponseDataGroupJSON `json:"-"`
-}
-
-// accountListResponseDataGroupJSON contains the JSON metadata for the struct
-// [AccountListResponseDataGroup]
-type accountListResponseDataGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountListResponseDataGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountListResponseDataGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -398,21 +385,49 @@ const (
 	AccountListResponseDataPlatformMastodon       AccountListResponseDataPlatform = "mastodon"
 	AccountListResponseDataPlatformDiscord        AccountListResponseDataPlatform = "discord"
 	AccountListResponseDataPlatformSMS            AccountListResponseDataPlatform = "sms"
+	AccountListResponseDataPlatformBeehiiv        AccountListResponseDataPlatform = "beehiiv"
+	AccountListResponseDataPlatformConvertkit     AccountListResponseDataPlatform = "convertkit"
+	AccountListResponseDataPlatformMailchimp      AccountListResponseDataPlatform = "mailchimp"
+	AccountListResponseDataPlatformListmonk       AccountListResponseDataPlatform = "listmonk"
 )
 
 func (r AccountListResponseDataPlatform) IsKnown() bool {
 	switch r {
-	case AccountListResponseDataPlatformTwitter, AccountListResponseDataPlatformInstagram, AccountListResponseDataPlatformFacebook, AccountListResponseDataPlatformLinkedin, AccountListResponseDataPlatformTiktok, AccountListResponseDataPlatformYoutube, AccountListResponseDataPlatformPinterest, AccountListResponseDataPlatformReddit, AccountListResponseDataPlatformBluesky, AccountListResponseDataPlatformThreads, AccountListResponseDataPlatformTelegram, AccountListResponseDataPlatformSnapchat, AccountListResponseDataPlatformGooglebusiness, AccountListResponseDataPlatformWhatsapp, AccountListResponseDataPlatformMastodon, AccountListResponseDataPlatformDiscord, AccountListResponseDataPlatformSMS:
+	case AccountListResponseDataPlatformTwitter, AccountListResponseDataPlatformInstagram, AccountListResponseDataPlatformFacebook, AccountListResponseDataPlatformLinkedin, AccountListResponseDataPlatformTiktok, AccountListResponseDataPlatformYoutube, AccountListResponseDataPlatformPinterest, AccountListResponseDataPlatformReddit, AccountListResponseDataPlatformBluesky, AccountListResponseDataPlatformThreads, AccountListResponseDataPlatformTelegram, AccountListResponseDataPlatformSnapchat, AccountListResponseDataPlatformGooglebusiness, AccountListResponseDataPlatformWhatsapp, AccountListResponseDataPlatformMastodon, AccountListResponseDataPlatformDiscord, AccountListResponseDataPlatformSMS, AccountListResponseDataPlatformBeehiiv, AccountListResponseDataPlatformConvertkit, AccountListResponseDataPlatformMailchimp, AccountListResponseDataPlatformListmonk:
 		return true
 	}
 	return false
 }
 
+// Account workspace
+type AccountListResponseDataWorkspace struct {
+	ID   string                               `json:"id" api:"required"`
+	Name string                               `json:"name" api:"required"`
+	JSON accountListResponseDataWorkspaceJSON `json:"-"`
+}
+
+// accountListResponseDataWorkspaceJSON contains the JSON metadata for the struct
+// [AccountListResponseDataWorkspace]
+type accountListResponseDataWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountListResponseDataWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountListResponseDataWorkspaceJSON) RawJSON() string {
+	return r.raw
+}
+
 type AccountUpdateParams struct {
-	DisplayName param.Field[string] `json:"display_name"`
-	// Group ID (null to ungroup)
-	GroupID  param.Field[string]                 `json:"group_id"`
-	Metadata param.Field[map[string]interface{}] `json:"metadata"`
+	DisplayName param.Field[string]                 `json:"display_name"`
+	Metadata    param.Field[map[string]interface{}] `json:"metadata"`
+	// Workspace ID (null to unassign)
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r AccountUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -424,16 +439,18 @@ type AccountListParams struct {
 	Cursor param.Field[string] `query:"cursor"`
 	// Filter: start date (ISO 8601)
 	From param.Field[time.Time] `query:"from" format:"date-time"`
-	// Filter by group ID
-	GroupID param.Field[string] `query:"group_id"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
+	// Comma-separated platform filter (e.g. instagram,facebook)
+	Platforms param.Field[string] `query:"platforms"`
 	// Search by name or username
 	Search param.Field[string] `query:"search"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
 	// Only show ungrouped accounts
 	Ungrouped param.Field[bool] `query:"ungrouped"`
+	// Filter by workspace ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [AccountListParams]'s query parameters as `url.Values`.

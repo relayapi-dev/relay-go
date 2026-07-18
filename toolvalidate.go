@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"time"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
 	"github.com/relayapi-dev/relay-go/internal/apiquery"
@@ -90,12 +91,16 @@ func (r toolValidateCheckPostLengthResponseJSON) RawJSON() string {
 
 // Character count per platform
 type ToolValidateCheckPostLengthResponsePlatforms struct {
+	Beehiiv        ToolValidateCheckPostLengthResponsePlatformsBeehiiv        `json:"beehiiv"`
 	Bluesky        ToolValidateCheckPostLengthResponsePlatformsBluesky        `json:"bluesky"`
+	Convertkit     ToolValidateCheckPostLengthResponsePlatformsConvertkit     `json:"convertkit"`
 	Discord        ToolValidateCheckPostLengthResponsePlatformsDiscord        `json:"discord"`
 	Facebook       ToolValidateCheckPostLengthResponsePlatformsFacebook       `json:"facebook"`
 	Googlebusiness ToolValidateCheckPostLengthResponsePlatformsGooglebusiness `json:"googlebusiness"`
 	Instagram      ToolValidateCheckPostLengthResponsePlatformsInstagram      `json:"instagram"`
 	Linkedin       ToolValidateCheckPostLengthResponsePlatformsLinkedin       `json:"linkedin"`
+	Listmonk       ToolValidateCheckPostLengthResponsePlatformsListmonk       `json:"listmonk"`
+	Mailchimp      ToolValidateCheckPostLengthResponsePlatformsMailchimp      `json:"mailchimp"`
 	Mastodon       ToolValidateCheckPostLengthResponsePlatformsMastodon       `json:"mastodon"`
 	Pinterest      ToolValidateCheckPostLengthResponsePlatformsPinterest      `json:"pinterest"`
 	Reddit         ToolValidateCheckPostLengthResponsePlatformsReddit         `json:"reddit"`
@@ -113,12 +118,16 @@ type ToolValidateCheckPostLengthResponsePlatforms struct {
 // toolValidateCheckPostLengthResponsePlatformsJSON contains the JSON metadata for
 // the struct [ToolValidateCheckPostLengthResponsePlatforms]
 type toolValidateCheckPostLengthResponsePlatformsJSON struct {
+	Beehiiv        apijson.Field
 	Bluesky        apijson.Field
+	Convertkit     apijson.Field
 	Discord        apijson.Field
 	Facebook       apijson.Field
 	Googlebusiness apijson.Field
 	Instagram      apijson.Field
 	Linkedin       apijson.Field
+	Listmonk       apijson.Field
+	Mailchimp      apijson.Field
 	Mastodon       apijson.Field
 	Pinterest      apijson.Field
 	Reddit         apijson.Field
@@ -139,6 +148,34 @@ func (r *ToolValidateCheckPostLengthResponsePlatforms) UnmarshalJSON(data []byte
 }
 
 func (r toolValidateCheckPostLengthResponsePlatformsJSON) RawJSON() string {
+	return r.raw
+}
+
+type ToolValidateCheckPostLengthResponsePlatformsBeehiiv struct {
+	// Character count for this platform
+	Count float64 `json:"count" api:"required"`
+	// Character limit for this platform
+	Limit float64 `json:"limit" api:"required"`
+	// Whether content is within limit
+	WithinLimit bool                                                    `json:"within_limit" api:"required"`
+	JSON        toolValidateCheckPostLengthResponsePlatformsBeehiivJSON `json:"-"`
+}
+
+// toolValidateCheckPostLengthResponsePlatformsBeehiivJSON contains the JSON
+// metadata for the struct [ToolValidateCheckPostLengthResponsePlatformsBeehiiv]
+type toolValidateCheckPostLengthResponsePlatformsBeehiivJSON struct {
+	Count       apijson.Field
+	Limit       apijson.Field
+	WithinLimit apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ToolValidateCheckPostLengthResponsePlatformsBeehiiv) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateCheckPostLengthResponsePlatformsBeehiivJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -167,6 +204,34 @@ func (r *ToolValidateCheckPostLengthResponsePlatformsBluesky) UnmarshalJSON(data
 }
 
 func (r toolValidateCheckPostLengthResponsePlatformsBlueskyJSON) RawJSON() string {
+	return r.raw
+}
+
+type ToolValidateCheckPostLengthResponsePlatformsConvertkit struct {
+	// Character count for this platform
+	Count float64 `json:"count" api:"required"`
+	// Character limit for this platform
+	Limit float64 `json:"limit" api:"required"`
+	// Whether content is within limit
+	WithinLimit bool                                                       `json:"within_limit" api:"required"`
+	JSON        toolValidateCheckPostLengthResponsePlatformsConvertkitJSON `json:"-"`
+}
+
+// toolValidateCheckPostLengthResponsePlatformsConvertkitJSON contains the JSON
+// metadata for the struct [ToolValidateCheckPostLengthResponsePlatformsConvertkit]
+type toolValidateCheckPostLengthResponsePlatformsConvertkitJSON struct {
+	Count       apijson.Field
+	Limit       apijson.Field
+	WithinLimit apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ToolValidateCheckPostLengthResponsePlatformsConvertkit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateCheckPostLengthResponsePlatformsConvertkitJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -308,6 +373,62 @@ func (r *ToolValidateCheckPostLengthResponsePlatformsLinkedin) UnmarshalJSON(dat
 }
 
 func (r toolValidateCheckPostLengthResponsePlatformsLinkedinJSON) RawJSON() string {
+	return r.raw
+}
+
+type ToolValidateCheckPostLengthResponsePlatformsListmonk struct {
+	// Character count for this platform
+	Count float64 `json:"count" api:"required"`
+	// Character limit for this platform
+	Limit float64 `json:"limit" api:"required"`
+	// Whether content is within limit
+	WithinLimit bool                                                     `json:"within_limit" api:"required"`
+	JSON        toolValidateCheckPostLengthResponsePlatformsListmonkJSON `json:"-"`
+}
+
+// toolValidateCheckPostLengthResponsePlatformsListmonkJSON contains the JSON
+// metadata for the struct [ToolValidateCheckPostLengthResponsePlatformsListmonk]
+type toolValidateCheckPostLengthResponsePlatformsListmonkJSON struct {
+	Count       apijson.Field
+	Limit       apijson.Field
+	WithinLimit apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ToolValidateCheckPostLengthResponsePlatformsListmonk) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateCheckPostLengthResponsePlatformsListmonkJSON) RawJSON() string {
+	return r.raw
+}
+
+type ToolValidateCheckPostLengthResponsePlatformsMailchimp struct {
+	// Character count for this platform
+	Count float64 `json:"count" api:"required"`
+	// Character limit for this platform
+	Limit float64 `json:"limit" api:"required"`
+	// Whether content is within limit
+	WithinLimit bool                                                      `json:"within_limit" api:"required"`
+	JSON        toolValidateCheckPostLengthResponsePlatformsMailchimpJSON `json:"-"`
+}
+
+// toolValidateCheckPostLengthResponsePlatformsMailchimpJSON contains the JSON
+// metadata for the struct [ToolValidateCheckPostLengthResponsePlatformsMailchimp]
+type toolValidateCheckPostLengthResponsePlatformsMailchimpJSON struct {
+	Count       apijson.Field
+	Limit       apijson.Field
+	WithinLimit apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ToolValidateCheckPostLengthResponsePlatformsMailchimp) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateCheckPostLengthResponsePlatformsMailchimpJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -663,8 +784,10 @@ type ToolValidateGetSubredditResponsePostTypes struct {
 	// Allows link posts
 	Link bool `json:"link" api:"required"`
 	// Allows text posts
-	Self bool                                          `json:"self" api:"required"`
-	JSON toolValidateGetSubredditResponsePostTypesJSON `json:"-"`
+	Self bool `json:"self" api:"required"`
+	// Allows video posts
+	Video bool                                          `json:"video"`
+	JSON  toolValidateGetSubredditResponsePostTypesJSON `json:"-"`
 }
 
 // toolValidateGetSubredditResponsePostTypesJSON contains the JSON metadata for the
@@ -673,6 +796,7 @@ type toolValidateGetSubredditResponsePostTypesJSON struct {
 	Image       apijson.Field
 	Link        apijson.Field
 	Self        apijson.Field
+	Video       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -718,12 +842,16 @@ func (r toolValidateValidateMediaResponseJSON) RawJSON() string {
 
 // Per-platform size limits
 type ToolValidateValidateMediaResponsePlatformLimits struct {
+	Beehiiv        ToolValidateValidateMediaResponsePlatformLimitsBeehiiv        `json:"beehiiv"`
 	Bluesky        ToolValidateValidateMediaResponsePlatformLimitsBluesky        `json:"bluesky"`
+	Convertkit     ToolValidateValidateMediaResponsePlatformLimitsConvertkit     `json:"convertkit"`
 	Discord        ToolValidateValidateMediaResponsePlatformLimitsDiscord        `json:"discord"`
 	Facebook       ToolValidateValidateMediaResponsePlatformLimitsFacebook       `json:"facebook"`
 	Googlebusiness ToolValidateValidateMediaResponsePlatformLimitsGooglebusiness `json:"googlebusiness"`
 	Instagram      ToolValidateValidateMediaResponsePlatformLimitsInstagram      `json:"instagram"`
 	Linkedin       ToolValidateValidateMediaResponsePlatformLimitsLinkedin       `json:"linkedin"`
+	Listmonk       ToolValidateValidateMediaResponsePlatformLimitsListmonk       `json:"listmonk"`
+	Mailchimp      ToolValidateValidateMediaResponsePlatformLimitsMailchimp      `json:"mailchimp"`
 	Mastodon       ToolValidateValidateMediaResponsePlatformLimitsMastodon       `json:"mastodon"`
 	Pinterest      ToolValidateValidateMediaResponsePlatformLimitsPinterest      `json:"pinterest"`
 	Reddit         ToolValidateValidateMediaResponsePlatformLimitsReddit         `json:"reddit"`
@@ -741,12 +869,16 @@ type ToolValidateValidateMediaResponsePlatformLimits struct {
 // toolValidateValidateMediaResponsePlatformLimitsJSON contains the JSON metadata
 // for the struct [ToolValidateValidateMediaResponsePlatformLimits]
 type toolValidateValidateMediaResponsePlatformLimitsJSON struct {
+	Beehiiv        apijson.Field
 	Bluesky        apijson.Field
+	Convertkit     apijson.Field
 	Discord        apijson.Field
 	Facebook       apijson.Field
 	Googlebusiness apijson.Field
 	Instagram      apijson.Field
 	Linkedin       apijson.Field
+	Listmonk       apijson.Field
+	Mailchimp      apijson.Field
 	Mastodon       apijson.Field
 	Pinterest      apijson.Field
 	Reddit         apijson.Field
@@ -770,21 +902,52 @@ func (r toolValidateValidateMediaResponsePlatformLimitsJSON) RawJSON() string {
 	return r.raw
 }
 
+type ToolValidateValidateMediaResponsePlatformLimitsBeehiiv struct {
+	// Maximum file size in bytes
+	MaxSize float64 `json:"max_size" api:"required"`
+	// Whether file size is within limit
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                       `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsBeehiivJSON `json:"-"`
+}
+
+// toolValidateValidateMediaResponsePlatformLimitsBeehiivJSON contains the JSON
+// metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsBeehiiv]
+type toolValidateValidateMediaResponsePlatformLimitsBeehiivJSON struct {
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ToolValidateValidateMediaResponsePlatformLimitsBeehiiv) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateValidateMediaResponsePlatformLimitsBeehiivJSON) RawJSON() string {
+	return r.raw
+}
+
 type ToolValidateValidateMediaResponsePlatformLimitsBluesky struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                       `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsBlueskyJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                       `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsBlueskyJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsBlueskyJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsBluesky]
 type toolValidateValidateMediaResponsePlatformLimitsBlueskyJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsBluesky) UnmarshalJSON(data []byte) (err error) {
@@ -795,21 +958,53 @@ func (r toolValidateValidateMediaResponsePlatformLimitsBlueskyJSON) RawJSON() st
 	return r.raw
 }
 
+type ToolValidateValidateMediaResponsePlatformLimitsConvertkit struct {
+	// Maximum file size in bytes
+	MaxSize float64 `json:"max_size" api:"required"`
+	// Whether file size is within limit
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                          `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsConvertkitJSON `json:"-"`
+}
+
+// toolValidateValidateMediaResponsePlatformLimitsConvertkitJSON contains the JSON
+// metadata for the struct
+// [ToolValidateValidateMediaResponsePlatformLimitsConvertkit]
+type toolValidateValidateMediaResponsePlatformLimitsConvertkitJSON struct {
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ToolValidateValidateMediaResponsePlatformLimitsConvertkit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateValidateMediaResponsePlatformLimitsConvertkitJSON) RawJSON() string {
+	return r.raw
+}
+
 type ToolValidateValidateMediaResponsePlatformLimitsDiscord struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                       `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsDiscordJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                       `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsDiscordJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsDiscordJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsDiscord]
 type toolValidateValidateMediaResponsePlatformLimitsDiscordJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsDiscord) UnmarshalJSON(data []byte) (err error) {
@@ -824,18 +1019,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsFacebook struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                        `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsFacebookJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                        `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsFacebookJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsFacebookJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsFacebook]
 type toolValidateValidateMediaResponsePlatformLimitsFacebookJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsFacebook) UnmarshalJSON(data []byte) (err error) {
@@ -850,18 +1048,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsGooglebusiness struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                              `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsGooglebusinessJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                              `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsGooglebusinessJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsGooglebusinessJSON contains the
 // JSON metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsGooglebusiness]
 type toolValidateValidateMediaResponsePlatformLimitsGooglebusinessJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsGooglebusiness) UnmarshalJSON(data []byte) (err error) {
@@ -876,18 +1077,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsInstagram struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                         `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsInstagramJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                         `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsInstagramJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsInstagramJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsInstagram]
 type toolValidateValidateMediaResponsePlatformLimitsInstagramJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsInstagram) UnmarshalJSON(data []byte) (err error) {
@@ -902,18 +1106,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsLinkedin struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                        `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsLinkedinJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                        `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsLinkedinJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsLinkedinJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsLinkedin]
 type toolValidateValidateMediaResponsePlatformLimitsLinkedinJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsLinkedin) UnmarshalJSON(data []byte) (err error) {
@@ -924,22 +1131,83 @@ func (r toolValidateValidateMediaResponsePlatformLimitsLinkedinJSON) RawJSON() s
 	return r.raw
 }
 
+type ToolValidateValidateMediaResponsePlatformLimitsListmonk struct {
+	// Maximum file size in bytes
+	MaxSize float64 `json:"max_size" api:"required"`
+	// Whether file size is within limit
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                        `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsListmonkJSON `json:"-"`
+}
+
+// toolValidateValidateMediaResponsePlatformLimitsListmonkJSON contains the JSON
+// metadata for the struct
+// [ToolValidateValidateMediaResponsePlatformLimitsListmonk]
+type toolValidateValidateMediaResponsePlatformLimitsListmonkJSON struct {
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ToolValidateValidateMediaResponsePlatformLimitsListmonk) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateValidateMediaResponsePlatformLimitsListmonkJSON) RawJSON() string {
+	return r.raw
+}
+
+type ToolValidateValidateMediaResponsePlatformLimitsMailchimp struct {
+	// Maximum file size in bytes
+	MaxSize float64 `json:"max_size" api:"required"`
+	// Whether file size is within limit
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                         `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsMailchimpJSON `json:"-"`
+}
+
+// toolValidateValidateMediaResponsePlatformLimitsMailchimpJSON contains the JSON
+// metadata for the struct
+// [ToolValidateValidateMediaResponsePlatformLimitsMailchimp]
+type toolValidateValidateMediaResponsePlatformLimitsMailchimpJSON struct {
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ToolValidateValidateMediaResponsePlatformLimitsMailchimp) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r toolValidateValidateMediaResponsePlatformLimitsMailchimpJSON) RawJSON() string {
+	return r.raw
+}
+
 type ToolValidateValidateMediaResponsePlatformLimitsMastodon struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                        `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsMastodonJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                        `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsMastodonJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsMastodonJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsMastodon]
 type toolValidateValidateMediaResponsePlatformLimitsMastodonJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsMastodon) UnmarshalJSON(data []byte) (err error) {
@@ -954,18 +1222,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsPinterest struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                         `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsPinterestJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                         `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsPinterestJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsPinterestJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsPinterest]
 type toolValidateValidateMediaResponsePlatformLimitsPinterestJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsPinterest) UnmarshalJSON(data []byte) (err error) {
@@ -980,17 +1251,20 @@ type ToolValidateValidateMediaResponsePlatformLimitsReddit struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                      `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsRedditJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                      `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsRedditJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsRedditJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsReddit]
 type toolValidateValidateMediaResponsePlatformLimitsRedditJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsReddit) UnmarshalJSON(data []byte) (err error) {
@@ -1005,17 +1279,20 @@ type ToolValidateValidateMediaResponsePlatformLimitsSMS struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                   `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsSMSJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                   `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsSMSJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsSMSJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsSMS]
 type toolValidateValidateMediaResponsePlatformLimitsSMSJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsSMS) UnmarshalJSON(data []byte) (err error) {
@@ -1030,18 +1307,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsSnapchat struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                        `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsSnapchatJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                        `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsSnapchatJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsSnapchatJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsSnapchat]
 type toolValidateValidateMediaResponsePlatformLimitsSnapchatJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsSnapchat) UnmarshalJSON(data []byte) (err error) {
@@ -1056,18 +1336,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsTelegram struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                        `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsTelegramJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                        `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsTelegramJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsTelegramJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsTelegram]
 type toolValidateValidateMediaResponsePlatformLimitsTelegramJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsTelegram) UnmarshalJSON(data []byte) (err error) {
@@ -1082,17 +1365,20 @@ type ToolValidateValidateMediaResponsePlatformLimitsThreads struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                       `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsThreadsJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                       `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsThreadsJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsThreadsJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsThreads]
 type toolValidateValidateMediaResponsePlatformLimitsThreadsJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsThreads) UnmarshalJSON(data []byte) (err error) {
@@ -1107,17 +1393,20 @@ type ToolValidateValidateMediaResponsePlatformLimitsTiktok struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                      `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsTiktokJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                      `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsTiktokJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsTiktokJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsTiktok]
 type toolValidateValidateMediaResponsePlatformLimitsTiktokJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsTiktok) UnmarshalJSON(data []byte) (err error) {
@@ -1132,17 +1421,20 @@ type ToolValidateValidateMediaResponsePlatformLimitsTwitter struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                       `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsTwitterJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                       `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsTwitterJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsTwitterJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsTwitter]
 type toolValidateValidateMediaResponsePlatformLimitsTwitterJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsTwitter) UnmarshalJSON(data []byte) (err error) {
@@ -1157,18 +1449,21 @@ type ToolValidateValidateMediaResponsePlatformLimitsWhatsapp struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                        `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsWhatsappJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                        `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsWhatsappJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsWhatsappJSON contains the JSON
 // metadata for the struct
 // [ToolValidateValidateMediaResponsePlatformLimitsWhatsapp]
 type toolValidateValidateMediaResponsePlatformLimitsWhatsappJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsWhatsapp) UnmarshalJSON(data []byte) (err error) {
@@ -1183,17 +1478,20 @@ type ToolValidateValidateMediaResponsePlatformLimitsYoutube struct {
 	// Maximum file size in bytes
 	MaxSize float64 `json:"max_size" api:"required"`
 	// Whether file size is within limit
-	WithinLimit bool                                                       `json:"within_limit" api:"required"`
-	JSON        toolValidateValidateMediaResponsePlatformLimitsYoutubeJSON `json:"-"`
+	WithinLimit bool `json:"within_limit" api:"required"`
+	// Whether the MIME type is supported by this platform
+	MimeTypeSupported bool                                                       `json:"mime_type_supported"`
+	JSON              toolValidateValidateMediaResponsePlatformLimitsYoutubeJSON `json:"-"`
 }
 
 // toolValidateValidateMediaResponsePlatformLimitsYoutubeJSON contains the JSON
 // metadata for the struct [ToolValidateValidateMediaResponsePlatformLimitsYoutube]
 type toolValidateValidateMediaResponsePlatformLimitsYoutubeJSON struct {
-	MaxSize     apijson.Field
-	WithinLimit apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	MaxSize           apijson.Field
+	WithinLimit       apijson.Field
+	MimeTypeSupported apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
 }
 
 func (r *ToolValidateValidateMediaResponsePlatformLimitsYoutube) UnmarshalJSON(data []byte) (err error) {
@@ -1321,28 +1619,87 @@ func (r ToolValidateValidateMediaParams) MarshalJSON() (data []byte, err error) 
 }
 
 type ToolValidateValidatePostParams struct {
-	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
-	// an ISO 8601 timestamp to schedule.
+	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
+	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
+	// schedule (max 30 days ahead).
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
-	// Account IDs, platform names, or group IDs to publish to
+	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
 	// Post text. Optional if target_options provide per-target content.
 	Content param.Field[string] `json:"content"`
+	// Cross-post actions to execute after publishing (e.g., repost from another
+	// account, comment from another account)
+	CrossPostActions param.Field[[]ToolValidateValidatePostParamsCrossPostAction] `json:"cross_post_actions"`
+	// Create post from an idea. Pre-fills content from the idea. Explicit 'content'
+	// field takes precedence.
+	IdeaID param.Field[string] `json:"idea_id"`
 	// Media attachments
 	Media param.Field[[]ToolValidateValidatePostParamsMedia] `json:"media"`
-	// Per-target customizations keyed by target value (account ID or platform name)
+	// Recycling configuration for evergreen content (Pro plan only)
+	Recycling param.Field[ToolValidateValidatePostParamsRecycling] `json:"recycling"`
+	// Shorten URLs in post content. Only relevant when short link mode is 'ask'.
+	// Ignored when mode is 'always' or 'never'. (Pro plan only)
+	ShortenURLs param.Field[bool] `json:"shorten_urls"`
+	// When true, the default signature is not auto-appended even if one is configured.
+	SkipSignature param.Field[bool] `json:"skip_signature"`
+	// Per-target customizations keyed by target value (account ID or platform name).
+	// Supports platform-specific features such as Twitter polls (poll.options,
+	// poll.duration_minutes), threads, reply_to, and reply_settings.
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
+	// Content template ID. When provided, the template content is used as the base for
+	// the post. Explicit 'content' field takes precedence.
+	TemplateID param.Field[string] `json:"template_id"`
+	// Variables to interpolate in the template (e.g., { "promo_code": "SUMMER25" }).
+	// Built-in variables: {{date}}, {{account_name}}.
+	TemplateVariables param.Field[map[string]string] `json:"template_variables"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
+	// Workspace ID to scope this post to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r ToolValidateValidatePostParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type ToolValidateValidatePostParamsCrossPostAction struct {
+	// Type of cross-post action
+	ActionType param.Field[ToolValidateValidatePostParamsCrossPostActionsActionType] `json:"action_type" api:"required"`
+	// Account to perform the action from
+	TargetAccountID param.Field[string] `json:"target_account_id" api:"required"`
+	// Text content for comment/quote actions (required for comment and quote)
+	Content param.Field[string] `json:"content"`
+	// Delay in minutes after publishing
+	DelayMinutes param.Field[int64] `json:"delay_minutes"`
+}
+
+func (r ToolValidateValidatePostParamsCrossPostAction) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Type of cross-post action
+type ToolValidateValidatePostParamsCrossPostActionsActionType string
+
+const (
+	ToolValidateValidatePostParamsCrossPostActionsActionTypeRepost  ToolValidateValidatePostParamsCrossPostActionsActionType = "repost"
+	ToolValidateValidatePostParamsCrossPostActionsActionTypeComment ToolValidateValidatePostParamsCrossPostActionsActionType = "comment"
+	ToolValidateValidatePostParamsCrossPostActionsActionTypeQuote   ToolValidateValidatePostParamsCrossPostActionsActionType = "quote"
+)
+
+func (r ToolValidateValidatePostParamsCrossPostActionsActionType) IsKnown() bool {
+	switch r {
+	case ToolValidateValidatePostParamsCrossPostActionsActionTypeRepost, ToolValidateValidatePostParamsCrossPostActionsActionTypeComment, ToolValidateValidatePostParamsCrossPostActionsActionTypeQuote:
+		return true
+	}
+	return false
+}
+
 type ToolValidateValidatePostParamsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[ToolValidateValidatePostParamsMediaType] `json:"type"`
 }
@@ -1364,6 +1721,45 @@ const (
 func (r ToolValidateValidatePostParamsMediaType) IsKnown() bool {
 	switch r {
 	case ToolValidateValidatePostParamsMediaTypeImage, ToolValidateValidatePostParamsMediaTypeVideo, ToolValidateValidatePostParamsMediaTypeGif, ToolValidateValidatePostParamsMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration for evergreen content (Pro plan only)
+type ToolValidateValidatePostParamsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[ToolValidateValidatePostParamsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r ToolValidateValidatePostParamsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type ToolValidateValidatePostParamsRecyclingGapFreq string
+
+const (
+	ToolValidateValidatePostParamsRecyclingGapFreqDay   ToolValidateValidatePostParamsRecyclingGapFreq = "day"
+	ToolValidateValidatePostParamsRecyclingGapFreqWeek  ToolValidateValidatePostParamsRecyclingGapFreq = "week"
+	ToolValidateValidatePostParamsRecyclingGapFreqMonth ToolValidateValidatePostParamsRecyclingGapFreq = "month"
+)
+
+func (r ToolValidateValidatePostParamsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case ToolValidateValidatePostParamsRecyclingGapFreqDay, ToolValidateValidatePostParamsRecyclingGapFreqWeek, ToolValidateValidatePostParamsRecyclingGapFreqMonth:
 		return true
 	}
 	return false

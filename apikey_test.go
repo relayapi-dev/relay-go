@@ -28,8 +28,10 @@ func TestAPIKeyNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.APIKeys.New(context.TODO(), relaygo.APIKeyNewParams{
-		Name:          relaygo.F("x"),
-		ExpiresInDays: relaygo.F(int64(1)),
+		Name:           relaygo.F("x"),
+		ExpiresInDays:  relaygo.F(int64(1)),
+		Permission:     relaygo.F(relaygo.APIKeyNewParamsPermissionReadWrite),
+		WorkspaceScope: relaygo.F[relaygo.APIKeyNewParamsWorkspaceScopeUnion](relaygo.APIKeyNewParamsWorkspaceScopeString(relaygo.APIKeyNewParamsWorkspaceScopeStringAll)),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

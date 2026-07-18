@@ -124,18 +124,18 @@ func (r connectGooglebusinessLocationSelectResponseJSON) RawJSON() string {
 
 type ConnectGooglebusinessLocationSelectResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectGooglebusinessLocationSelectResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                                     `json:"id" api:"required"`
+	AvatarURL         string                                                     `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                                  `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                                     `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                                     `json:"metadata" api:"required,nullable"`
 	Platform          ConnectGooglebusinessLocationSelectResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                     `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                                  `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                                     `json:"username" api:"required,nullable"`
-	JSON              connectGooglebusinessLocationSelectResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectGooglebusinessLocationSelectResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectGooglebusinessLocationSelectResponseAccountJSON      `json:"-"`
 }
 
 // connectGooglebusinessLocationSelectResponseAccountJSON contains the JSON
@@ -145,12 +145,12 @@ type connectGooglebusinessLocationSelectResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -160,31 +160,6 @@ func (r *ConnectGooglebusinessLocationSelectResponseAccount) UnmarshalJSON(data 
 }
 
 func (r connectGooglebusinessLocationSelectResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectGooglebusinessLocationSelectResponseAccountGroup struct {
-	ID   string                                                      `json:"id" api:"required"`
-	Name string                                                      `json:"name" api:"required"`
-	JSON connectGooglebusinessLocationSelectResponseAccountGroupJSON `json:"-"`
-}
-
-// connectGooglebusinessLocationSelectResponseAccountGroupJSON contains the JSON
-// metadata for the struct
-// [ConnectGooglebusinessLocationSelectResponseAccountGroup]
-type connectGooglebusinessLocationSelectResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectGooglebusinessLocationSelectResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectGooglebusinessLocationSelectResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -208,14 +183,43 @@ const (
 	ConnectGooglebusinessLocationSelectResponseAccountPlatformMastodon       ConnectGooglebusinessLocationSelectResponseAccountPlatform = "mastodon"
 	ConnectGooglebusinessLocationSelectResponseAccountPlatformDiscord        ConnectGooglebusinessLocationSelectResponseAccountPlatform = "discord"
 	ConnectGooglebusinessLocationSelectResponseAccountPlatformSMS            ConnectGooglebusinessLocationSelectResponseAccountPlatform = "sms"
+	ConnectGooglebusinessLocationSelectResponseAccountPlatformBeehiiv        ConnectGooglebusinessLocationSelectResponseAccountPlatform = "beehiiv"
+	ConnectGooglebusinessLocationSelectResponseAccountPlatformConvertkit     ConnectGooglebusinessLocationSelectResponseAccountPlatform = "convertkit"
+	ConnectGooglebusinessLocationSelectResponseAccountPlatformMailchimp      ConnectGooglebusinessLocationSelectResponseAccountPlatform = "mailchimp"
+	ConnectGooglebusinessLocationSelectResponseAccountPlatformListmonk       ConnectGooglebusinessLocationSelectResponseAccountPlatform = "listmonk"
 )
 
 func (r ConnectGooglebusinessLocationSelectResponseAccountPlatform) IsKnown() bool {
 	switch r {
-	case ConnectGooglebusinessLocationSelectResponseAccountPlatformTwitter, ConnectGooglebusinessLocationSelectResponseAccountPlatformInstagram, ConnectGooglebusinessLocationSelectResponseAccountPlatformFacebook, ConnectGooglebusinessLocationSelectResponseAccountPlatformLinkedin, ConnectGooglebusinessLocationSelectResponseAccountPlatformTiktok, ConnectGooglebusinessLocationSelectResponseAccountPlatformYoutube, ConnectGooglebusinessLocationSelectResponseAccountPlatformPinterest, ConnectGooglebusinessLocationSelectResponseAccountPlatformReddit, ConnectGooglebusinessLocationSelectResponseAccountPlatformBluesky, ConnectGooglebusinessLocationSelectResponseAccountPlatformThreads, ConnectGooglebusinessLocationSelectResponseAccountPlatformTelegram, ConnectGooglebusinessLocationSelectResponseAccountPlatformSnapchat, ConnectGooglebusinessLocationSelectResponseAccountPlatformGooglebusiness, ConnectGooglebusinessLocationSelectResponseAccountPlatformWhatsapp, ConnectGooglebusinessLocationSelectResponseAccountPlatformMastodon, ConnectGooglebusinessLocationSelectResponseAccountPlatformDiscord, ConnectGooglebusinessLocationSelectResponseAccountPlatformSMS:
+	case ConnectGooglebusinessLocationSelectResponseAccountPlatformTwitter, ConnectGooglebusinessLocationSelectResponseAccountPlatformInstagram, ConnectGooglebusinessLocationSelectResponseAccountPlatformFacebook, ConnectGooglebusinessLocationSelectResponseAccountPlatformLinkedin, ConnectGooglebusinessLocationSelectResponseAccountPlatformTiktok, ConnectGooglebusinessLocationSelectResponseAccountPlatformYoutube, ConnectGooglebusinessLocationSelectResponseAccountPlatformPinterest, ConnectGooglebusinessLocationSelectResponseAccountPlatformReddit, ConnectGooglebusinessLocationSelectResponseAccountPlatformBluesky, ConnectGooglebusinessLocationSelectResponseAccountPlatformThreads, ConnectGooglebusinessLocationSelectResponseAccountPlatformTelegram, ConnectGooglebusinessLocationSelectResponseAccountPlatformSnapchat, ConnectGooglebusinessLocationSelectResponseAccountPlatformGooglebusiness, ConnectGooglebusinessLocationSelectResponseAccountPlatformWhatsapp, ConnectGooglebusinessLocationSelectResponseAccountPlatformMastodon, ConnectGooglebusinessLocationSelectResponseAccountPlatformDiscord, ConnectGooglebusinessLocationSelectResponseAccountPlatformSMS, ConnectGooglebusinessLocationSelectResponseAccountPlatformBeehiiv, ConnectGooglebusinessLocationSelectResponseAccountPlatformConvertkit, ConnectGooglebusinessLocationSelectResponseAccountPlatformMailchimp, ConnectGooglebusinessLocationSelectResponseAccountPlatformListmonk:
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type ConnectGooglebusinessLocationSelectResponseAccountWorkspace struct {
+	ID   string                                                          `json:"id" api:"required"`
+	Name string                                                          `json:"name" api:"required"`
+	JSON connectGooglebusinessLocationSelectResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectGooglebusinessLocationSelectResponseAccountWorkspaceJSON contains the
+// JSON metadata for the struct
+// [ConnectGooglebusinessLocationSelectResponseAccountWorkspace]
+type connectGooglebusinessLocationSelectResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectGooglebusinessLocationSelectResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectGooglebusinessLocationSelectResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type ConnectGooglebusinessLocationSelectParams struct {

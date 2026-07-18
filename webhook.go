@@ -326,6 +326,8 @@ type WebhookNewParams struct {
 	Events param.Field[[]WebhookNewParamsEvent] `json:"events" api:"required"`
 	// Webhook endpoint URL
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Workspace ID to scope this webhook to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r WebhookNewParams) MarshalJSON() (data []byte, err error) {
@@ -335,19 +337,30 @@ func (r WebhookNewParams) MarshalJSON() (data []byte, err error) {
 type WebhookNewParamsEvent string
 
 const (
-	WebhookNewParamsEventPostPublished       WebhookNewParamsEvent = "post.published"
-	WebhookNewParamsEventPostPartial         WebhookNewParamsEvent = "post.partial"
-	WebhookNewParamsEventPostFailed          WebhookNewParamsEvent = "post.failed"
-	WebhookNewParamsEventPostScheduled       WebhookNewParamsEvent = "post.scheduled"
-	WebhookNewParamsEventAccountConnected    WebhookNewParamsEvent = "account.connected"
-	WebhookNewParamsEventAccountDisconnected WebhookNewParamsEvent = "account.disconnected"
-	WebhookNewParamsEventCommentReceived     WebhookNewParamsEvent = "comment.received"
-	WebhookNewParamsEventMessageReceived     WebhookNewParamsEvent = "message.received"
+	WebhookNewParamsEventPostPublished           WebhookNewParamsEvent = "post.published"
+	WebhookNewParamsEventPostPartial             WebhookNewParamsEvent = "post.partial"
+	WebhookNewParamsEventPostFailed              WebhookNewParamsEvent = "post.failed"
+	WebhookNewParamsEventPostScheduled           WebhookNewParamsEvent = "post.scheduled"
+	WebhookNewParamsEventPostRecycled            WebhookNewParamsEvent = "post.recycled"
+	WebhookNewParamsEventThreadPublished         WebhookNewParamsEvent = "thread.published"
+	WebhookNewParamsEventAccountConnected        WebhookNewParamsEvent = "account.connected"
+	WebhookNewParamsEventAccountDisconnected     WebhookNewParamsEvent = "account.disconnected"
+	WebhookNewParamsEventCommentReceived         WebhookNewParamsEvent = "comment.received"
+	WebhookNewParamsEventMessageReceived         WebhookNewParamsEvent = "message.received"
+	WebhookNewParamsEventMessageSent             WebhookNewParamsEvent = "message.sent"
+	WebhookNewParamsEventAutoPostCreated         WebhookNewParamsEvent = "auto_post.created"
+	WebhookNewParamsEventAutoPostError           WebhookNewParamsEvent = "auto_post.error"
+	WebhookNewParamsEventStreakStarted           WebhookNewParamsEvent = "streak.started"
+	WebhookNewParamsEventStreakMilestone         WebhookNewParamsEvent = "streak.milestone"
+	WebhookNewParamsEventStreakWarning           WebhookNewParamsEvent = "streak.warning"
+	WebhookNewParamsEventStreakBroken            WebhookNewParamsEvent = "streak.broken"
+	WebhookNewParamsEventCrossPostActionExecuted WebhookNewParamsEvent = "cross_post_action.executed"
+	WebhookNewParamsEventCrossPostActionFailed   WebhookNewParamsEvent = "cross_post_action.failed"
 )
 
 func (r WebhookNewParamsEvent) IsKnown() bool {
 	switch r {
-	case WebhookNewParamsEventPostPublished, WebhookNewParamsEventPostPartial, WebhookNewParamsEventPostFailed, WebhookNewParamsEventPostScheduled, WebhookNewParamsEventAccountConnected, WebhookNewParamsEventAccountDisconnected, WebhookNewParamsEventCommentReceived, WebhookNewParamsEventMessageReceived:
+	case WebhookNewParamsEventPostPublished, WebhookNewParamsEventPostPartial, WebhookNewParamsEventPostFailed, WebhookNewParamsEventPostScheduled, WebhookNewParamsEventPostRecycled, WebhookNewParamsEventThreadPublished, WebhookNewParamsEventAccountConnected, WebhookNewParamsEventAccountDisconnected, WebhookNewParamsEventCommentReceived, WebhookNewParamsEventMessageReceived, WebhookNewParamsEventMessageSent, WebhookNewParamsEventAutoPostCreated, WebhookNewParamsEventAutoPostError, WebhookNewParamsEventStreakStarted, WebhookNewParamsEventStreakMilestone, WebhookNewParamsEventStreakWarning, WebhookNewParamsEventStreakBroken, WebhookNewParamsEventCrossPostActionExecuted, WebhookNewParamsEventCrossPostActionFailed:
 		return true
 	}
 	return false
@@ -369,19 +382,30 @@ func (r WebhookUpdateParams) MarshalJSON() (data []byte, err error) {
 type WebhookUpdateParamsEvent string
 
 const (
-	WebhookUpdateParamsEventPostPublished       WebhookUpdateParamsEvent = "post.published"
-	WebhookUpdateParamsEventPostPartial         WebhookUpdateParamsEvent = "post.partial"
-	WebhookUpdateParamsEventPostFailed          WebhookUpdateParamsEvent = "post.failed"
-	WebhookUpdateParamsEventPostScheduled       WebhookUpdateParamsEvent = "post.scheduled"
-	WebhookUpdateParamsEventAccountConnected    WebhookUpdateParamsEvent = "account.connected"
-	WebhookUpdateParamsEventAccountDisconnected WebhookUpdateParamsEvent = "account.disconnected"
-	WebhookUpdateParamsEventCommentReceived     WebhookUpdateParamsEvent = "comment.received"
-	WebhookUpdateParamsEventMessageReceived     WebhookUpdateParamsEvent = "message.received"
+	WebhookUpdateParamsEventPostPublished           WebhookUpdateParamsEvent = "post.published"
+	WebhookUpdateParamsEventPostPartial             WebhookUpdateParamsEvent = "post.partial"
+	WebhookUpdateParamsEventPostFailed              WebhookUpdateParamsEvent = "post.failed"
+	WebhookUpdateParamsEventPostScheduled           WebhookUpdateParamsEvent = "post.scheduled"
+	WebhookUpdateParamsEventPostRecycled            WebhookUpdateParamsEvent = "post.recycled"
+	WebhookUpdateParamsEventThreadPublished         WebhookUpdateParamsEvent = "thread.published"
+	WebhookUpdateParamsEventAccountConnected        WebhookUpdateParamsEvent = "account.connected"
+	WebhookUpdateParamsEventAccountDisconnected     WebhookUpdateParamsEvent = "account.disconnected"
+	WebhookUpdateParamsEventCommentReceived         WebhookUpdateParamsEvent = "comment.received"
+	WebhookUpdateParamsEventMessageReceived         WebhookUpdateParamsEvent = "message.received"
+	WebhookUpdateParamsEventMessageSent             WebhookUpdateParamsEvent = "message.sent"
+	WebhookUpdateParamsEventAutoPostCreated         WebhookUpdateParamsEvent = "auto_post.created"
+	WebhookUpdateParamsEventAutoPostError           WebhookUpdateParamsEvent = "auto_post.error"
+	WebhookUpdateParamsEventStreakStarted           WebhookUpdateParamsEvent = "streak.started"
+	WebhookUpdateParamsEventStreakMilestone         WebhookUpdateParamsEvent = "streak.milestone"
+	WebhookUpdateParamsEventStreakWarning           WebhookUpdateParamsEvent = "streak.warning"
+	WebhookUpdateParamsEventStreakBroken            WebhookUpdateParamsEvent = "streak.broken"
+	WebhookUpdateParamsEventCrossPostActionExecuted WebhookUpdateParamsEvent = "cross_post_action.executed"
+	WebhookUpdateParamsEventCrossPostActionFailed   WebhookUpdateParamsEvent = "cross_post_action.failed"
 )
 
 func (r WebhookUpdateParamsEvent) IsKnown() bool {
 	switch r {
-	case WebhookUpdateParamsEventPostPublished, WebhookUpdateParamsEventPostPartial, WebhookUpdateParamsEventPostFailed, WebhookUpdateParamsEventPostScheduled, WebhookUpdateParamsEventAccountConnected, WebhookUpdateParamsEventAccountDisconnected, WebhookUpdateParamsEventCommentReceived, WebhookUpdateParamsEventMessageReceived:
+	case WebhookUpdateParamsEventPostPublished, WebhookUpdateParamsEventPostPartial, WebhookUpdateParamsEventPostFailed, WebhookUpdateParamsEventPostScheduled, WebhookUpdateParamsEventPostRecycled, WebhookUpdateParamsEventThreadPublished, WebhookUpdateParamsEventAccountConnected, WebhookUpdateParamsEventAccountDisconnected, WebhookUpdateParamsEventCommentReceived, WebhookUpdateParamsEventMessageReceived, WebhookUpdateParamsEventMessageSent, WebhookUpdateParamsEventAutoPostCreated, WebhookUpdateParamsEventAutoPostError, WebhookUpdateParamsEventStreakStarted, WebhookUpdateParamsEventStreakMilestone, WebhookUpdateParamsEventStreakWarning, WebhookUpdateParamsEventStreakBroken, WebhookUpdateParamsEventCrossPostActionExecuted, WebhookUpdateParamsEventCrossPostActionFailed:
 		return true
 	}
 	return false
@@ -396,6 +420,8 @@ type WebhookListParams struct {
 	Limit param.Field[int64] `query:"limit"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
+	// Filter by workspace ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [WebhookListParams]'s query parameters as `url.Values`.

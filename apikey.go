@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"reflect"
 	"slices"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/relayapi-dev/relay-go/internal/param"
 	"github.com/relayapi-dev/relay-go/internal/requestconfig"
 	"github.com/relayapi-dev/relay-go/option"
+	"github.com/tidwall/gjson"
 )
 
 // APIKeyService contains methods and other services that help with interacting
@@ -78,22 +80,28 @@ type APIKeyNewResponse struct {
 	Key string `json:"key" api:"required"`
 	// API key name
 	Name string `json:"name" api:"required,nullable"`
+	// Permission level
+	Permission APIKeyNewResponsePermission `json:"permission" api:"required"`
 	// Key prefix
-	Prefix string                `json:"prefix" api:"required"`
-	JSON   apiKeyNewResponseJSON `json:"-"`
+	Prefix string `json:"prefix" api:"required"`
+	// Workspace access: 'all' or array of workspace IDs
+	WorkspaceScope APIKeyNewResponseWorkspaceScopeUnion `json:"workspace_scope" api:"required"`
+	JSON           apiKeyNewResponseJSON                `json:"-"`
 }
 
 // apiKeyNewResponseJSON contains the JSON metadata for the struct
 // [APIKeyNewResponse]
 type apiKeyNewResponseJSON struct {
-	ID          apijson.Field
-	CreatedAt   apijson.Field
-	ExpiresAt   apijson.Field
-	Key         apijson.Field
-	Name        apijson.Field
-	Prefix      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	CreatedAt      apijson.Field
+	ExpiresAt      apijson.Field
+	Key            apijson.Field
+	Name           apijson.Field
+	Permission     apijson.Field
+	Prefix         apijson.Field
+	WorkspaceScope apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *APIKeyNewResponse) UnmarshalJSON(data []byte) (err error) {
@@ -103,6 +111,65 @@ func (r *APIKeyNewResponse) UnmarshalJSON(data []byte) (err error) {
 func (r apiKeyNewResponseJSON) RawJSON() string {
 	return r.raw
 }
+
+// Permission level
+type APIKeyNewResponsePermission string
+
+const (
+	APIKeyNewResponsePermissionReadWrite APIKeyNewResponsePermission = "read_write"
+	APIKeyNewResponsePermissionReadOnly  APIKeyNewResponsePermission = "read_only"
+)
+
+func (r APIKeyNewResponsePermission) IsKnown() bool {
+	switch r {
+	case APIKeyNewResponsePermissionReadWrite, APIKeyNewResponsePermissionReadOnly:
+		return true
+	}
+	return false
+}
+
+// Workspace access: 'all' or array of workspace IDs
+//
+// Union satisfied by [APIKeyNewResponseWorkspaceScopeString] or
+// [APIKeyNewResponseWorkspaceScopeArray].
+type APIKeyNewResponseWorkspaceScopeUnion interface {
+	implementsAPIKeyNewResponseWorkspaceScopeUnion()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*APIKeyNewResponseWorkspaceScopeUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.String,
+			Type:       reflect.TypeOf(APIKeyNewResponseWorkspaceScopeString("")),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(APIKeyNewResponseWorkspaceScopeArray{}),
+		},
+	)
+}
+
+type APIKeyNewResponseWorkspaceScopeString string
+
+const (
+	APIKeyNewResponseWorkspaceScopeStringAll APIKeyNewResponseWorkspaceScopeString = "all"
+)
+
+func (r APIKeyNewResponseWorkspaceScopeString) IsKnown() bool {
+	switch r {
+	case APIKeyNewResponseWorkspaceScopeStringAll:
+		return true
+	}
+	return false
+}
+
+func (r APIKeyNewResponseWorkspaceScopeString) implementsAPIKeyNewResponseWorkspaceScopeUnion() {}
+
+type APIKeyNewResponseWorkspaceScopeArray []string
+
+func (r APIKeyNewResponseWorkspaceScopeArray) implementsAPIKeyNewResponseWorkspaceScopeUnion() {}
 
 type APIKeyListResponse struct {
 	Data []APIKeyListResponseData `json:"data" api:"required"`
@@ -142,25 +209,31 @@ type APIKeyListResponseData struct {
 	ExpiresAt time.Time `json:"expires_at" api:"required,nullable" format:"date-time"`
 	// API key name
 	Name string `json:"name" api:"required,nullable"`
+	// Permission level
+	Permission APIKeyListResponseDataPermission `json:"permission" api:"required"`
 	// Key prefix (e.g. rlay*live*)
 	Prefix string `json:"prefix" api:"required,nullable"`
 	// First 8 characters of the key (preview)
-	Start string                     `json:"start" api:"required"`
-	JSON  apiKeyListResponseDataJSON `json:"-"`
+	Start string `json:"start" api:"required"`
+	// Workspace access: 'all' or array of workspace IDs
+	WorkspaceScope APIKeyListResponseDataWorkspaceScopeUnion `json:"workspace_scope" api:"required"`
+	JSON           apiKeyListResponseDataJSON                `json:"-"`
 }
 
 // apiKeyListResponseDataJSON contains the JSON metadata for the struct
 // [APIKeyListResponseData]
 type apiKeyListResponseDataJSON struct {
-	ID          apijson.Field
-	CreatedAt   apijson.Field
-	Enabled     apijson.Field
-	ExpiresAt   apijson.Field
-	Name        apijson.Field
-	Prefix      apijson.Field
-	Start       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	CreatedAt      apijson.Field
+	Enabled        apijson.Field
+	ExpiresAt      apijson.Field
+	Name           apijson.Field
+	Permission     apijson.Field
+	Prefix         apijson.Field
+	Start          apijson.Field
+	WorkspaceScope apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *APIKeyListResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -171,16 +244,125 @@ func (r apiKeyListResponseDataJSON) RawJSON() string {
 	return r.raw
 }
 
+// Permission level
+type APIKeyListResponseDataPermission string
+
+const (
+	APIKeyListResponseDataPermissionReadWrite APIKeyListResponseDataPermission = "read_write"
+	APIKeyListResponseDataPermissionReadOnly  APIKeyListResponseDataPermission = "read_only"
+)
+
+func (r APIKeyListResponseDataPermission) IsKnown() bool {
+	switch r {
+	case APIKeyListResponseDataPermissionReadWrite, APIKeyListResponseDataPermissionReadOnly:
+		return true
+	}
+	return false
+}
+
+// Workspace access: 'all' or array of workspace IDs
+//
+// Union satisfied by [APIKeyListResponseDataWorkspaceScopeString] or
+// [APIKeyListResponseDataWorkspaceScopeArray].
+type APIKeyListResponseDataWorkspaceScopeUnion interface {
+	implementsAPIKeyListResponseDataWorkspaceScopeUnion()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*APIKeyListResponseDataWorkspaceScopeUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.String,
+			Type:       reflect.TypeOf(APIKeyListResponseDataWorkspaceScopeString("")),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(APIKeyListResponseDataWorkspaceScopeArray{}),
+		},
+	)
+}
+
+type APIKeyListResponseDataWorkspaceScopeString string
+
+const (
+	APIKeyListResponseDataWorkspaceScopeStringAll APIKeyListResponseDataWorkspaceScopeString = "all"
+)
+
+func (r APIKeyListResponseDataWorkspaceScopeString) IsKnown() bool {
+	switch r {
+	case APIKeyListResponseDataWorkspaceScopeStringAll:
+		return true
+	}
+	return false
+}
+
+func (r APIKeyListResponseDataWorkspaceScopeString) implementsAPIKeyListResponseDataWorkspaceScopeUnion() {
+}
+
+type APIKeyListResponseDataWorkspaceScopeArray []string
+
+func (r APIKeyListResponseDataWorkspaceScopeArray) implementsAPIKeyListResponseDataWorkspaceScopeUnion() {
+}
+
 type APIKeyNewParams struct {
 	// Name for the API key
 	Name param.Field[string] `json:"name" api:"required"`
 	// Number of days until the key expires
 	ExpiresInDays param.Field[int64] `json:"expires_in_days"`
+	// Permission level: read_write (default) or read_only
+	Permission param.Field[APIKeyNewParamsPermission] `json:"permission"`
+	// Workspace access: 'all' for unrestricted, or array of workspace IDs
+	WorkspaceScope param.Field[APIKeyNewParamsWorkspaceScopeUnion] `json:"workspace_scope"`
 }
 
 func (r APIKeyNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
+
+// Permission level: read_write (default) or read_only
+type APIKeyNewParamsPermission string
+
+const (
+	APIKeyNewParamsPermissionReadWrite APIKeyNewParamsPermission = "read_write"
+	APIKeyNewParamsPermissionReadOnly  APIKeyNewParamsPermission = "read_only"
+)
+
+func (r APIKeyNewParamsPermission) IsKnown() bool {
+	switch r {
+	case APIKeyNewParamsPermissionReadWrite, APIKeyNewParamsPermissionReadOnly:
+		return true
+	}
+	return false
+}
+
+// Workspace access: 'all' for unrestricted, or array of workspace IDs
+//
+// Satisfied by [APIKeyNewParamsWorkspaceScopeString],
+// [APIKeyNewParamsWorkspaceScopeArray].
+type APIKeyNewParamsWorkspaceScopeUnion interface {
+	implementsAPIKeyNewParamsWorkspaceScopeUnion()
+}
+
+type APIKeyNewParamsWorkspaceScopeString string
+
+const (
+	APIKeyNewParamsWorkspaceScopeStringAll APIKeyNewParamsWorkspaceScopeString = "all"
+)
+
+func (r APIKeyNewParamsWorkspaceScopeString) IsKnown() bool {
+	switch r {
+	case APIKeyNewParamsWorkspaceScopeStringAll:
+		return true
+	}
+	return false
+}
+
+func (r APIKeyNewParamsWorkspaceScopeString) implementsAPIKeyNewParamsWorkspaceScopeUnion() {}
+
+type APIKeyNewParamsWorkspaceScopeArray []string
+
+func (r APIKeyNewParamsWorkspaceScopeArray) implementsAPIKeyNewParamsWorkspaceScopeUnion() {}
 
 type APIKeyListParams struct {
 	// Pagination cursor

@@ -124,18 +124,18 @@ func (r connectPinterestBoardSelectResponseJSON) RawJSON() string {
 
 type ConnectPinterestBoardSelectResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectPinterestBoardSelectResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                             `json:"id" api:"required"`
+	AvatarURL         string                                             `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                          `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                             `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                             `json:"metadata" api:"required,nullable"`
 	Platform          ConnectPinterestBoardSelectResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                             `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                          `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                             `json:"username" api:"required,nullable"`
-	JSON              connectPinterestBoardSelectResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectPinterestBoardSelectResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectPinterestBoardSelectResponseAccountJSON      `json:"-"`
 }
 
 // connectPinterestBoardSelectResponseAccountJSON contains the JSON metadata for
@@ -145,12 +145,12 @@ type connectPinterestBoardSelectResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -160,30 +160,6 @@ func (r *ConnectPinterestBoardSelectResponseAccount) UnmarshalJSON(data []byte) 
 }
 
 func (r connectPinterestBoardSelectResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectPinterestBoardSelectResponseAccountGroup struct {
-	ID   string                                              `json:"id" api:"required"`
-	Name string                                              `json:"name" api:"required"`
-	JSON connectPinterestBoardSelectResponseAccountGroupJSON `json:"-"`
-}
-
-// connectPinterestBoardSelectResponseAccountGroupJSON contains the JSON metadata
-// for the struct [ConnectPinterestBoardSelectResponseAccountGroup]
-type connectPinterestBoardSelectResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectPinterestBoardSelectResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectPinterestBoardSelectResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -207,14 +183,42 @@ const (
 	ConnectPinterestBoardSelectResponseAccountPlatformMastodon       ConnectPinterestBoardSelectResponseAccountPlatform = "mastodon"
 	ConnectPinterestBoardSelectResponseAccountPlatformDiscord        ConnectPinterestBoardSelectResponseAccountPlatform = "discord"
 	ConnectPinterestBoardSelectResponseAccountPlatformSMS            ConnectPinterestBoardSelectResponseAccountPlatform = "sms"
+	ConnectPinterestBoardSelectResponseAccountPlatformBeehiiv        ConnectPinterestBoardSelectResponseAccountPlatform = "beehiiv"
+	ConnectPinterestBoardSelectResponseAccountPlatformConvertkit     ConnectPinterestBoardSelectResponseAccountPlatform = "convertkit"
+	ConnectPinterestBoardSelectResponseAccountPlatformMailchimp      ConnectPinterestBoardSelectResponseAccountPlatform = "mailchimp"
+	ConnectPinterestBoardSelectResponseAccountPlatformListmonk       ConnectPinterestBoardSelectResponseAccountPlatform = "listmonk"
 )
 
 func (r ConnectPinterestBoardSelectResponseAccountPlatform) IsKnown() bool {
 	switch r {
-	case ConnectPinterestBoardSelectResponseAccountPlatformTwitter, ConnectPinterestBoardSelectResponseAccountPlatformInstagram, ConnectPinterestBoardSelectResponseAccountPlatformFacebook, ConnectPinterestBoardSelectResponseAccountPlatformLinkedin, ConnectPinterestBoardSelectResponseAccountPlatformTiktok, ConnectPinterestBoardSelectResponseAccountPlatformYoutube, ConnectPinterestBoardSelectResponseAccountPlatformPinterest, ConnectPinterestBoardSelectResponseAccountPlatformReddit, ConnectPinterestBoardSelectResponseAccountPlatformBluesky, ConnectPinterestBoardSelectResponseAccountPlatformThreads, ConnectPinterestBoardSelectResponseAccountPlatformTelegram, ConnectPinterestBoardSelectResponseAccountPlatformSnapchat, ConnectPinterestBoardSelectResponseAccountPlatformGooglebusiness, ConnectPinterestBoardSelectResponseAccountPlatformWhatsapp, ConnectPinterestBoardSelectResponseAccountPlatformMastodon, ConnectPinterestBoardSelectResponseAccountPlatformDiscord, ConnectPinterestBoardSelectResponseAccountPlatformSMS:
+	case ConnectPinterestBoardSelectResponseAccountPlatformTwitter, ConnectPinterestBoardSelectResponseAccountPlatformInstagram, ConnectPinterestBoardSelectResponseAccountPlatformFacebook, ConnectPinterestBoardSelectResponseAccountPlatformLinkedin, ConnectPinterestBoardSelectResponseAccountPlatformTiktok, ConnectPinterestBoardSelectResponseAccountPlatformYoutube, ConnectPinterestBoardSelectResponseAccountPlatformPinterest, ConnectPinterestBoardSelectResponseAccountPlatformReddit, ConnectPinterestBoardSelectResponseAccountPlatformBluesky, ConnectPinterestBoardSelectResponseAccountPlatformThreads, ConnectPinterestBoardSelectResponseAccountPlatformTelegram, ConnectPinterestBoardSelectResponseAccountPlatformSnapchat, ConnectPinterestBoardSelectResponseAccountPlatformGooglebusiness, ConnectPinterestBoardSelectResponseAccountPlatformWhatsapp, ConnectPinterestBoardSelectResponseAccountPlatformMastodon, ConnectPinterestBoardSelectResponseAccountPlatformDiscord, ConnectPinterestBoardSelectResponseAccountPlatformSMS, ConnectPinterestBoardSelectResponseAccountPlatformBeehiiv, ConnectPinterestBoardSelectResponseAccountPlatformConvertkit, ConnectPinterestBoardSelectResponseAccountPlatformMailchimp, ConnectPinterestBoardSelectResponseAccountPlatformListmonk:
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type ConnectPinterestBoardSelectResponseAccountWorkspace struct {
+	ID   string                                                  `json:"id" api:"required"`
+	Name string                                                  `json:"name" api:"required"`
+	JSON connectPinterestBoardSelectResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectPinterestBoardSelectResponseAccountWorkspaceJSON contains the JSON
+// metadata for the struct [ConnectPinterestBoardSelectResponseAccountWorkspace]
+type connectPinterestBoardSelectResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectPinterestBoardSelectResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectPinterestBoardSelectResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type ConnectPinterestBoardSelectParams struct {

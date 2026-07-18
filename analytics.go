@@ -88,7 +88,10 @@ func (r *AnalyticsService) ListDailyMetrics(ctx context.Context, query Analytics
 type AnalyticsGetResponse struct {
 	Data     []AnalyticsGetResponseData   `json:"data" api:"required"`
 	Overview AnalyticsGetResponseOverview `json:"overview"`
-	JSON     analyticsGetResponseJSON     `json:"-"`
+	// True when the matching target set exceeds the per-response cap. Narrow by
+	// from_date/to_date/platform to see the full set.
+	Truncated bool                     `json:"truncated"`
+	JSON      analyticsGetResponseJSON `json:"-"`
 }
 
 // analyticsGetResponseJSON contains the JSON metadata for the struct
@@ -96,6 +99,7 @@ type AnalyticsGetResponse struct {
 type analyticsGetResponseJSON struct {
 	Data        apijson.Field
 	Overview    apijson.Field
+	Truncated   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -179,11 +183,15 @@ const (
 	AnalyticsGetResponseDataPlatformMastodon       AnalyticsGetResponseDataPlatform = "mastodon"
 	AnalyticsGetResponseDataPlatformDiscord        AnalyticsGetResponseDataPlatform = "discord"
 	AnalyticsGetResponseDataPlatformSMS            AnalyticsGetResponseDataPlatform = "sms"
+	AnalyticsGetResponseDataPlatformBeehiiv        AnalyticsGetResponseDataPlatform = "beehiiv"
+	AnalyticsGetResponseDataPlatformConvertkit     AnalyticsGetResponseDataPlatform = "convertkit"
+	AnalyticsGetResponseDataPlatformMailchimp      AnalyticsGetResponseDataPlatform = "mailchimp"
+	AnalyticsGetResponseDataPlatformListmonk       AnalyticsGetResponseDataPlatform = "listmonk"
 )
 
 func (r AnalyticsGetResponseDataPlatform) IsKnown() bool {
 	switch r {
-	case AnalyticsGetResponseDataPlatformTwitter, AnalyticsGetResponseDataPlatformInstagram, AnalyticsGetResponseDataPlatformFacebook, AnalyticsGetResponseDataPlatformLinkedin, AnalyticsGetResponseDataPlatformTiktok, AnalyticsGetResponseDataPlatformYoutube, AnalyticsGetResponseDataPlatformPinterest, AnalyticsGetResponseDataPlatformReddit, AnalyticsGetResponseDataPlatformBluesky, AnalyticsGetResponseDataPlatformThreads, AnalyticsGetResponseDataPlatformTelegram, AnalyticsGetResponseDataPlatformSnapchat, AnalyticsGetResponseDataPlatformGooglebusiness, AnalyticsGetResponseDataPlatformWhatsapp, AnalyticsGetResponseDataPlatformMastodon, AnalyticsGetResponseDataPlatformDiscord, AnalyticsGetResponseDataPlatformSMS:
+	case AnalyticsGetResponseDataPlatformTwitter, AnalyticsGetResponseDataPlatformInstagram, AnalyticsGetResponseDataPlatformFacebook, AnalyticsGetResponseDataPlatformLinkedin, AnalyticsGetResponseDataPlatformTiktok, AnalyticsGetResponseDataPlatformYoutube, AnalyticsGetResponseDataPlatformPinterest, AnalyticsGetResponseDataPlatformReddit, AnalyticsGetResponseDataPlatformBluesky, AnalyticsGetResponseDataPlatformThreads, AnalyticsGetResponseDataPlatformTelegram, AnalyticsGetResponseDataPlatformSnapchat, AnalyticsGetResponseDataPlatformGooglebusiness, AnalyticsGetResponseDataPlatformWhatsapp, AnalyticsGetResponseDataPlatformMastodon, AnalyticsGetResponseDataPlatformDiscord, AnalyticsGetResponseDataPlatformSMS, AnalyticsGetResponseDataPlatformBeehiiv, AnalyticsGetResponseDataPlatformConvertkit, AnalyticsGetResponseDataPlatformMailchimp, AnalyticsGetResponseDataPlatformListmonk:
 		return true
 	}
 	return false
@@ -363,11 +371,15 @@ const (
 	AnalyticsGetContentDecayResponsePlatformMastodon       AnalyticsGetContentDecayResponsePlatform = "mastodon"
 	AnalyticsGetContentDecayResponsePlatformDiscord        AnalyticsGetContentDecayResponsePlatform = "discord"
 	AnalyticsGetContentDecayResponsePlatformSMS            AnalyticsGetContentDecayResponsePlatform = "sms"
+	AnalyticsGetContentDecayResponsePlatformBeehiiv        AnalyticsGetContentDecayResponsePlatform = "beehiiv"
+	AnalyticsGetContentDecayResponsePlatformConvertkit     AnalyticsGetContentDecayResponsePlatform = "convertkit"
+	AnalyticsGetContentDecayResponsePlatformMailchimp      AnalyticsGetContentDecayResponsePlatform = "mailchimp"
+	AnalyticsGetContentDecayResponsePlatformListmonk       AnalyticsGetContentDecayResponsePlatform = "listmonk"
 )
 
 func (r AnalyticsGetContentDecayResponsePlatform) IsKnown() bool {
 	switch r {
-	case AnalyticsGetContentDecayResponsePlatformTwitter, AnalyticsGetContentDecayResponsePlatformInstagram, AnalyticsGetContentDecayResponsePlatformFacebook, AnalyticsGetContentDecayResponsePlatformLinkedin, AnalyticsGetContentDecayResponsePlatformTiktok, AnalyticsGetContentDecayResponsePlatformYoutube, AnalyticsGetContentDecayResponsePlatformPinterest, AnalyticsGetContentDecayResponsePlatformReddit, AnalyticsGetContentDecayResponsePlatformBluesky, AnalyticsGetContentDecayResponsePlatformThreads, AnalyticsGetContentDecayResponsePlatformTelegram, AnalyticsGetContentDecayResponsePlatformSnapchat, AnalyticsGetContentDecayResponsePlatformGooglebusiness, AnalyticsGetContentDecayResponsePlatformWhatsapp, AnalyticsGetContentDecayResponsePlatformMastodon, AnalyticsGetContentDecayResponsePlatformDiscord, AnalyticsGetContentDecayResponsePlatformSMS:
+	case AnalyticsGetContentDecayResponsePlatformTwitter, AnalyticsGetContentDecayResponsePlatformInstagram, AnalyticsGetContentDecayResponsePlatformFacebook, AnalyticsGetContentDecayResponsePlatformLinkedin, AnalyticsGetContentDecayResponsePlatformTiktok, AnalyticsGetContentDecayResponsePlatformYoutube, AnalyticsGetContentDecayResponsePlatformPinterest, AnalyticsGetContentDecayResponsePlatformReddit, AnalyticsGetContentDecayResponsePlatformBluesky, AnalyticsGetContentDecayResponsePlatformThreads, AnalyticsGetContentDecayResponsePlatformTelegram, AnalyticsGetContentDecayResponsePlatformSnapchat, AnalyticsGetContentDecayResponsePlatformGooglebusiness, AnalyticsGetContentDecayResponsePlatformWhatsapp, AnalyticsGetContentDecayResponsePlatformMastodon, AnalyticsGetContentDecayResponsePlatformDiscord, AnalyticsGetContentDecayResponsePlatformSMS, AnalyticsGetContentDecayResponsePlatformBeehiiv, AnalyticsGetContentDecayResponsePlatformConvertkit, AnalyticsGetContentDecayResponsePlatformMailchimp, AnalyticsGetContentDecayResponsePlatformListmonk:
 		return true
 	}
 	return false
@@ -598,11 +610,15 @@ const (
 	AnalyticsGetParamsPlatformMastodon       AnalyticsGetParamsPlatform = "mastodon"
 	AnalyticsGetParamsPlatformDiscord        AnalyticsGetParamsPlatform = "discord"
 	AnalyticsGetParamsPlatformSMS            AnalyticsGetParamsPlatform = "sms"
+	AnalyticsGetParamsPlatformBeehiiv        AnalyticsGetParamsPlatform = "beehiiv"
+	AnalyticsGetParamsPlatformConvertkit     AnalyticsGetParamsPlatform = "convertkit"
+	AnalyticsGetParamsPlatformMailchimp      AnalyticsGetParamsPlatform = "mailchimp"
+	AnalyticsGetParamsPlatformListmonk       AnalyticsGetParamsPlatform = "listmonk"
 )
 
 func (r AnalyticsGetParamsPlatform) IsKnown() bool {
 	switch r {
-	case AnalyticsGetParamsPlatformTwitter, AnalyticsGetParamsPlatformInstagram, AnalyticsGetParamsPlatformFacebook, AnalyticsGetParamsPlatformLinkedin, AnalyticsGetParamsPlatformTiktok, AnalyticsGetParamsPlatformYoutube, AnalyticsGetParamsPlatformPinterest, AnalyticsGetParamsPlatformReddit, AnalyticsGetParamsPlatformBluesky, AnalyticsGetParamsPlatformThreads, AnalyticsGetParamsPlatformTelegram, AnalyticsGetParamsPlatformSnapchat, AnalyticsGetParamsPlatformGooglebusiness, AnalyticsGetParamsPlatformWhatsapp, AnalyticsGetParamsPlatformMastodon, AnalyticsGetParamsPlatformDiscord, AnalyticsGetParamsPlatformSMS:
+	case AnalyticsGetParamsPlatformTwitter, AnalyticsGetParamsPlatformInstagram, AnalyticsGetParamsPlatformFacebook, AnalyticsGetParamsPlatformLinkedin, AnalyticsGetParamsPlatformTiktok, AnalyticsGetParamsPlatformYoutube, AnalyticsGetParamsPlatformPinterest, AnalyticsGetParamsPlatformReddit, AnalyticsGetParamsPlatformBluesky, AnalyticsGetParamsPlatformThreads, AnalyticsGetParamsPlatformTelegram, AnalyticsGetParamsPlatformSnapchat, AnalyticsGetParamsPlatformGooglebusiness, AnalyticsGetParamsPlatformWhatsapp, AnalyticsGetParamsPlatformMastodon, AnalyticsGetParamsPlatformDiscord, AnalyticsGetParamsPlatformSMS, AnalyticsGetParamsPlatformBeehiiv, AnalyticsGetParamsPlatformConvertkit, AnalyticsGetParamsPlatformMailchimp, AnalyticsGetParamsPlatformListmonk:
 		return true
 	}
 	return false
@@ -649,11 +665,15 @@ const (
 	AnalyticsGetBestTimeParamsPlatformMastodon       AnalyticsGetBestTimeParamsPlatform = "mastodon"
 	AnalyticsGetBestTimeParamsPlatformDiscord        AnalyticsGetBestTimeParamsPlatform = "discord"
 	AnalyticsGetBestTimeParamsPlatformSMS            AnalyticsGetBestTimeParamsPlatform = "sms"
+	AnalyticsGetBestTimeParamsPlatformBeehiiv        AnalyticsGetBestTimeParamsPlatform = "beehiiv"
+	AnalyticsGetBestTimeParamsPlatformConvertkit     AnalyticsGetBestTimeParamsPlatform = "convertkit"
+	AnalyticsGetBestTimeParamsPlatformMailchimp      AnalyticsGetBestTimeParamsPlatform = "mailchimp"
+	AnalyticsGetBestTimeParamsPlatformListmonk       AnalyticsGetBestTimeParamsPlatform = "listmonk"
 )
 
 func (r AnalyticsGetBestTimeParamsPlatform) IsKnown() bool {
 	switch r {
-	case AnalyticsGetBestTimeParamsPlatformTwitter, AnalyticsGetBestTimeParamsPlatformInstagram, AnalyticsGetBestTimeParamsPlatformFacebook, AnalyticsGetBestTimeParamsPlatformLinkedin, AnalyticsGetBestTimeParamsPlatformTiktok, AnalyticsGetBestTimeParamsPlatformYoutube, AnalyticsGetBestTimeParamsPlatformPinterest, AnalyticsGetBestTimeParamsPlatformReddit, AnalyticsGetBestTimeParamsPlatformBluesky, AnalyticsGetBestTimeParamsPlatformThreads, AnalyticsGetBestTimeParamsPlatformTelegram, AnalyticsGetBestTimeParamsPlatformSnapchat, AnalyticsGetBestTimeParamsPlatformGooglebusiness, AnalyticsGetBestTimeParamsPlatformWhatsapp, AnalyticsGetBestTimeParamsPlatformMastodon, AnalyticsGetBestTimeParamsPlatformDiscord, AnalyticsGetBestTimeParamsPlatformSMS:
+	case AnalyticsGetBestTimeParamsPlatformTwitter, AnalyticsGetBestTimeParamsPlatformInstagram, AnalyticsGetBestTimeParamsPlatformFacebook, AnalyticsGetBestTimeParamsPlatformLinkedin, AnalyticsGetBestTimeParamsPlatformTiktok, AnalyticsGetBestTimeParamsPlatformYoutube, AnalyticsGetBestTimeParamsPlatformPinterest, AnalyticsGetBestTimeParamsPlatformReddit, AnalyticsGetBestTimeParamsPlatformBluesky, AnalyticsGetBestTimeParamsPlatformThreads, AnalyticsGetBestTimeParamsPlatformTelegram, AnalyticsGetBestTimeParamsPlatformSnapchat, AnalyticsGetBestTimeParamsPlatformGooglebusiness, AnalyticsGetBestTimeParamsPlatformWhatsapp, AnalyticsGetBestTimeParamsPlatformMastodon, AnalyticsGetBestTimeParamsPlatformDiscord, AnalyticsGetBestTimeParamsPlatformSMS, AnalyticsGetBestTimeParamsPlatformBeehiiv, AnalyticsGetBestTimeParamsPlatformConvertkit, AnalyticsGetBestTimeParamsPlatformMailchimp, AnalyticsGetBestTimeParamsPlatformListmonk:
 		return true
 	}
 	return false
@@ -734,11 +754,15 @@ const (
 	AnalyticsGetPostingFrequencyParamsPlatformMastodon       AnalyticsGetPostingFrequencyParamsPlatform = "mastodon"
 	AnalyticsGetPostingFrequencyParamsPlatformDiscord        AnalyticsGetPostingFrequencyParamsPlatform = "discord"
 	AnalyticsGetPostingFrequencyParamsPlatformSMS            AnalyticsGetPostingFrequencyParamsPlatform = "sms"
+	AnalyticsGetPostingFrequencyParamsPlatformBeehiiv        AnalyticsGetPostingFrequencyParamsPlatform = "beehiiv"
+	AnalyticsGetPostingFrequencyParamsPlatformConvertkit     AnalyticsGetPostingFrequencyParamsPlatform = "convertkit"
+	AnalyticsGetPostingFrequencyParamsPlatformMailchimp      AnalyticsGetPostingFrequencyParamsPlatform = "mailchimp"
+	AnalyticsGetPostingFrequencyParamsPlatformListmonk       AnalyticsGetPostingFrequencyParamsPlatform = "listmonk"
 )
 
 func (r AnalyticsGetPostingFrequencyParamsPlatform) IsKnown() bool {
 	switch r {
-	case AnalyticsGetPostingFrequencyParamsPlatformTwitter, AnalyticsGetPostingFrequencyParamsPlatformInstagram, AnalyticsGetPostingFrequencyParamsPlatformFacebook, AnalyticsGetPostingFrequencyParamsPlatformLinkedin, AnalyticsGetPostingFrequencyParamsPlatformTiktok, AnalyticsGetPostingFrequencyParamsPlatformYoutube, AnalyticsGetPostingFrequencyParamsPlatformPinterest, AnalyticsGetPostingFrequencyParamsPlatformReddit, AnalyticsGetPostingFrequencyParamsPlatformBluesky, AnalyticsGetPostingFrequencyParamsPlatformThreads, AnalyticsGetPostingFrequencyParamsPlatformTelegram, AnalyticsGetPostingFrequencyParamsPlatformSnapchat, AnalyticsGetPostingFrequencyParamsPlatformGooglebusiness, AnalyticsGetPostingFrequencyParamsPlatformWhatsapp, AnalyticsGetPostingFrequencyParamsPlatformMastodon, AnalyticsGetPostingFrequencyParamsPlatformDiscord, AnalyticsGetPostingFrequencyParamsPlatformSMS:
+	case AnalyticsGetPostingFrequencyParamsPlatformTwitter, AnalyticsGetPostingFrequencyParamsPlatformInstagram, AnalyticsGetPostingFrequencyParamsPlatformFacebook, AnalyticsGetPostingFrequencyParamsPlatformLinkedin, AnalyticsGetPostingFrequencyParamsPlatformTiktok, AnalyticsGetPostingFrequencyParamsPlatformYoutube, AnalyticsGetPostingFrequencyParamsPlatformPinterest, AnalyticsGetPostingFrequencyParamsPlatformReddit, AnalyticsGetPostingFrequencyParamsPlatformBluesky, AnalyticsGetPostingFrequencyParamsPlatformThreads, AnalyticsGetPostingFrequencyParamsPlatformTelegram, AnalyticsGetPostingFrequencyParamsPlatformSnapchat, AnalyticsGetPostingFrequencyParamsPlatformGooglebusiness, AnalyticsGetPostingFrequencyParamsPlatformWhatsapp, AnalyticsGetPostingFrequencyParamsPlatformMastodon, AnalyticsGetPostingFrequencyParamsPlatformDiscord, AnalyticsGetPostingFrequencyParamsPlatformSMS, AnalyticsGetPostingFrequencyParamsPlatformBeehiiv, AnalyticsGetPostingFrequencyParamsPlatformConvertkit, AnalyticsGetPostingFrequencyParamsPlatformMailchimp, AnalyticsGetPostingFrequencyParamsPlatformListmonk:
 		return true
 	}
 	return false
@@ -785,11 +809,15 @@ const (
 	AnalyticsListDailyMetricsParamsPlatformMastodon       AnalyticsListDailyMetricsParamsPlatform = "mastodon"
 	AnalyticsListDailyMetricsParamsPlatformDiscord        AnalyticsListDailyMetricsParamsPlatform = "discord"
 	AnalyticsListDailyMetricsParamsPlatformSMS            AnalyticsListDailyMetricsParamsPlatform = "sms"
+	AnalyticsListDailyMetricsParamsPlatformBeehiiv        AnalyticsListDailyMetricsParamsPlatform = "beehiiv"
+	AnalyticsListDailyMetricsParamsPlatformConvertkit     AnalyticsListDailyMetricsParamsPlatform = "convertkit"
+	AnalyticsListDailyMetricsParamsPlatformMailchimp      AnalyticsListDailyMetricsParamsPlatform = "mailchimp"
+	AnalyticsListDailyMetricsParamsPlatformListmonk       AnalyticsListDailyMetricsParamsPlatform = "listmonk"
 )
 
 func (r AnalyticsListDailyMetricsParamsPlatform) IsKnown() bool {
 	switch r {
-	case AnalyticsListDailyMetricsParamsPlatformTwitter, AnalyticsListDailyMetricsParamsPlatformInstagram, AnalyticsListDailyMetricsParamsPlatformFacebook, AnalyticsListDailyMetricsParamsPlatformLinkedin, AnalyticsListDailyMetricsParamsPlatformTiktok, AnalyticsListDailyMetricsParamsPlatformYoutube, AnalyticsListDailyMetricsParamsPlatformPinterest, AnalyticsListDailyMetricsParamsPlatformReddit, AnalyticsListDailyMetricsParamsPlatformBluesky, AnalyticsListDailyMetricsParamsPlatformThreads, AnalyticsListDailyMetricsParamsPlatformTelegram, AnalyticsListDailyMetricsParamsPlatformSnapchat, AnalyticsListDailyMetricsParamsPlatformGooglebusiness, AnalyticsListDailyMetricsParamsPlatformWhatsapp, AnalyticsListDailyMetricsParamsPlatformMastodon, AnalyticsListDailyMetricsParamsPlatformDiscord, AnalyticsListDailyMetricsParamsPlatformSMS:
+	case AnalyticsListDailyMetricsParamsPlatformTwitter, AnalyticsListDailyMetricsParamsPlatformInstagram, AnalyticsListDailyMetricsParamsPlatformFacebook, AnalyticsListDailyMetricsParamsPlatformLinkedin, AnalyticsListDailyMetricsParamsPlatformTiktok, AnalyticsListDailyMetricsParamsPlatformYoutube, AnalyticsListDailyMetricsParamsPlatformPinterest, AnalyticsListDailyMetricsParamsPlatformReddit, AnalyticsListDailyMetricsParamsPlatformBluesky, AnalyticsListDailyMetricsParamsPlatformThreads, AnalyticsListDailyMetricsParamsPlatformTelegram, AnalyticsListDailyMetricsParamsPlatformSnapchat, AnalyticsListDailyMetricsParamsPlatformGooglebusiness, AnalyticsListDailyMetricsParamsPlatformWhatsapp, AnalyticsListDailyMetricsParamsPlatformMastodon, AnalyticsListDailyMetricsParamsPlatformDiscord, AnalyticsListDailyMetricsParamsPlatformSMS, AnalyticsListDailyMetricsParamsPlatformBeehiiv, AnalyticsListDailyMetricsParamsPlatformConvertkit, AnalyticsListDailyMetricsParamsPlatformMailchimp, AnalyticsListDailyMetricsParamsPlatformListmonk:
 		return true
 	}
 	return false

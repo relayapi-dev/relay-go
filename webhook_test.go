@@ -14,7 +14,7 @@ import (
 	"github.com/relayapi-dev/relay-go/option"
 )
 
-func TestWebhookNew(t *testing.T) {
+func TestWebhookNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -28,8 +28,9 @@ func TestWebhookNew(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Webhooks.New(context.TODO(), relaygo.WebhookNewParams{
-		Events: relaygo.F([]relaygo.WebhookNewParamsEvent{relaygo.WebhookNewParamsEventPostPublished}),
-		URL:    relaygo.F("https://example.com"),
+		Events:      relaygo.F([]relaygo.WebhookNewParamsEvent{relaygo.WebhookNewParamsEventPostPublished}),
+		URL:         relaygo.F("https://example.com"),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -85,10 +86,11 @@ func TestWebhookListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Webhooks.List(context.TODO(), relaygo.WebhookListParams{
-		Cursor: relaygo.F("cursor"),
-		From:   relaygo.F(time.Now()),
-		Limit:  relaygo.F(int64(1)),
-		To:     relaygo.F(time.Now()),
+		Cursor:      relaygo.F("cursor"),
+		From:        relaygo.F(time.Now()),
+		Limit:       relaygo.F(int64(1)),
+		To:          relaygo.F(time.Now()),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

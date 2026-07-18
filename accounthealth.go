@@ -7,10 +7,13 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"time"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
+	"github.com/relayapi-dev/relay-go/internal/apiquery"
+	"github.com/relayapi-dev/relay-go/internal/param"
 	"github.com/relayapi-dev/relay-go/internal/requestconfig"
 	"github.com/relayapi-dev/relay-go/option"
 )
@@ -47,20 +50,24 @@ func (r *AccountHealthService) Get(ctx context.Context, id string, opts ...optio
 }
 
 // Check health of all connected accounts
-func (r *AccountHealthService) List(ctx context.Context, opts ...option.RequestOption) (res *AccountHealthListResponse, err error) {
+func (r *AccountHealthService) List(ctx context.Context, query AccountHealthListParams, opts ...option.RequestOption) (res *AccountHealthListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/accounts/health"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return res, err
 }
 
 type AccountHealthGetResponse struct {
 	ID             string                        `json:"id" api:"required"`
+	AvatarURL      string                        `json:"avatar_url" api:"required,nullable"`
+	DisplayName    string                        `json:"display_name" api:"required,nullable"`
 	Healthy        bool                          `json:"healthy" api:"required"`
 	Platform       string                        `json:"platform" api:"required"`
+	Scopes         []string                      `json:"scopes" api:"required"`
 	TokenExpiresAt string                        `json:"token_expires_at" api:"required,nullable"`
 	Username       string                        `json:"username" api:"required,nullable"`
 	Error          AccountHealthGetResponseError `json:"error"`
+	Sync           AccountHealthGetResponseSync  `json:"sync" api:"nullable"`
 	JSON           accountHealthGetResponseJSON  `json:"-"`
 }
 
@@ -68,11 +75,15 @@ type AccountHealthGetResponse struct {
 // [AccountHealthGetResponse]
 type accountHealthGetResponseJSON struct {
 	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
 	Healthy        apijson.Field
 	Platform       apijson.Field
+	Scopes         apijson.Field
 	TokenExpiresAt apijson.Field
 	Username       apijson.Field
 	Error          apijson.Field
+	Sync           apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -108,15 +119,58 @@ func (r accountHealthGetResponseErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+type AccountHealthGetResponseSync struct {
+	ConsecutiveErrors float64                          `json:"consecutive_errors" api:"required"`
+	Enabled           bool                             `json:"enabled" api:"required"`
+	LastError         string                           `json:"last_error" api:"required,nullable"`
+	LastErrorAt       string                           `json:"last_error_at" api:"required,nullable"`
+	LastSyncAt        string                           `json:"last_sync_at" api:"required,nullable"`
+	NextSyncAt        string                           `json:"next_sync_at" api:"required,nullable"`
+	RateLimitResetAt  string                           `json:"rate_limit_reset_at" api:"required,nullable"`
+	TotalPostsSynced  float64                          `json:"total_posts_synced" api:"required"`
+	TotalSyncRuns     float64                          `json:"total_sync_runs" api:"required"`
+	JSON              accountHealthGetResponseSyncJSON `json:"-"`
+}
+
+// accountHealthGetResponseSyncJSON contains the JSON metadata for the struct
+// [AccountHealthGetResponseSync]
+type accountHealthGetResponseSyncJSON struct {
+	ConsecutiveErrors apijson.Field
+	Enabled           apijson.Field
+	LastError         apijson.Field
+	LastErrorAt       apijson.Field
+	LastSyncAt        apijson.Field
+	NextSyncAt        apijson.Field
+	RateLimitResetAt  apijson.Field
+	TotalPostsSynced  apijson.Field
+	TotalSyncRuns     apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *AccountHealthGetResponseSync) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountHealthGetResponseSyncJSON) RawJSON() string {
+	return r.raw
+}
+
 type AccountHealthListResponse struct {
 	Data []AccountHealthListResponseData `json:"data" api:"required"`
-	JSON accountHealthListResponseJSON   `json:"-"`
+	// Whether more items exist
+	HasMore bool `json:"has_more" api:"required"`
+	// Cursor for next page
+	NextCursor string                        `json:"next_cursor" api:"required,nullable"`
+	JSON       accountHealthListResponseJSON `json:"-"`
 }
 
 // accountHealthListResponseJSON contains the JSON metadata for the struct
 // [AccountHealthListResponse]
 type accountHealthListResponseJSON struct {
 	Data        apijson.Field
+	HasMore     apijson.Field
+	NextCursor  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -130,24 +184,34 @@ func (r accountHealthListResponseJSON) RawJSON() string {
 }
 
 type AccountHealthListResponseData struct {
-	ID             string                                `json:"id" api:"required"`
-	Healthy        bool                                  `json:"healthy" api:"required"`
-	Platform       AccountHealthListResponseDataPlatform `json:"platform" api:"required"`
-	TokenExpiresAt time.Time                             `json:"token_expires_at" api:"required,nullable" format:"date-time"`
-	Username       string                                `json:"username" api:"required,nullable"`
-	Error          AccountHealthListResponseDataError    `json:"error"`
-	JSON           accountHealthListResponseDataJSON     `json:"-"`
+	ID             string                                 `json:"id" api:"required"`
+	AvatarURL      string                                 `json:"avatar_url" api:"required,nullable"`
+	DisplayName    string                                 `json:"display_name" api:"required,nullable"`
+	Healthy        bool                                   `json:"healthy" api:"required"`
+	Platform       AccountHealthListResponseDataPlatform  `json:"platform" api:"required"`
+	Scopes         []string                               `json:"scopes" api:"required"`
+	TokenExpiresAt time.Time                              `json:"token_expires_at" api:"required,nullable" format:"date-time"`
+	Username       string                                 `json:"username" api:"required,nullable"`
+	Workspace      AccountHealthListResponseDataWorkspace `json:"workspace" api:"required,nullable"`
+	Error          AccountHealthListResponseDataError     `json:"error"`
+	Sync           AccountHealthListResponseDataSync      `json:"sync" api:"nullable"`
+	JSON           accountHealthListResponseDataJSON      `json:"-"`
 }
 
 // accountHealthListResponseDataJSON contains the JSON metadata for the struct
 // [AccountHealthListResponseData]
 type accountHealthListResponseDataJSON struct {
 	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
 	Healthy        apijson.Field
 	Platform       apijson.Field
+	Scopes         apijson.Field
 	TokenExpiresAt apijson.Field
 	Username       apijson.Field
+	Workspace      apijson.Field
 	Error          apijson.Field
+	Sync           apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -180,14 +244,41 @@ const (
 	AccountHealthListResponseDataPlatformMastodon       AccountHealthListResponseDataPlatform = "mastodon"
 	AccountHealthListResponseDataPlatformDiscord        AccountHealthListResponseDataPlatform = "discord"
 	AccountHealthListResponseDataPlatformSMS            AccountHealthListResponseDataPlatform = "sms"
+	AccountHealthListResponseDataPlatformBeehiiv        AccountHealthListResponseDataPlatform = "beehiiv"
+	AccountHealthListResponseDataPlatformConvertkit     AccountHealthListResponseDataPlatform = "convertkit"
+	AccountHealthListResponseDataPlatformMailchimp      AccountHealthListResponseDataPlatform = "mailchimp"
+	AccountHealthListResponseDataPlatformListmonk       AccountHealthListResponseDataPlatform = "listmonk"
 )
 
 func (r AccountHealthListResponseDataPlatform) IsKnown() bool {
 	switch r {
-	case AccountHealthListResponseDataPlatformTwitter, AccountHealthListResponseDataPlatformInstagram, AccountHealthListResponseDataPlatformFacebook, AccountHealthListResponseDataPlatformLinkedin, AccountHealthListResponseDataPlatformTiktok, AccountHealthListResponseDataPlatformYoutube, AccountHealthListResponseDataPlatformPinterest, AccountHealthListResponseDataPlatformReddit, AccountHealthListResponseDataPlatformBluesky, AccountHealthListResponseDataPlatformThreads, AccountHealthListResponseDataPlatformTelegram, AccountHealthListResponseDataPlatformSnapchat, AccountHealthListResponseDataPlatformGooglebusiness, AccountHealthListResponseDataPlatformWhatsapp, AccountHealthListResponseDataPlatformMastodon, AccountHealthListResponseDataPlatformDiscord, AccountHealthListResponseDataPlatformSMS:
+	case AccountHealthListResponseDataPlatformTwitter, AccountHealthListResponseDataPlatformInstagram, AccountHealthListResponseDataPlatformFacebook, AccountHealthListResponseDataPlatformLinkedin, AccountHealthListResponseDataPlatformTiktok, AccountHealthListResponseDataPlatformYoutube, AccountHealthListResponseDataPlatformPinterest, AccountHealthListResponseDataPlatformReddit, AccountHealthListResponseDataPlatformBluesky, AccountHealthListResponseDataPlatformThreads, AccountHealthListResponseDataPlatformTelegram, AccountHealthListResponseDataPlatformSnapchat, AccountHealthListResponseDataPlatformGooglebusiness, AccountHealthListResponseDataPlatformWhatsapp, AccountHealthListResponseDataPlatformMastodon, AccountHealthListResponseDataPlatformDiscord, AccountHealthListResponseDataPlatformSMS, AccountHealthListResponseDataPlatformBeehiiv, AccountHealthListResponseDataPlatformConvertkit, AccountHealthListResponseDataPlatformMailchimp, AccountHealthListResponseDataPlatformListmonk:
 		return true
 	}
 	return false
+}
+
+type AccountHealthListResponseDataWorkspace struct {
+	ID   string                                     `json:"id" api:"required"`
+	Name string                                     `json:"name" api:"required"`
+	JSON accountHealthListResponseDataWorkspaceJSON `json:"-"`
+}
+
+// accountHealthListResponseDataWorkspaceJSON contains the JSON metadata for the
+// struct [AccountHealthListResponseDataWorkspace]
+type accountHealthListResponseDataWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountHealthListResponseDataWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountHealthListResponseDataWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type AccountHealthListResponseDataError struct {
@@ -211,4 +302,57 @@ func (r *AccountHealthListResponseDataError) UnmarshalJSON(data []byte) (err err
 
 func (r accountHealthListResponseDataErrorJSON) RawJSON() string {
 	return r.raw
+}
+
+type AccountHealthListResponseDataSync struct {
+	ConsecutiveErrors float64                               `json:"consecutive_errors" api:"required"`
+	Enabled           bool                                  `json:"enabled" api:"required"`
+	LastError         string                                `json:"last_error" api:"required,nullable"`
+	LastErrorAt       time.Time                             `json:"last_error_at" api:"required,nullable" format:"date-time"`
+	LastSyncAt        time.Time                             `json:"last_sync_at" api:"required,nullable" format:"date-time"`
+	NextSyncAt        time.Time                             `json:"next_sync_at" api:"required,nullable" format:"date-time"`
+	RateLimitResetAt  time.Time                             `json:"rate_limit_reset_at" api:"required,nullable" format:"date-time"`
+	TotalPostsSynced  float64                               `json:"total_posts_synced" api:"required"`
+	TotalSyncRuns     float64                               `json:"total_sync_runs" api:"required"`
+	JSON              accountHealthListResponseDataSyncJSON `json:"-"`
+}
+
+// accountHealthListResponseDataSyncJSON contains the JSON metadata for the struct
+// [AccountHealthListResponseDataSync]
+type accountHealthListResponseDataSyncJSON struct {
+	ConsecutiveErrors apijson.Field
+	Enabled           apijson.Field
+	LastError         apijson.Field
+	LastErrorAt       apijson.Field
+	LastSyncAt        apijson.Field
+	NextSyncAt        apijson.Field
+	RateLimitResetAt  apijson.Field
+	TotalPostsSynced  apijson.Field
+	TotalSyncRuns     apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *AccountHealthListResponseDataSync) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountHealthListResponseDataSyncJSON) RawJSON() string {
+	return r.raw
+}
+
+type AccountHealthListParams struct {
+	// Pagination cursor
+	Cursor param.Field[string] `query:"cursor"`
+	// Number of items per page
+	Limit param.Field[int64] `query:"limit"`
+}
+
+// URLQuery serializes [AccountHealthListParams]'s query parameters as
+// `url.Values`.
+func (r AccountHealthListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

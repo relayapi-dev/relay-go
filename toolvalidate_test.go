@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/relayapi-dev/relay-go"
 	"github.com/relayapi-dev/relay-go/internal/testutil"
@@ -105,16 +106,40 @@ func TestToolValidateValidatePostWithOptionalParams(t *testing.T) {
 		ScheduledAt: relaygo.F("now"),
 		Targets:     relaygo.F([]string{"string"}),
 		Content:     relaygo.F("content"),
-		Media: relaygo.F([]relaygo.ToolValidateValidatePostParamsMedia{{
-			URL:  relaygo.F("https://example.com"),
-			Type: relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
+		CrossPostActions: relaygo.F([]relaygo.ToolValidateValidatePostParamsCrossPostAction{{
+			ActionType:      relaygo.F(relaygo.ToolValidateValidatePostParamsCrossPostActionsActionTypeRepost),
+			TargetAccountID: relaygo.F("target_account_id"),
+			Content:         relaygo.F("content"),
+			DelayMinutes:    relaygo.F(int64(0)),
 		}}),
+		IdeaID: relaygo.F("idea_id"),
+		Media: relaygo.F([]relaygo.ToolValidateValidatePostParamsMedia{{
+			URL:       relaygo.F("https://example.com"),
+			Thumbnail: relaygo.F("thumbnail"),
+			Type:      relaygo.F(relaygo.ToolValidateValidatePostParamsMediaTypeImage),
+		}}),
+		Recycling: relaygo.F(relaygo.ToolValidateValidatePostParamsRecycling{
+			Gap:               relaygo.F(int64(1)),
+			GapFreq:           relaygo.F(relaygo.ToolValidateValidatePostParamsRecyclingGapFreqDay),
+			StartDate:         relaygo.F(time.Now()),
+			ContentVariations: relaygo.F([]string{"string"}),
+			Enabled:           relaygo.F(true),
+			ExpireCount:       relaygo.F(int64(1)),
+			ExpireDate:        relaygo.F(time.Now()),
+		}),
+		ShortenURLs:   relaygo.F(true),
+		SkipSignature: relaygo.F(true),
 		TargetOptions: relaygo.F(map[string]map[string]interface{}{
 			"foo": {
 				"foo": "bar",
 			},
 		}),
-		Timezone: relaygo.F("timezone"),
+		TemplateID: relaygo.F("template_id"),
+		TemplateVariables: relaygo.F(map[string]string{
+			"foo": "string",
+		}),
+		Timezone:    relaygo.F("timezone"),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error

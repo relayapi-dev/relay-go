@@ -29,7 +29,7 @@ func TestQueueSlotNewWithOptionalParams(t *testing.T) {
 	_, err := client.Queue.Slots.New(context.TODO(), relaygo.QueueSlotNewParams{
 		Slots: relaygo.F([]relaygo.QueueSlotNewParamsSlot{{
 			DayOfWeek: relaygo.F(int64(0)),
-			Time:      relaygo.F("73:16"),
+			Time:      relaygo.F("20:29"),
 			Timezone:  relaygo.F("timezone"),
 		}}),
 		Timezone: relaygo.F("timezone"),
@@ -62,7 +62,7 @@ func TestQueueSlotUpdateWithOptionalParams(t *testing.T) {
 		SetAsDefault: relaygo.F(true),
 		Slots: relaygo.F([]relaygo.QueueSlotUpdateParamsSlot{{
 			DayOfWeek: relaygo.F(int64(0)),
-			Time:      relaygo.F("73:16"),
+			Time:      relaygo.F("20:29"),
 			Timezone:  relaygo.F("timezone"),
 		}}),
 	})

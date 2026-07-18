@@ -7,9 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/relayapi-dev/relay-go/internal/apijson"
+	"github.com/relayapi-dev/relay-go/internal/apiquery"
+	"github.com/relayapi-dev/relay-go/internal/param"
 	"github.com/relayapi-dev/relay-go/internal/requestconfig"
 	"github.com/relayapi-dev/relay-go/option"
 )
@@ -34,26 +37,26 @@ func NewInboxCommentLikeService(opts ...option.RequestOption) (r *InboxCommentLi
 }
 
 // Like a comment
-func (r *InboxCommentLikeService) New(ctx context.Context, commentID string, opts ...option.RequestOption) (res *InboxCommentLikeNewResponse, err error) {
+func (r *InboxCommentLikeService) New(ctx context.Context, commentID string, body InboxCommentLikeNewParams, opts ...option.RequestOption) (res *InboxCommentLikeNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if commentID == "" {
 		err = errors.New("missing required comment_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("v1/inbox/comments/%s/like", commentID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
 
 // Unlike a comment
-func (r *InboxCommentLikeService) Delete(ctx context.Context, commentID string, opts ...option.RequestOption) (res *InboxCommentLikeDeleteResponse, err error) {
+func (r *InboxCommentLikeService) Delete(ctx context.Context, commentID string, body InboxCommentLikeDeleteParams, opts ...option.RequestOption) (res *InboxCommentLikeDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if commentID == "" {
 		err = errors.New("missing required comment_id parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("v1/inbox/comments/%s/like", commentID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, body, &res, opts...)
 	return res, err
 }
 
@@ -105,4 +108,32 @@ func (r *InboxCommentLikeDeleteResponse) UnmarshalJSON(data []byte) (err error) 
 
 func (r inboxCommentLikeDeleteResponseJSON) RawJSON() string {
 	return r.raw
+}
+
+type InboxCommentLikeNewParams struct {
+	// Target a specific account instead of fanning out to all org accounts
+	AccountID param.Field[string] `query:"account_id"`
+}
+
+// URLQuery serializes [InboxCommentLikeNewParams]'s query parameters as
+// `url.Values`.
+func (r InboxCommentLikeNewParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxCommentLikeDeleteParams struct {
+	// Target a specific account instead of fanning out to all org accounts
+	AccountID param.Field[string] `query:"account_id"`
+}
+
+// URLQuery serializes [InboxCommentLikeDeleteParams]'s query parameters as
+// `url.Values`.
+func (r InboxCommentLikeDeleteParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

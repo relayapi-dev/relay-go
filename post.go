@@ -129,30 +129,54 @@ func (r *PostService) Unpublish(ctx context.Context, id string, body PostUnpubli
 
 type PostNewResponse struct {
 	// Post ID
-	ID          string                 `json:"id" api:"required"`
-	Content     string                 `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time              `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostNewResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                 `json:"scheduled_at" api:"required,nullable"`
-	Status      PostNewResponseStatus  `json:"status" api:"required"`
+	ID        string                 `json:"id" api:"required"`
+	Content   string                 `json:"content" api:"required,nullable"`
+	CreatedAt time.Time              `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostNewResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostNewResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                   `json:"scheduled_at" api:"required,nullable"`
+	Status      PostNewResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostNewResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postNewResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostNewResponseMetrics `json:"metrics"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
+	// IANA timezone
+	Timezone string              `json:"timezone" api:"nullable"`
+	JSON     postNewResponseJSON `json:"-"`
 }
 
 // postNewResponseJSON contains the JSON metadata for the struct [PostNewResponse]
 type postNewResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	PublishedAt    apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
+	Timezone       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostNewResponse) UnmarshalJSON(data []byte) (err error) {
@@ -166,6 +190,9 @@ func (r postNewResponseJSON) RawJSON() string {
 type PostNewResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostNewResponseMediaType `json:"type"`
 	JSON postNewResponseMediaJSON `json:"-"`
@@ -175,6 +202,7 @@ type PostNewResponseMedia struct {
 // [PostNewResponseMedia]
 type postNewResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -201,6 +229,70 @@ const (
 func (r PostNewResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostNewResponseMediaTypeImage, PostNewResponseMediaTypeVideo, PostNewResponseMediaTypeGif, PostNewResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostNewResponseRecycling struct {
+	ID                    string                          `json:"id" api:"required"`
+	ContentVariationIndex float64                         `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                        `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                       `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                            `json:"enabled" api:"required"`
+	ExpireCount           float64                         `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                       `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                         `json:"gap" api:"required"`
+	GapFreq               PostNewResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                       `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                       `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                         `json:"recycle_count" api:"required"`
+	StartDate             time.Time                       `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                       `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postNewResponseRecyclingJSON    `json:"-"`
+}
+
+// postNewResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostNewResponseRecycling]
+type postNewResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostNewResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postNewResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostNewResponseRecyclingGapFreq string
+
+const (
+	PostNewResponseRecyclingGapFreqDay   PostNewResponseRecyclingGapFreq = "day"
+	PostNewResponseRecyclingGapFreqWeek  PostNewResponseRecyclingGapFreq = "week"
+	PostNewResponseRecyclingGapFreqMonth PostNewResponseRecyclingGapFreq = "month"
+)
+
+func (r PostNewResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostNewResponseRecyclingGapFreqDay, PostNewResponseRecyclingGapFreqWeek, PostNewResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -272,11 +364,15 @@ const (
 	PostNewResponseTargetsPlatformMastodon       PostNewResponseTargetsPlatform = "mastodon"
 	PostNewResponseTargetsPlatformDiscord        PostNewResponseTargetsPlatform = "discord"
 	PostNewResponseTargetsPlatformSMS            PostNewResponseTargetsPlatform = "sms"
+	PostNewResponseTargetsPlatformBeehiiv        PostNewResponseTargetsPlatform = "beehiiv"
+	PostNewResponseTargetsPlatformConvertkit     PostNewResponseTargetsPlatform = "convertkit"
+	PostNewResponseTargetsPlatformMailchimp      PostNewResponseTargetsPlatform = "mailchimp"
+	PostNewResponseTargetsPlatformListmonk       PostNewResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostNewResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostNewResponseTargetsPlatformTwitter, PostNewResponseTargetsPlatformInstagram, PostNewResponseTargetsPlatformFacebook, PostNewResponseTargetsPlatformLinkedin, PostNewResponseTargetsPlatformTiktok, PostNewResponseTargetsPlatformYoutube, PostNewResponseTargetsPlatformPinterest, PostNewResponseTargetsPlatformReddit, PostNewResponseTargetsPlatformBluesky, PostNewResponseTargetsPlatformThreads, PostNewResponseTargetsPlatformTelegram, PostNewResponseTargetsPlatformSnapchat, PostNewResponseTargetsPlatformGooglebusiness, PostNewResponseTargetsPlatformWhatsapp, PostNewResponseTargetsPlatformMastodon, PostNewResponseTargetsPlatformDiscord, PostNewResponseTargetsPlatformSMS:
+	case PostNewResponseTargetsPlatformTwitter, PostNewResponseTargetsPlatformInstagram, PostNewResponseTargetsPlatformFacebook, PostNewResponseTargetsPlatformLinkedin, PostNewResponseTargetsPlatformTiktok, PostNewResponseTargetsPlatformYoutube, PostNewResponseTargetsPlatformPinterest, PostNewResponseTargetsPlatformReddit, PostNewResponseTargetsPlatformBluesky, PostNewResponseTargetsPlatformThreads, PostNewResponseTargetsPlatformTelegram, PostNewResponseTargetsPlatformSnapchat, PostNewResponseTargetsPlatformGooglebusiness, PostNewResponseTargetsPlatformWhatsapp, PostNewResponseTargetsPlatformMastodon, PostNewResponseTargetsPlatformDiscord, PostNewResponseTargetsPlatformSMS, PostNewResponseTargetsPlatformBeehiiv, PostNewResponseTargetsPlatformConvertkit, PostNewResponseTargetsPlatformMailchimp, PostNewResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -290,11 +386,12 @@ const (
 	PostNewResponseTargetsStatusPublishing PostNewResponseTargetsStatus = "publishing"
 	PostNewResponseTargetsStatusPublished  PostNewResponseTargetsStatus = "published"
 	PostNewResponseTargetsStatusFailed     PostNewResponseTargetsStatus = "failed"
+	PostNewResponseTargetsStatusPartial    PostNewResponseTargetsStatus = "partial"
 )
 
 func (r PostNewResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostNewResponseTargetsStatusDraft, PostNewResponseTargetsStatusScheduled, PostNewResponseTargetsStatusPublishing, PostNewResponseTargetsStatusPublished, PostNewResponseTargetsStatusFailed:
+	case PostNewResponseTargetsStatusDraft, PostNewResponseTargetsStatusScheduled, PostNewResponseTargetsStatusPublishing, PostNewResponseTargetsStatusPublished, PostNewResponseTargetsStatusFailed, PostNewResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -302,6 +399,14 @@ func (r PostNewResponseTargetsStatus) IsKnown() bool {
 
 type PostNewResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                            `json:"url" api:"required,nullable"`
 	Username string                            `json:"username" api:"required,nullable"`
@@ -311,11 +416,15 @@ type PostNewResponseTargetsAccount struct {
 // postNewResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostNewResponseTargetsAccount]
 type postNewResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	TargetID       apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostNewResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -327,9 +436,11 @@ func (r postNewResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostNewResponseTargetsError struct {
-	Code    string                          `json:"code" api:"required"`
-	Message string                          `json:"message" api:"required"`
-	JSON    postNewResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                          `json:"detail"`
+	JSON   postNewResponseTargetsErrorJSON `json:"-"`
 }
 
 // postNewResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -337,6 +448,7 @@ type PostNewResponseTargetsError struct {
 type postNewResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -349,32 +461,94 @@ func (r postNewResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostNewResponseMetrics struct {
+	Clicks         float64                    `json:"clicks"`
+	Comments       float64                    `json:"comments"`
+	EngagementRate float64                    `json:"engagement_rate"`
+	Impressions    float64                    `json:"impressions"`
+	Likes          float64                    `json:"likes"`
+	Reach          float64                    `json:"reach"`
+	Saves          float64                    `json:"saves"`
+	Shares         float64                    `json:"shares"`
+	Views          float64                    `json:"views"`
+	JSON           postNewResponseMetricsJSON `json:"-"`
+}
+
+// postNewResponseMetricsJSON contains the JSON metadata for the struct
+// [PostNewResponseMetrics]
+type postNewResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostNewResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postNewResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostGetResponse struct {
 	// Post ID
-	ID          string                 `json:"id" api:"required"`
-	Content     string                 `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time              `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostGetResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                 `json:"scheduled_at" api:"required,nullable"`
-	Status      PostGetResponseStatus  `json:"status" api:"required"`
+	ID        string                 `json:"id" api:"required"`
+	Content   string                 `json:"content" api:"required,nullable"`
+	CreatedAt time.Time              `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostGetResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostGetResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                   `json:"scheduled_at" api:"required,nullable"`
+	Status      PostGetResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostGetResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                        `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postGetResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostGetResponseMetrics `json:"metrics"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
+	// IANA timezone
+	Timezone string              `json:"timezone" api:"nullable"`
+	JSON     postGetResponseJSON `json:"-"`
 }
 
 // postGetResponseJSON contains the JSON metadata for the struct [PostGetResponse]
 type postGetResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	PublishedAt    apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
+	Timezone       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostGetResponse) UnmarshalJSON(data []byte) (err error) {
@@ -388,6 +562,9 @@ func (r postGetResponseJSON) RawJSON() string {
 type PostGetResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostGetResponseMediaType `json:"type"`
 	JSON postGetResponseMediaJSON `json:"-"`
@@ -397,6 +574,7 @@ type PostGetResponseMedia struct {
 // [PostGetResponseMedia]
 type postGetResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -423,6 +601,70 @@ const (
 func (r PostGetResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostGetResponseMediaTypeImage, PostGetResponseMediaTypeVideo, PostGetResponseMediaTypeGif, PostGetResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostGetResponseRecycling struct {
+	ID                    string                          `json:"id" api:"required"`
+	ContentVariationIndex float64                         `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                        `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                       `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                            `json:"enabled" api:"required"`
+	ExpireCount           float64                         `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                       `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                         `json:"gap" api:"required"`
+	GapFreq               PostGetResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                       `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                       `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                         `json:"recycle_count" api:"required"`
+	StartDate             time.Time                       `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                       `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postGetResponseRecyclingJSON    `json:"-"`
+}
+
+// postGetResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostGetResponseRecycling]
+type postGetResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostGetResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postGetResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostGetResponseRecyclingGapFreq string
+
+const (
+	PostGetResponseRecyclingGapFreqDay   PostGetResponseRecyclingGapFreq = "day"
+	PostGetResponseRecyclingGapFreqWeek  PostGetResponseRecyclingGapFreq = "week"
+	PostGetResponseRecyclingGapFreqMonth PostGetResponseRecyclingGapFreq = "month"
+)
+
+func (r PostGetResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostGetResponseRecyclingGapFreqDay, PostGetResponseRecyclingGapFreqWeek, PostGetResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -494,11 +736,15 @@ const (
 	PostGetResponseTargetsPlatformMastodon       PostGetResponseTargetsPlatform = "mastodon"
 	PostGetResponseTargetsPlatformDiscord        PostGetResponseTargetsPlatform = "discord"
 	PostGetResponseTargetsPlatformSMS            PostGetResponseTargetsPlatform = "sms"
+	PostGetResponseTargetsPlatformBeehiiv        PostGetResponseTargetsPlatform = "beehiiv"
+	PostGetResponseTargetsPlatformConvertkit     PostGetResponseTargetsPlatform = "convertkit"
+	PostGetResponseTargetsPlatformMailchimp      PostGetResponseTargetsPlatform = "mailchimp"
+	PostGetResponseTargetsPlatformListmonk       PostGetResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostGetResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostGetResponseTargetsPlatformTwitter, PostGetResponseTargetsPlatformInstagram, PostGetResponseTargetsPlatformFacebook, PostGetResponseTargetsPlatformLinkedin, PostGetResponseTargetsPlatformTiktok, PostGetResponseTargetsPlatformYoutube, PostGetResponseTargetsPlatformPinterest, PostGetResponseTargetsPlatformReddit, PostGetResponseTargetsPlatformBluesky, PostGetResponseTargetsPlatformThreads, PostGetResponseTargetsPlatformTelegram, PostGetResponseTargetsPlatformSnapchat, PostGetResponseTargetsPlatformGooglebusiness, PostGetResponseTargetsPlatformWhatsapp, PostGetResponseTargetsPlatformMastodon, PostGetResponseTargetsPlatformDiscord, PostGetResponseTargetsPlatformSMS:
+	case PostGetResponseTargetsPlatformTwitter, PostGetResponseTargetsPlatformInstagram, PostGetResponseTargetsPlatformFacebook, PostGetResponseTargetsPlatformLinkedin, PostGetResponseTargetsPlatformTiktok, PostGetResponseTargetsPlatformYoutube, PostGetResponseTargetsPlatformPinterest, PostGetResponseTargetsPlatformReddit, PostGetResponseTargetsPlatformBluesky, PostGetResponseTargetsPlatformThreads, PostGetResponseTargetsPlatformTelegram, PostGetResponseTargetsPlatformSnapchat, PostGetResponseTargetsPlatformGooglebusiness, PostGetResponseTargetsPlatformWhatsapp, PostGetResponseTargetsPlatformMastodon, PostGetResponseTargetsPlatformDiscord, PostGetResponseTargetsPlatformSMS, PostGetResponseTargetsPlatformBeehiiv, PostGetResponseTargetsPlatformConvertkit, PostGetResponseTargetsPlatformMailchimp, PostGetResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -512,11 +758,12 @@ const (
 	PostGetResponseTargetsStatusPublishing PostGetResponseTargetsStatus = "publishing"
 	PostGetResponseTargetsStatusPublished  PostGetResponseTargetsStatus = "published"
 	PostGetResponseTargetsStatusFailed     PostGetResponseTargetsStatus = "failed"
+	PostGetResponseTargetsStatusPartial    PostGetResponseTargetsStatus = "partial"
 )
 
 func (r PostGetResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostGetResponseTargetsStatusDraft, PostGetResponseTargetsStatusScheduled, PostGetResponseTargetsStatusPublishing, PostGetResponseTargetsStatusPublished, PostGetResponseTargetsStatusFailed:
+	case PostGetResponseTargetsStatusDraft, PostGetResponseTargetsStatusScheduled, PostGetResponseTargetsStatusPublishing, PostGetResponseTargetsStatusPublished, PostGetResponseTargetsStatusFailed, PostGetResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -524,6 +771,14 @@ func (r PostGetResponseTargetsStatus) IsKnown() bool {
 
 type PostGetResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                            `json:"url" api:"required,nullable"`
 	Username string                            `json:"username" api:"required,nullable"`
@@ -533,11 +788,15 @@ type PostGetResponseTargetsAccount struct {
 // postGetResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostGetResponseTargetsAccount]
 type postGetResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	TargetID       apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostGetResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -549,9 +808,11 @@ func (r postGetResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostGetResponseTargetsError struct {
-	Code    string                          `json:"code" api:"required"`
-	Message string                          `json:"message" api:"required"`
-	JSON    postGetResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                          `json:"detail"`
+	JSON   postGetResponseTargetsErrorJSON `json:"-"`
 }
 
 // postGetResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -559,6 +820,7 @@ type PostGetResponseTargetsError struct {
 type postGetResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -571,33 +833,95 @@ func (r postGetResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostGetResponseMetrics struct {
+	Clicks         float64                    `json:"clicks"`
+	Comments       float64                    `json:"comments"`
+	EngagementRate float64                    `json:"engagement_rate"`
+	Impressions    float64                    `json:"impressions"`
+	Likes          float64                    `json:"likes"`
+	Reach          float64                    `json:"reach"`
+	Saves          float64                    `json:"saves"`
+	Shares         float64                    `json:"shares"`
+	Views          float64                    `json:"views"`
+	JSON           postGetResponseMetricsJSON `json:"-"`
+}
+
+// postGetResponseMetricsJSON contains the JSON metadata for the struct
+// [PostGetResponseMetrics]
+type postGetResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostGetResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postGetResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostUpdateResponse struct {
 	// Post ID
-	ID          string                    `json:"id" api:"required"`
-	Content     string                    `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                 `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostUpdateResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                    `json:"scheduled_at" api:"required,nullable"`
-	Status      PostUpdateResponseStatus  `json:"status" api:"required"`
+	ID        string                    `json:"id" api:"required"`
+	Content   string                    `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                 `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostUpdateResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostUpdateResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                      `json:"scheduled_at" api:"required,nullable"`
+	Status      PostUpdateResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostUpdateResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                           `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postUpdateResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostUpdateResponseMetrics `json:"metrics"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
+	// IANA timezone
+	Timezone string                 `json:"timezone" api:"nullable"`
+	JSON     postUpdateResponseJSON `json:"-"`
 }
 
 // postUpdateResponseJSON contains the JSON metadata for the struct
 // [PostUpdateResponse]
 type postUpdateResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	PublishedAt    apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
+	Timezone       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUpdateResponse) UnmarshalJSON(data []byte) (err error) {
@@ -611,6 +935,9 @@ func (r postUpdateResponseJSON) RawJSON() string {
 type PostUpdateResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostUpdateResponseMediaType `json:"type"`
 	JSON postUpdateResponseMediaJSON `json:"-"`
@@ -620,6 +947,7 @@ type PostUpdateResponseMedia struct {
 // [PostUpdateResponseMedia]
 type postUpdateResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -646,6 +974,70 @@ const (
 func (r PostUpdateResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostUpdateResponseMediaTypeImage, PostUpdateResponseMediaTypeVideo, PostUpdateResponseMediaTypeGif, PostUpdateResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostUpdateResponseRecycling struct {
+	ID                    string                             `json:"id" api:"required"`
+	ContentVariationIndex float64                            `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                           `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                          `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                               `json:"enabled" api:"required"`
+	ExpireCount           float64                            `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                          `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                            `json:"gap" api:"required"`
+	GapFreq               PostUpdateResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                          `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                          `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                            `json:"recycle_count" api:"required"`
+	StartDate             time.Time                          `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                          `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postUpdateResponseRecyclingJSON    `json:"-"`
+}
+
+// postUpdateResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostUpdateResponseRecycling]
+type postUpdateResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostUpdateResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUpdateResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostUpdateResponseRecyclingGapFreq string
+
+const (
+	PostUpdateResponseRecyclingGapFreqDay   PostUpdateResponseRecyclingGapFreq = "day"
+	PostUpdateResponseRecyclingGapFreqWeek  PostUpdateResponseRecyclingGapFreq = "week"
+	PostUpdateResponseRecyclingGapFreqMonth PostUpdateResponseRecyclingGapFreq = "month"
+)
+
+func (r PostUpdateResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostUpdateResponseRecyclingGapFreqDay, PostUpdateResponseRecyclingGapFreqWeek, PostUpdateResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -717,11 +1109,15 @@ const (
 	PostUpdateResponseTargetsPlatformMastodon       PostUpdateResponseTargetsPlatform = "mastodon"
 	PostUpdateResponseTargetsPlatformDiscord        PostUpdateResponseTargetsPlatform = "discord"
 	PostUpdateResponseTargetsPlatformSMS            PostUpdateResponseTargetsPlatform = "sms"
+	PostUpdateResponseTargetsPlatformBeehiiv        PostUpdateResponseTargetsPlatform = "beehiiv"
+	PostUpdateResponseTargetsPlatformConvertkit     PostUpdateResponseTargetsPlatform = "convertkit"
+	PostUpdateResponseTargetsPlatformMailchimp      PostUpdateResponseTargetsPlatform = "mailchimp"
+	PostUpdateResponseTargetsPlatformListmonk       PostUpdateResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostUpdateResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostUpdateResponseTargetsPlatformTwitter, PostUpdateResponseTargetsPlatformInstagram, PostUpdateResponseTargetsPlatformFacebook, PostUpdateResponseTargetsPlatformLinkedin, PostUpdateResponseTargetsPlatformTiktok, PostUpdateResponseTargetsPlatformYoutube, PostUpdateResponseTargetsPlatformPinterest, PostUpdateResponseTargetsPlatformReddit, PostUpdateResponseTargetsPlatformBluesky, PostUpdateResponseTargetsPlatformThreads, PostUpdateResponseTargetsPlatformTelegram, PostUpdateResponseTargetsPlatformSnapchat, PostUpdateResponseTargetsPlatformGooglebusiness, PostUpdateResponseTargetsPlatformWhatsapp, PostUpdateResponseTargetsPlatformMastodon, PostUpdateResponseTargetsPlatformDiscord, PostUpdateResponseTargetsPlatformSMS:
+	case PostUpdateResponseTargetsPlatformTwitter, PostUpdateResponseTargetsPlatformInstagram, PostUpdateResponseTargetsPlatformFacebook, PostUpdateResponseTargetsPlatformLinkedin, PostUpdateResponseTargetsPlatformTiktok, PostUpdateResponseTargetsPlatformYoutube, PostUpdateResponseTargetsPlatformPinterest, PostUpdateResponseTargetsPlatformReddit, PostUpdateResponseTargetsPlatformBluesky, PostUpdateResponseTargetsPlatformThreads, PostUpdateResponseTargetsPlatformTelegram, PostUpdateResponseTargetsPlatformSnapchat, PostUpdateResponseTargetsPlatformGooglebusiness, PostUpdateResponseTargetsPlatformWhatsapp, PostUpdateResponseTargetsPlatformMastodon, PostUpdateResponseTargetsPlatformDiscord, PostUpdateResponseTargetsPlatformSMS, PostUpdateResponseTargetsPlatformBeehiiv, PostUpdateResponseTargetsPlatformConvertkit, PostUpdateResponseTargetsPlatformMailchimp, PostUpdateResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -735,11 +1131,12 @@ const (
 	PostUpdateResponseTargetsStatusPublishing PostUpdateResponseTargetsStatus = "publishing"
 	PostUpdateResponseTargetsStatusPublished  PostUpdateResponseTargetsStatus = "published"
 	PostUpdateResponseTargetsStatusFailed     PostUpdateResponseTargetsStatus = "failed"
+	PostUpdateResponseTargetsStatusPartial    PostUpdateResponseTargetsStatus = "partial"
 )
 
 func (r PostUpdateResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostUpdateResponseTargetsStatusDraft, PostUpdateResponseTargetsStatusScheduled, PostUpdateResponseTargetsStatusPublishing, PostUpdateResponseTargetsStatusPublished, PostUpdateResponseTargetsStatusFailed:
+	case PostUpdateResponseTargetsStatusDraft, PostUpdateResponseTargetsStatusScheduled, PostUpdateResponseTargetsStatusPublishing, PostUpdateResponseTargetsStatusPublished, PostUpdateResponseTargetsStatusFailed, PostUpdateResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -747,6 +1144,14 @@ func (r PostUpdateResponseTargetsStatus) IsKnown() bool {
 
 type PostUpdateResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                               `json:"url" api:"required,nullable"`
 	Username string                               `json:"username" api:"required,nullable"`
@@ -756,11 +1161,15 @@ type PostUpdateResponseTargetsAccount struct {
 // postUpdateResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostUpdateResponseTargetsAccount]
 type postUpdateResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	TargetID       apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUpdateResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -772,9 +1181,11 @@ func (r postUpdateResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostUpdateResponseTargetsError struct {
-	Code    string                             `json:"code" api:"required"`
-	Message string                             `json:"message" api:"required"`
-	JSON    postUpdateResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                             `json:"detail"`
+	JSON   postUpdateResponseTargetsErrorJSON `json:"-"`
 }
 
 // postUpdateResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -782,6 +1193,7 @@ type PostUpdateResponseTargetsError struct {
 type postUpdateResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -791,6 +1203,44 @@ func (r *PostUpdateResponseTargetsError) UnmarshalJSON(data []byte) (err error) 
 }
 
 func (r postUpdateResponseTargetsErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+// Engagement metrics (reactions, comments, views, etc.)
+type PostUpdateResponseMetrics struct {
+	Clicks         float64                       `json:"clicks"`
+	Comments       float64                       `json:"comments"`
+	EngagementRate float64                       `json:"engagement_rate"`
+	Impressions    float64                       `json:"impressions"`
+	Likes          float64                       `json:"likes"`
+	Reach          float64                       `json:"reach"`
+	Saves          float64                       `json:"saves"`
+	Shares         float64                       `json:"shares"`
+	Views          float64                       `json:"views"`
+	JSON           postUpdateResponseMetricsJSON `json:"-"`
+}
+
+// postUpdateResponseMetricsJSON contains the JSON metadata for the struct
+// [PostUpdateResponseMetrics]
+type postUpdateResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostUpdateResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUpdateResponseMetricsJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -823,31 +1273,55 @@ func (r postListResponseJSON) RawJSON() string {
 
 type PostListResponseData struct {
 	// Post ID
-	ID          string                      `json:"id" api:"required"`
-	Content     string                      `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                   `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostListResponseDataMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                      `json:"scheduled_at" api:"required,nullable"`
-	Status      PostListResponseDataStatus  `json:"status" api:"required"`
+	ID        string                      `json:"id" api:"required"`
+	Content   string                      `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                   `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostListResponseDataMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostListResponseDataRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                        `json:"scheduled_at" api:"required,nullable"`
+	Status      PostListResponseDataStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostListResponseDataTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                             `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postListResponseDataJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostListResponseDataMetrics `json:"metrics"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
+	// IANA timezone
+	Timezone string                   `json:"timezone" api:"nullable"`
+	JSON     postListResponseDataJSON `json:"-"`
 }
 
 // postListResponseDataJSON contains the JSON metadata for the struct
 // [PostListResponseData]
 type postListResponseDataJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	PublishedAt    apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
+	Timezone       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostListResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -861,6 +1335,9 @@ func (r postListResponseDataJSON) RawJSON() string {
 type PostListResponseDataMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostListResponseDataMediaType `json:"type"`
 	JSON postListResponseDataMediaJSON `json:"-"`
@@ -870,6 +1347,7 @@ type PostListResponseDataMedia struct {
 // [PostListResponseDataMedia]
 type postListResponseDataMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -896,6 +1374,70 @@ const (
 func (r PostListResponseDataMediaType) IsKnown() bool {
 	switch r {
 	case PostListResponseDataMediaTypeImage, PostListResponseDataMediaTypeVideo, PostListResponseDataMediaTypeGif, PostListResponseDataMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostListResponseDataRecycling struct {
+	ID                    string                               `json:"id" api:"required"`
+	ContentVariationIndex float64                              `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                             `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                            `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                                 `json:"enabled" api:"required"`
+	ExpireCount           float64                              `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                            `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                              `json:"gap" api:"required"`
+	GapFreq               PostListResponseDataRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                            `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                            `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                              `json:"recycle_count" api:"required"`
+	StartDate             time.Time                            `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                            `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postListResponseDataRecyclingJSON    `json:"-"`
+}
+
+// postListResponseDataRecyclingJSON contains the JSON metadata for the struct
+// [PostListResponseDataRecycling]
+type postListResponseDataRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostListResponseDataRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postListResponseDataRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostListResponseDataRecyclingGapFreq string
+
+const (
+	PostListResponseDataRecyclingGapFreqDay   PostListResponseDataRecyclingGapFreq = "day"
+	PostListResponseDataRecyclingGapFreqWeek  PostListResponseDataRecyclingGapFreq = "week"
+	PostListResponseDataRecyclingGapFreqMonth PostListResponseDataRecyclingGapFreq = "month"
+)
+
+func (r PostListResponseDataRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostListResponseDataRecyclingGapFreqDay, PostListResponseDataRecyclingGapFreqWeek, PostListResponseDataRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -967,11 +1509,15 @@ const (
 	PostListResponseDataTargetsPlatformMastodon       PostListResponseDataTargetsPlatform = "mastodon"
 	PostListResponseDataTargetsPlatformDiscord        PostListResponseDataTargetsPlatform = "discord"
 	PostListResponseDataTargetsPlatformSMS            PostListResponseDataTargetsPlatform = "sms"
+	PostListResponseDataTargetsPlatformBeehiiv        PostListResponseDataTargetsPlatform = "beehiiv"
+	PostListResponseDataTargetsPlatformConvertkit     PostListResponseDataTargetsPlatform = "convertkit"
+	PostListResponseDataTargetsPlatformMailchimp      PostListResponseDataTargetsPlatform = "mailchimp"
+	PostListResponseDataTargetsPlatformListmonk       PostListResponseDataTargetsPlatform = "listmonk"
 )
 
 func (r PostListResponseDataTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostListResponseDataTargetsPlatformTwitter, PostListResponseDataTargetsPlatformInstagram, PostListResponseDataTargetsPlatformFacebook, PostListResponseDataTargetsPlatformLinkedin, PostListResponseDataTargetsPlatformTiktok, PostListResponseDataTargetsPlatformYoutube, PostListResponseDataTargetsPlatformPinterest, PostListResponseDataTargetsPlatformReddit, PostListResponseDataTargetsPlatformBluesky, PostListResponseDataTargetsPlatformThreads, PostListResponseDataTargetsPlatformTelegram, PostListResponseDataTargetsPlatformSnapchat, PostListResponseDataTargetsPlatformGooglebusiness, PostListResponseDataTargetsPlatformWhatsapp, PostListResponseDataTargetsPlatformMastodon, PostListResponseDataTargetsPlatformDiscord, PostListResponseDataTargetsPlatformSMS:
+	case PostListResponseDataTargetsPlatformTwitter, PostListResponseDataTargetsPlatformInstagram, PostListResponseDataTargetsPlatformFacebook, PostListResponseDataTargetsPlatformLinkedin, PostListResponseDataTargetsPlatformTiktok, PostListResponseDataTargetsPlatformYoutube, PostListResponseDataTargetsPlatformPinterest, PostListResponseDataTargetsPlatformReddit, PostListResponseDataTargetsPlatformBluesky, PostListResponseDataTargetsPlatformThreads, PostListResponseDataTargetsPlatformTelegram, PostListResponseDataTargetsPlatformSnapchat, PostListResponseDataTargetsPlatformGooglebusiness, PostListResponseDataTargetsPlatformWhatsapp, PostListResponseDataTargetsPlatformMastodon, PostListResponseDataTargetsPlatformDiscord, PostListResponseDataTargetsPlatformSMS, PostListResponseDataTargetsPlatformBeehiiv, PostListResponseDataTargetsPlatformConvertkit, PostListResponseDataTargetsPlatformMailchimp, PostListResponseDataTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -985,11 +1531,12 @@ const (
 	PostListResponseDataTargetsStatusPublishing PostListResponseDataTargetsStatus = "publishing"
 	PostListResponseDataTargetsStatusPublished  PostListResponseDataTargetsStatus = "published"
 	PostListResponseDataTargetsStatusFailed     PostListResponseDataTargetsStatus = "failed"
+	PostListResponseDataTargetsStatusPartial    PostListResponseDataTargetsStatus = "partial"
 )
 
 func (r PostListResponseDataTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostListResponseDataTargetsStatusDraft, PostListResponseDataTargetsStatusScheduled, PostListResponseDataTargetsStatusPublishing, PostListResponseDataTargetsStatusPublished, PostListResponseDataTargetsStatusFailed:
+	case PostListResponseDataTargetsStatusDraft, PostListResponseDataTargetsStatusScheduled, PostListResponseDataTargetsStatusPublishing, PostListResponseDataTargetsStatusPublished, PostListResponseDataTargetsStatusFailed, PostListResponseDataTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -997,6 +1544,14 @@ func (r PostListResponseDataTargetsStatus) IsKnown() bool {
 
 type PostListResponseDataTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                 `json:"url" api:"required,nullable"`
 	Username string                                 `json:"username" api:"required,nullable"`
@@ -1006,11 +1561,15 @@ type PostListResponseDataTargetsAccount struct {
 // postListResponseDataTargetsAccountJSON contains the JSON metadata for the struct
 // [PostListResponseDataTargetsAccount]
 type postListResponseDataTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	TargetID       apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostListResponseDataTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1022,9 +1581,11 @@ func (r postListResponseDataTargetsAccountJSON) RawJSON() string {
 }
 
 type PostListResponseDataTargetsError struct {
-	Code    string                               `json:"code" api:"required"`
-	Message string                               `json:"message" api:"required"`
-	JSON    postListResponseDataTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                               `json:"detail"`
+	JSON   postListResponseDataTargetsErrorJSON `json:"-"`
 }
 
 // postListResponseDataTargetsErrorJSON contains the JSON metadata for the struct
@@ -1032,6 +1593,7 @@ type PostListResponseDataTargetsError struct {
 type postListResponseDataTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1041,6 +1603,44 @@ func (r *PostListResponseDataTargetsError) UnmarshalJSON(data []byte) (err error
 }
 
 func (r postListResponseDataTargetsErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+// Engagement metrics (reactions, comments, views, etc.)
+type PostListResponseDataMetrics struct {
+	Clicks         float64                         `json:"clicks"`
+	Comments       float64                         `json:"comments"`
+	EngagementRate float64                         `json:"engagement_rate"`
+	Impressions    float64                         `json:"impressions"`
+	Likes          float64                         `json:"likes"`
+	Reach          float64                         `json:"reach"`
+	Saves          float64                         `json:"saves"`
+	Shares         float64                         `json:"shares"`
+	Views          float64                         `json:"views"`
+	JSON           postListResponseDataMetricsJSON `json:"-"`
+}
+
+// postListResponseDataMetricsJSON contains the JSON metadata for the struct
+// [PostListResponseDataMetrics]
+type postListResponseDataMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostListResponseDataMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postListResponseDataMetricsJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1069,31 +1669,55 @@ func (r postBulkNewResponseJSON) RawJSON() string {
 
 type PostBulkNewResponseData struct {
 	// Post ID
-	ID          string                         `json:"id" api:"required"`
-	Content     string                         `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                      `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostBulkNewResponseDataMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                         `json:"scheduled_at" api:"required,nullable"`
-	Status      PostBulkNewResponseDataStatus  `json:"status" api:"required"`
+	ID        string                         `json:"id" api:"required"`
+	Content   string                         `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                      `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostBulkNewResponseDataMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostBulkNewResponseDataRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                           `json:"scheduled_at" api:"required,nullable"`
+	Status      PostBulkNewResponseDataStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostBulkNewResponseDataTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                                `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postBulkNewResponseDataJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostBulkNewResponseDataMetrics `json:"metrics"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
+	// IANA timezone
+	Timezone string                      `json:"timezone" api:"nullable"`
+	JSON     postBulkNewResponseDataJSON `json:"-"`
 }
 
 // postBulkNewResponseDataJSON contains the JSON metadata for the struct
 // [PostBulkNewResponseData]
 type postBulkNewResponseDataJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	PublishedAt    apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
+	Timezone       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostBulkNewResponseData) UnmarshalJSON(data []byte) (err error) {
@@ -1107,6 +1731,9 @@ func (r postBulkNewResponseDataJSON) RawJSON() string {
 type PostBulkNewResponseDataMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostBulkNewResponseDataMediaType `json:"type"`
 	JSON postBulkNewResponseDataMediaJSON `json:"-"`
@@ -1116,6 +1743,7 @@ type PostBulkNewResponseDataMedia struct {
 // [PostBulkNewResponseDataMedia]
 type postBulkNewResponseDataMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -1142,6 +1770,70 @@ const (
 func (r PostBulkNewResponseDataMediaType) IsKnown() bool {
 	switch r {
 	case PostBulkNewResponseDataMediaTypeImage, PostBulkNewResponseDataMediaTypeVideo, PostBulkNewResponseDataMediaTypeGif, PostBulkNewResponseDataMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostBulkNewResponseDataRecycling struct {
+	ID                    string                                  `json:"id" api:"required"`
+	ContentVariationIndex float64                                 `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                                `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                               `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                                    `json:"enabled" api:"required"`
+	ExpireCount           float64                                 `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                               `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                                 `json:"gap" api:"required"`
+	GapFreq               PostBulkNewResponseDataRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                               `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                               `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                                 `json:"recycle_count" api:"required"`
+	StartDate             time.Time                               `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                               `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postBulkNewResponseDataRecyclingJSON    `json:"-"`
+}
+
+// postBulkNewResponseDataRecyclingJSON contains the JSON metadata for the struct
+// [PostBulkNewResponseDataRecycling]
+type postBulkNewResponseDataRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostBulkNewResponseDataRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postBulkNewResponseDataRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostBulkNewResponseDataRecyclingGapFreq string
+
+const (
+	PostBulkNewResponseDataRecyclingGapFreqDay   PostBulkNewResponseDataRecyclingGapFreq = "day"
+	PostBulkNewResponseDataRecyclingGapFreqWeek  PostBulkNewResponseDataRecyclingGapFreq = "week"
+	PostBulkNewResponseDataRecyclingGapFreqMonth PostBulkNewResponseDataRecyclingGapFreq = "month"
+)
+
+func (r PostBulkNewResponseDataRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostBulkNewResponseDataRecyclingGapFreqDay, PostBulkNewResponseDataRecyclingGapFreqWeek, PostBulkNewResponseDataRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1213,11 +1905,15 @@ const (
 	PostBulkNewResponseDataTargetsPlatformMastodon       PostBulkNewResponseDataTargetsPlatform = "mastodon"
 	PostBulkNewResponseDataTargetsPlatformDiscord        PostBulkNewResponseDataTargetsPlatform = "discord"
 	PostBulkNewResponseDataTargetsPlatformSMS            PostBulkNewResponseDataTargetsPlatform = "sms"
+	PostBulkNewResponseDataTargetsPlatformBeehiiv        PostBulkNewResponseDataTargetsPlatform = "beehiiv"
+	PostBulkNewResponseDataTargetsPlatformConvertkit     PostBulkNewResponseDataTargetsPlatform = "convertkit"
+	PostBulkNewResponseDataTargetsPlatformMailchimp      PostBulkNewResponseDataTargetsPlatform = "mailchimp"
+	PostBulkNewResponseDataTargetsPlatformListmonk       PostBulkNewResponseDataTargetsPlatform = "listmonk"
 )
 
 func (r PostBulkNewResponseDataTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostBulkNewResponseDataTargetsPlatformTwitter, PostBulkNewResponseDataTargetsPlatformInstagram, PostBulkNewResponseDataTargetsPlatformFacebook, PostBulkNewResponseDataTargetsPlatformLinkedin, PostBulkNewResponseDataTargetsPlatformTiktok, PostBulkNewResponseDataTargetsPlatformYoutube, PostBulkNewResponseDataTargetsPlatformPinterest, PostBulkNewResponseDataTargetsPlatformReddit, PostBulkNewResponseDataTargetsPlatformBluesky, PostBulkNewResponseDataTargetsPlatformThreads, PostBulkNewResponseDataTargetsPlatformTelegram, PostBulkNewResponseDataTargetsPlatformSnapchat, PostBulkNewResponseDataTargetsPlatformGooglebusiness, PostBulkNewResponseDataTargetsPlatformWhatsapp, PostBulkNewResponseDataTargetsPlatformMastodon, PostBulkNewResponseDataTargetsPlatformDiscord, PostBulkNewResponseDataTargetsPlatformSMS:
+	case PostBulkNewResponseDataTargetsPlatformTwitter, PostBulkNewResponseDataTargetsPlatformInstagram, PostBulkNewResponseDataTargetsPlatformFacebook, PostBulkNewResponseDataTargetsPlatformLinkedin, PostBulkNewResponseDataTargetsPlatformTiktok, PostBulkNewResponseDataTargetsPlatformYoutube, PostBulkNewResponseDataTargetsPlatformPinterest, PostBulkNewResponseDataTargetsPlatformReddit, PostBulkNewResponseDataTargetsPlatformBluesky, PostBulkNewResponseDataTargetsPlatformThreads, PostBulkNewResponseDataTargetsPlatformTelegram, PostBulkNewResponseDataTargetsPlatformSnapchat, PostBulkNewResponseDataTargetsPlatformGooglebusiness, PostBulkNewResponseDataTargetsPlatformWhatsapp, PostBulkNewResponseDataTargetsPlatformMastodon, PostBulkNewResponseDataTargetsPlatformDiscord, PostBulkNewResponseDataTargetsPlatformSMS, PostBulkNewResponseDataTargetsPlatformBeehiiv, PostBulkNewResponseDataTargetsPlatformConvertkit, PostBulkNewResponseDataTargetsPlatformMailchimp, PostBulkNewResponseDataTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -1231,11 +1927,12 @@ const (
 	PostBulkNewResponseDataTargetsStatusPublishing PostBulkNewResponseDataTargetsStatus = "publishing"
 	PostBulkNewResponseDataTargetsStatusPublished  PostBulkNewResponseDataTargetsStatus = "published"
 	PostBulkNewResponseDataTargetsStatusFailed     PostBulkNewResponseDataTargetsStatus = "failed"
+	PostBulkNewResponseDataTargetsStatusPartial    PostBulkNewResponseDataTargetsStatus = "partial"
 )
 
 func (r PostBulkNewResponseDataTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostBulkNewResponseDataTargetsStatusDraft, PostBulkNewResponseDataTargetsStatusScheduled, PostBulkNewResponseDataTargetsStatusPublishing, PostBulkNewResponseDataTargetsStatusPublished, PostBulkNewResponseDataTargetsStatusFailed:
+	case PostBulkNewResponseDataTargetsStatusDraft, PostBulkNewResponseDataTargetsStatusScheduled, PostBulkNewResponseDataTargetsStatusPublishing, PostBulkNewResponseDataTargetsStatusPublished, PostBulkNewResponseDataTargetsStatusFailed, PostBulkNewResponseDataTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -1243,6 +1940,14 @@ func (r PostBulkNewResponseDataTargetsStatus) IsKnown() bool {
 
 type PostBulkNewResponseDataTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                    `json:"url" api:"required,nullable"`
 	Username string                                    `json:"username" api:"required,nullable"`
@@ -1252,11 +1957,15 @@ type PostBulkNewResponseDataTargetsAccount struct {
 // postBulkNewResponseDataTargetsAccountJSON contains the JSON metadata for the
 // struct [PostBulkNewResponseDataTargetsAccount]
 type postBulkNewResponseDataTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	TargetID       apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostBulkNewResponseDataTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1268,9 +1977,11 @@ func (r postBulkNewResponseDataTargetsAccountJSON) RawJSON() string {
 }
 
 type PostBulkNewResponseDataTargetsError struct {
-	Code    string                                  `json:"code" api:"required"`
-	Message string                                  `json:"message" api:"required"`
-	JSON    postBulkNewResponseDataTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                                  `json:"detail"`
+	JSON   postBulkNewResponseDataTargetsErrorJSON `json:"-"`
 }
 
 // postBulkNewResponseDataTargetsErrorJSON contains the JSON metadata for the
@@ -1278,6 +1989,7 @@ type PostBulkNewResponseDataTargetsError struct {
 type postBulkNewResponseDataTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1287,6 +1999,44 @@ func (r *PostBulkNewResponseDataTargetsError) UnmarshalJSON(data []byte) (err er
 }
 
 func (r postBulkNewResponseDataTargetsErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+// Engagement metrics (reactions, comments, views, etc.)
+type PostBulkNewResponseDataMetrics struct {
+	Clicks         float64                            `json:"clicks"`
+	Comments       float64                            `json:"comments"`
+	EngagementRate float64                            `json:"engagement_rate"`
+	Impressions    float64                            `json:"impressions"`
+	Likes          float64                            `json:"likes"`
+	Reach          float64                            `json:"reach"`
+	Saves          float64                            `json:"saves"`
+	Shares         float64                            `json:"shares"`
+	Views          float64                            `json:"views"`
+	JSON           postBulkNewResponseDataMetricsJSON `json:"-"`
+}
+
+// postBulkNewResponseDataMetricsJSON contains the JSON metadata for the struct
+// [PostBulkNewResponseDataMetrics]
+type postBulkNewResponseDataMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostBulkNewResponseDataMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postBulkNewResponseDataMetricsJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1317,31 +2067,55 @@ func (r postBulkNewResponseSummaryJSON) RawJSON() string {
 
 type PostRetryResponse struct {
 	// Post ID
-	ID          string                   `json:"id" api:"required"`
-	Content     string                   `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostRetryResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                   `json:"scheduled_at" api:"required,nullable"`
-	Status      PostRetryResponseStatus  `json:"status" api:"required"`
+	ID        string                   `json:"id" api:"required"`
+	Content   string                   `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostRetryResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostRetryResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                     `json:"scheduled_at" api:"required,nullable"`
+	Status      PostRetryResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostRetryResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                          `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postRetryResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostRetryResponseMetrics `json:"metrics"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
+	// IANA timezone
+	Timezone string                `json:"timezone" api:"nullable"`
+	JSON     postRetryResponseJSON `json:"-"`
 }
 
 // postRetryResponseJSON contains the JSON metadata for the struct
 // [PostRetryResponse]
 type postRetryResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	PublishedAt    apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
+	Timezone       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostRetryResponse) UnmarshalJSON(data []byte) (err error) {
@@ -1355,6 +2129,9 @@ func (r postRetryResponseJSON) RawJSON() string {
 type PostRetryResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostRetryResponseMediaType `json:"type"`
 	JSON postRetryResponseMediaJSON `json:"-"`
@@ -1364,6 +2141,7 @@ type PostRetryResponseMedia struct {
 // [PostRetryResponseMedia]
 type postRetryResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -1390,6 +2168,70 @@ const (
 func (r PostRetryResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostRetryResponseMediaTypeImage, PostRetryResponseMediaTypeVideo, PostRetryResponseMediaTypeGif, PostRetryResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostRetryResponseRecycling struct {
+	ID                    string                            `json:"id" api:"required"`
+	ContentVariationIndex float64                           `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                          `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                         `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                              `json:"enabled" api:"required"`
+	ExpireCount           float64                           `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                         `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                           `json:"gap" api:"required"`
+	GapFreq               PostRetryResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                         `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                         `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                           `json:"recycle_count" api:"required"`
+	StartDate             time.Time                         `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                         `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postRetryResponseRecyclingJSON    `json:"-"`
+}
+
+// postRetryResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostRetryResponseRecycling]
+type postRetryResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostRetryResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postRetryResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostRetryResponseRecyclingGapFreq string
+
+const (
+	PostRetryResponseRecyclingGapFreqDay   PostRetryResponseRecyclingGapFreq = "day"
+	PostRetryResponseRecyclingGapFreqWeek  PostRetryResponseRecyclingGapFreq = "week"
+	PostRetryResponseRecyclingGapFreqMonth PostRetryResponseRecyclingGapFreq = "month"
+)
+
+func (r PostRetryResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostRetryResponseRecyclingGapFreqDay, PostRetryResponseRecyclingGapFreqWeek, PostRetryResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1461,11 +2303,15 @@ const (
 	PostRetryResponseTargetsPlatformMastodon       PostRetryResponseTargetsPlatform = "mastodon"
 	PostRetryResponseTargetsPlatformDiscord        PostRetryResponseTargetsPlatform = "discord"
 	PostRetryResponseTargetsPlatformSMS            PostRetryResponseTargetsPlatform = "sms"
+	PostRetryResponseTargetsPlatformBeehiiv        PostRetryResponseTargetsPlatform = "beehiiv"
+	PostRetryResponseTargetsPlatformConvertkit     PostRetryResponseTargetsPlatform = "convertkit"
+	PostRetryResponseTargetsPlatformMailchimp      PostRetryResponseTargetsPlatform = "mailchimp"
+	PostRetryResponseTargetsPlatformListmonk       PostRetryResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostRetryResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostRetryResponseTargetsPlatformTwitter, PostRetryResponseTargetsPlatformInstagram, PostRetryResponseTargetsPlatformFacebook, PostRetryResponseTargetsPlatformLinkedin, PostRetryResponseTargetsPlatformTiktok, PostRetryResponseTargetsPlatformYoutube, PostRetryResponseTargetsPlatformPinterest, PostRetryResponseTargetsPlatformReddit, PostRetryResponseTargetsPlatformBluesky, PostRetryResponseTargetsPlatformThreads, PostRetryResponseTargetsPlatformTelegram, PostRetryResponseTargetsPlatformSnapchat, PostRetryResponseTargetsPlatformGooglebusiness, PostRetryResponseTargetsPlatformWhatsapp, PostRetryResponseTargetsPlatformMastodon, PostRetryResponseTargetsPlatformDiscord, PostRetryResponseTargetsPlatformSMS:
+	case PostRetryResponseTargetsPlatformTwitter, PostRetryResponseTargetsPlatformInstagram, PostRetryResponseTargetsPlatformFacebook, PostRetryResponseTargetsPlatformLinkedin, PostRetryResponseTargetsPlatformTiktok, PostRetryResponseTargetsPlatformYoutube, PostRetryResponseTargetsPlatformPinterest, PostRetryResponseTargetsPlatformReddit, PostRetryResponseTargetsPlatformBluesky, PostRetryResponseTargetsPlatformThreads, PostRetryResponseTargetsPlatformTelegram, PostRetryResponseTargetsPlatformSnapchat, PostRetryResponseTargetsPlatformGooglebusiness, PostRetryResponseTargetsPlatformWhatsapp, PostRetryResponseTargetsPlatformMastodon, PostRetryResponseTargetsPlatformDiscord, PostRetryResponseTargetsPlatformSMS, PostRetryResponseTargetsPlatformBeehiiv, PostRetryResponseTargetsPlatformConvertkit, PostRetryResponseTargetsPlatformMailchimp, PostRetryResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -1479,11 +2325,12 @@ const (
 	PostRetryResponseTargetsStatusPublishing PostRetryResponseTargetsStatus = "publishing"
 	PostRetryResponseTargetsStatusPublished  PostRetryResponseTargetsStatus = "published"
 	PostRetryResponseTargetsStatusFailed     PostRetryResponseTargetsStatus = "failed"
+	PostRetryResponseTargetsStatusPartial    PostRetryResponseTargetsStatus = "partial"
 )
 
 func (r PostRetryResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostRetryResponseTargetsStatusDraft, PostRetryResponseTargetsStatusScheduled, PostRetryResponseTargetsStatusPublishing, PostRetryResponseTargetsStatusPublished, PostRetryResponseTargetsStatusFailed:
+	case PostRetryResponseTargetsStatusDraft, PostRetryResponseTargetsStatusScheduled, PostRetryResponseTargetsStatusPublishing, PostRetryResponseTargetsStatusPublished, PostRetryResponseTargetsStatusFailed, PostRetryResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -1491,6 +2338,14 @@ func (r PostRetryResponseTargetsStatus) IsKnown() bool {
 
 type PostRetryResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                              `json:"url" api:"required,nullable"`
 	Username string                              `json:"username" api:"required,nullable"`
@@ -1500,11 +2355,15 @@ type PostRetryResponseTargetsAccount struct {
 // postRetryResponseTargetsAccountJSON contains the JSON metadata for the struct
 // [PostRetryResponseTargetsAccount]
 type postRetryResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	TargetID       apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostRetryResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1516,9 +2375,11 @@ func (r postRetryResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostRetryResponseTargetsError struct {
-	Code    string                            `json:"code" api:"required"`
-	Message string                            `json:"message" api:"required"`
-	JSON    postRetryResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                            `json:"detail"`
+	JSON   postRetryResponseTargetsErrorJSON `json:"-"`
 }
 
 // postRetryResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -1526,6 +2387,7 @@ type PostRetryResponseTargetsError struct {
 type postRetryResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1538,33 +2400,95 @@ func (r postRetryResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostRetryResponseMetrics struct {
+	Clicks         float64                      `json:"clicks"`
+	Comments       float64                      `json:"comments"`
+	EngagementRate float64                      `json:"engagement_rate"`
+	Impressions    float64                      `json:"impressions"`
+	Likes          float64                      `json:"likes"`
+	Reach          float64                      `json:"reach"`
+	Saves          float64                      `json:"saves"`
+	Shares         float64                      `json:"shares"`
+	Views          float64                      `json:"views"`
+	JSON           postRetryResponseMetricsJSON `json:"-"`
+}
+
+// postRetryResponseMetricsJSON contains the JSON metadata for the struct
+// [PostRetryResponseMetrics]
+type postRetryResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostRetryResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postRetryResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostUnpublishResponse struct {
 	// Post ID
-	ID          string                       `json:"id" api:"required"`
-	Content     string                       `json:"content" api:"required,nullable"`
-	CreatedAt   time.Time                    `json:"created_at" api:"required" format:"date-time"`
-	Media       []PostUnpublishResponseMedia `json:"media" api:"required,nullable"`
-	ScheduledAt string                       `json:"scheduled_at" api:"required,nullable"`
-	Status      PostUnpublishResponseStatus  `json:"status" api:"required"`
+	ID        string                       `json:"id" api:"required"`
+	Content   string                       `json:"content" api:"required,nullable"`
+	CreatedAt time.Time                    `json:"created_at" api:"required" format:"date-time"`
+	Media     []PostUnpublishResponseMedia `json:"media" api:"required,nullable"`
+	// When the post was published
+	PublishedAt string `json:"published_at" api:"required,nullable"`
+	// Source post ID if this is a recycled copy
+	RecycledFromID string `json:"recycled_from_id" api:"required,nullable"`
+	// Recycling configuration, if any
+	Recycling   PostUnpublishResponseRecycling `json:"recycling" api:"required,nullable"`
+	ScheduledAt string                         `json:"scheduled_at" api:"required,nullable"`
+	Status      PostUnpublishResponseStatus    `json:"status" api:"required"`
 	// Per-target results
 	Targets   map[string]PostUnpublishResponseTarget `json:"targets" api:"required"`
 	UpdatedAt time.Time                              `json:"updated_at" api:"required" format:"date-time"`
-	JSON      postUnpublishResponseJSON              `json:"-"`
+	// Engagement metrics (reactions, comments, views, etc.)
+	Metrics PostUnpublishResponseMetrics `json:"metrics"`
+	// Per-target customizations
+	TargetOptions map[string]map[string]interface{} `json:"target_options" api:"nullable"`
+	// Thread group ID (non-null if part of a thread)
+	ThreadGroupID string `json:"thread_group_id" api:"nullable"`
+	// Position within thread (0 = root)
+	ThreadPosition float64 `json:"thread_position" api:"nullable"`
+	// IANA timezone
+	Timezone string                    `json:"timezone" api:"nullable"`
+	JSON     postUnpublishResponseJSON `json:"-"`
 }
 
 // postUnpublishResponseJSON contains the JSON metadata for the struct
 // [PostUnpublishResponse]
 type postUnpublishResponseJSON struct {
-	ID          apijson.Field
-	Content     apijson.Field
-	CreatedAt   apijson.Field
-	Media       apijson.Field
-	ScheduledAt apijson.Field
-	Status      apijson.Field
-	Targets     apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	Content        apijson.Field
+	CreatedAt      apijson.Field
+	Media          apijson.Field
+	PublishedAt    apijson.Field
+	RecycledFromID apijson.Field
+	Recycling      apijson.Field
+	ScheduledAt    apijson.Field
+	Status         apijson.Field
+	Targets        apijson.Field
+	UpdatedAt      apijson.Field
+	Metrics        apijson.Field
+	TargetOptions  apijson.Field
+	ThreadGroupID  apijson.Field
+	ThreadPosition apijson.Field
+	Timezone       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUnpublishResponse) UnmarshalJSON(data []byte) (err error) {
@@ -1578,6 +2502,9 @@ func (r postUnpublishResponseJSON) RawJSON() string {
 type PostUnpublishResponseMedia struct {
 	// Public URL of the media file
 	URL string `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail string `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type PostUnpublishResponseMediaType `json:"type"`
 	JSON postUnpublishResponseMediaJSON `json:"-"`
@@ -1587,6 +2514,7 @@ type PostUnpublishResponseMedia struct {
 // [PostUnpublishResponseMedia]
 type postUnpublishResponseMediaJSON struct {
 	URL         apijson.Field
+	Thumbnail   apijson.Field
 	Type        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -1613,6 +2541,70 @@ const (
 func (r PostUnpublishResponseMediaType) IsKnown() bool {
 	switch r {
 	case PostUnpublishResponseMediaTypeImage, PostUnpublishResponseMediaTypeVideo, PostUnpublishResponseMediaTypeGif, PostUnpublishResponseMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration, if any
+type PostUnpublishResponseRecycling struct {
+	ID                    string                                `json:"id" api:"required"`
+	ContentVariationIndex float64                               `json:"content_variation_index" api:"required"`
+	ContentVariations     []string                              `json:"content_variations" api:"required"`
+	CreatedAt             time.Time                             `json:"created_at" api:"required" format:"date-time"`
+	Enabled               bool                                  `json:"enabled" api:"required"`
+	ExpireCount           float64                               `json:"expire_count" api:"required,nullable"`
+	ExpireDate            time.Time                             `json:"expire_date" api:"required,nullable" format:"date-time"`
+	Gap                   float64                               `json:"gap" api:"required"`
+	GapFreq               PostUnpublishResponseRecyclingGapFreq `json:"gap_freq" api:"required"`
+	LastRecycledAt        time.Time                             `json:"last_recycled_at" api:"required,nullable" format:"date-time"`
+	NextRecycleAt         time.Time                             `json:"next_recycle_at" api:"required,nullable" format:"date-time"`
+	RecycleCount          float64                               `json:"recycle_count" api:"required"`
+	StartDate             time.Time                             `json:"start_date" api:"required" format:"date-time"`
+	UpdatedAt             time.Time                             `json:"updated_at" api:"required" format:"date-time"`
+	JSON                  postUnpublishResponseRecyclingJSON    `json:"-"`
+}
+
+// postUnpublishResponseRecyclingJSON contains the JSON metadata for the struct
+// [PostUnpublishResponseRecycling]
+type postUnpublishResponseRecyclingJSON struct {
+	ID                    apijson.Field
+	ContentVariationIndex apijson.Field
+	ContentVariations     apijson.Field
+	CreatedAt             apijson.Field
+	Enabled               apijson.Field
+	ExpireCount           apijson.Field
+	ExpireDate            apijson.Field
+	Gap                   apijson.Field
+	GapFreq               apijson.Field
+	LastRecycledAt        apijson.Field
+	NextRecycleAt         apijson.Field
+	RecycleCount          apijson.Field
+	StartDate             apijson.Field
+	UpdatedAt             apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *PostUnpublishResponseRecycling) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUnpublishResponseRecyclingJSON) RawJSON() string {
+	return r.raw
+}
+
+type PostUnpublishResponseRecyclingGapFreq string
+
+const (
+	PostUnpublishResponseRecyclingGapFreqDay   PostUnpublishResponseRecyclingGapFreq = "day"
+	PostUnpublishResponseRecyclingGapFreqWeek  PostUnpublishResponseRecyclingGapFreq = "week"
+	PostUnpublishResponseRecyclingGapFreqMonth PostUnpublishResponseRecyclingGapFreq = "month"
+)
+
+func (r PostUnpublishResponseRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostUnpublishResponseRecyclingGapFreqDay, PostUnpublishResponseRecyclingGapFreqWeek, PostUnpublishResponseRecyclingGapFreqMonth:
 		return true
 	}
 	return false
@@ -1684,11 +2676,15 @@ const (
 	PostUnpublishResponseTargetsPlatformMastodon       PostUnpublishResponseTargetsPlatform = "mastodon"
 	PostUnpublishResponseTargetsPlatformDiscord        PostUnpublishResponseTargetsPlatform = "discord"
 	PostUnpublishResponseTargetsPlatformSMS            PostUnpublishResponseTargetsPlatform = "sms"
+	PostUnpublishResponseTargetsPlatformBeehiiv        PostUnpublishResponseTargetsPlatform = "beehiiv"
+	PostUnpublishResponseTargetsPlatformConvertkit     PostUnpublishResponseTargetsPlatform = "convertkit"
+	PostUnpublishResponseTargetsPlatformMailchimp      PostUnpublishResponseTargetsPlatform = "mailchimp"
+	PostUnpublishResponseTargetsPlatformListmonk       PostUnpublishResponseTargetsPlatform = "listmonk"
 )
 
 func (r PostUnpublishResponseTargetsPlatform) IsKnown() bool {
 	switch r {
-	case PostUnpublishResponseTargetsPlatformTwitter, PostUnpublishResponseTargetsPlatformInstagram, PostUnpublishResponseTargetsPlatformFacebook, PostUnpublishResponseTargetsPlatformLinkedin, PostUnpublishResponseTargetsPlatformTiktok, PostUnpublishResponseTargetsPlatformYoutube, PostUnpublishResponseTargetsPlatformPinterest, PostUnpublishResponseTargetsPlatformReddit, PostUnpublishResponseTargetsPlatformBluesky, PostUnpublishResponseTargetsPlatformThreads, PostUnpublishResponseTargetsPlatformTelegram, PostUnpublishResponseTargetsPlatformSnapchat, PostUnpublishResponseTargetsPlatformGooglebusiness, PostUnpublishResponseTargetsPlatformWhatsapp, PostUnpublishResponseTargetsPlatformMastodon, PostUnpublishResponseTargetsPlatformDiscord, PostUnpublishResponseTargetsPlatformSMS:
+	case PostUnpublishResponseTargetsPlatformTwitter, PostUnpublishResponseTargetsPlatformInstagram, PostUnpublishResponseTargetsPlatformFacebook, PostUnpublishResponseTargetsPlatformLinkedin, PostUnpublishResponseTargetsPlatformTiktok, PostUnpublishResponseTargetsPlatformYoutube, PostUnpublishResponseTargetsPlatformPinterest, PostUnpublishResponseTargetsPlatformReddit, PostUnpublishResponseTargetsPlatformBluesky, PostUnpublishResponseTargetsPlatformThreads, PostUnpublishResponseTargetsPlatformTelegram, PostUnpublishResponseTargetsPlatformSnapchat, PostUnpublishResponseTargetsPlatformGooglebusiness, PostUnpublishResponseTargetsPlatformWhatsapp, PostUnpublishResponseTargetsPlatformMastodon, PostUnpublishResponseTargetsPlatformDiscord, PostUnpublishResponseTargetsPlatformSMS, PostUnpublishResponseTargetsPlatformBeehiiv, PostUnpublishResponseTargetsPlatformConvertkit, PostUnpublishResponseTargetsPlatformMailchimp, PostUnpublishResponseTargetsPlatformListmonk:
 		return true
 	}
 	return false
@@ -1702,11 +2698,12 @@ const (
 	PostUnpublishResponseTargetsStatusPublishing PostUnpublishResponseTargetsStatus = "publishing"
 	PostUnpublishResponseTargetsStatusPublished  PostUnpublishResponseTargetsStatus = "published"
 	PostUnpublishResponseTargetsStatusFailed     PostUnpublishResponseTargetsStatus = "failed"
+	PostUnpublishResponseTargetsStatusPartial    PostUnpublishResponseTargetsStatus = "partial"
 )
 
 func (r PostUnpublishResponseTargetsStatus) IsKnown() bool {
 	switch r {
-	case PostUnpublishResponseTargetsStatusDraft, PostUnpublishResponseTargetsStatusScheduled, PostUnpublishResponseTargetsStatusPublishing, PostUnpublishResponseTargetsStatusPublished, PostUnpublishResponseTargetsStatusFailed:
+	case PostUnpublishResponseTargetsStatusDraft, PostUnpublishResponseTargetsStatusScheduled, PostUnpublishResponseTargetsStatusPublishing, PostUnpublishResponseTargetsStatusPublished, PostUnpublishResponseTargetsStatusFailed, PostUnpublishResponseTargetsStatusPartial:
 		return true
 	}
 	return false
@@ -1714,6 +2711,14 @@ func (r PostUnpublishResponseTargetsStatus) IsKnown() bool {
 
 type PostUnpublishResponseTargetsAccount struct {
 	ID string `json:"id" api:"required"`
+	// Account avatar URL
+	AvatarURL string `json:"avatar_url" api:"required,nullable"`
+	// Account display name
+	DisplayName string `json:"display_name" api:"required,nullable"`
+	// Platform-native post ID
+	PlatformPostID string `json:"platform_post_id" api:"required,nullable"`
+	// Post target ID (pt\_) — pass to /v1/ads/boost as post_target_id
+	TargetID string `json:"target_id" api:"required,nullable"`
 	// Published post URL on the platform
 	URL      string                                  `json:"url" api:"required,nullable"`
 	Username string                                  `json:"username" api:"required,nullable"`
@@ -1723,11 +2728,15 @@ type PostUnpublishResponseTargetsAccount struct {
 // postUnpublishResponseTargetsAccountJSON contains the JSON metadata for the
 // struct [PostUnpublishResponseTargetsAccount]
 type postUnpublishResponseTargetsAccountJSON struct {
-	ID          apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID             apijson.Field
+	AvatarURL      apijson.Field
+	DisplayName    apijson.Field
+	PlatformPostID apijson.Field
+	TargetID       apijson.Field
+	URL            apijson.Field
+	Username       apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *PostUnpublishResponseTargetsAccount) UnmarshalJSON(data []byte) (err error) {
@@ -1739,9 +2748,11 @@ func (r postUnpublishResponseTargetsAccountJSON) RawJSON() string {
 }
 
 type PostUnpublishResponseTargetsError struct {
-	Code    string                                `json:"code" api:"required"`
-	Message string                                `json:"message" api:"required"`
-	JSON    postUnpublishResponseTargetsErrorJSON `json:"-"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
+	// Raw platform error (HTTP status + response body), sanitized and truncated
+	Detail string                                `json:"detail"`
+	JSON   postUnpublishResponseTargetsErrorJSON `json:"-"`
 }
 
 // postUnpublishResponseTargetsErrorJSON contains the JSON metadata for the struct
@@ -1749,6 +2760,7 @@ type PostUnpublishResponseTargetsError struct {
 type postUnpublishResponseTargetsErrorJSON struct {
 	Code        apijson.Field
 	Message     apijson.Field
+	Detail      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1761,29 +2773,126 @@ func (r postUnpublishResponseTargetsErrorJSON) RawJSON() string {
 	return r.raw
 }
 
+// Engagement metrics (reactions, comments, views, etc.)
+type PostUnpublishResponseMetrics struct {
+	Clicks         float64                          `json:"clicks"`
+	Comments       float64                          `json:"comments"`
+	EngagementRate float64                          `json:"engagement_rate"`
+	Impressions    float64                          `json:"impressions"`
+	Likes          float64                          `json:"likes"`
+	Reach          float64                          `json:"reach"`
+	Saves          float64                          `json:"saves"`
+	Shares         float64                          `json:"shares"`
+	Views          float64                          `json:"views"`
+	JSON           postUnpublishResponseMetricsJSON `json:"-"`
+}
+
+// postUnpublishResponseMetricsJSON contains the JSON metadata for the struct
+// [PostUnpublishResponseMetrics]
+type postUnpublishResponseMetricsJSON struct {
+	Clicks         apijson.Field
+	Comments       apijson.Field
+	EngagementRate apijson.Field
+	Impressions    apijson.Field
+	Likes          apijson.Field
+	Reach          apijson.Field
+	Saves          apijson.Field
+	Shares         apijson.Field
+	Views          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *PostUnpublishResponseMetrics) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r postUnpublishResponseMetricsJSON) RawJSON() string {
+	return r.raw
+}
+
 type PostNewParams struct {
-	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
-	// an ISO 8601 timestamp to schedule.
+	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
+	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
+	// schedule (max 30 days ahead).
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
-	// Account IDs, platform names, or group IDs to publish to
+	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
 	// Post text. Optional if target_options provide per-target content.
 	Content param.Field[string] `json:"content"`
+	// Cross-post actions to execute after publishing (e.g., repost from another
+	// account, comment from another account)
+	CrossPostActions param.Field[[]PostNewParamsCrossPostAction] `json:"cross_post_actions"`
+	// Create post from an idea. Pre-fills content from the idea. Explicit 'content'
+	// field takes precedence.
+	IdeaID param.Field[string] `json:"idea_id"`
 	// Media attachments
 	Media param.Field[[]PostNewParamsMedia] `json:"media"`
-	// Per-target customizations keyed by target value (account ID or platform name)
+	// Recycling configuration for evergreen content (Pro plan only)
+	Recycling param.Field[PostNewParamsRecycling] `json:"recycling"`
+	// Shorten URLs in post content. Only relevant when short link mode is 'ask'.
+	// Ignored when mode is 'always' or 'never'. (Pro plan only)
+	ShortenURLs param.Field[bool] `json:"shorten_urls"`
+	// When true, the default signature is not auto-appended even if one is configured.
+	SkipSignature param.Field[bool] `json:"skip_signature"`
+	// Per-target customizations keyed by target value (account ID or platform name).
+	// Supports platform-specific features such as Twitter polls (poll.options,
+	// poll.duration_minutes), threads, reply_to, and reply_settings.
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
+	// Content template ID. When provided, the template content is used as the base for
+	// the post. Explicit 'content' field takes precedence.
+	TemplateID param.Field[string] `json:"template_id"`
+	// Variables to interpolate in the template (e.g., { "promo_code": "SUMMER25" }).
+	// Built-in variables: {{date}}, {{account_name}}.
+	TemplateVariables param.Field[map[string]string] `json:"template_variables"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
+	// Workspace ID to scope this post to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r PostNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type PostNewParamsCrossPostAction struct {
+	// Type of cross-post action
+	ActionType param.Field[PostNewParamsCrossPostActionsActionType] `json:"action_type" api:"required"`
+	// Account to perform the action from
+	TargetAccountID param.Field[string] `json:"target_account_id" api:"required"`
+	// Text content for comment/quote actions (required for comment and quote)
+	Content param.Field[string] `json:"content"`
+	// Delay in minutes after publishing
+	DelayMinutes param.Field[int64] `json:"delay_minutes"`
+}
+
+func (r PostNewParamsCrossPostAction) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Type of cross-post action
+type PostNewParamsCrossPostActionsActionType string
+
+const (
+	PostNewParamsCrossPostActionsActionTypeRepost  PostNewParamsCrossPostActionsActionType = "repost"
+	PostNewParamsCrossPostActionsActionTypeComment PostNewParamsCrossPostActionsActionType = "comment"
+	PostNewParamsCrossPostActionsActionTypeQuote   PostNewParamsCrossPostActionsActionType = "quote"
+)
+
+func (r PostNewParamsCrossPostActionsActionType) IsKnown() bool {
+	switch r {
+	case PostNewParamsCrossPostActionsActionTypeRepost, PostNewParamsCrossPostActionsActionTypeComment, PostNewParamsCrossPostActionsActionTypeQuote:
+		return true
+	}
+	return false
+}
+
 type PostNewParamsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[PostNewParamsMediaType] `json:"type"`
 }
@@ -1810,13 +2919,57 @@ func (r PostNewParamsMediaType) IsKnown() bool {
 	return false
 }
 
+// Recycling configuration for evergreen content (Pro plan only)
+type PostNewParamsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[PostNewParamsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r PostNewParamsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type PostNewParamsRecyclingGapFreq string
+
+const (
+	PostNewParamsRecyclingGapFreqDay   PostNewParamsRecyclingGapFreq = "day"
+	PostNewParamsRecyclingGapFreqWeek  PostNewParamsRecyclingGapFreq = "week"
+	PostNewParamsRecyclingGapFreqMonth PostNewParamsRecyclingGapFreq = "month"
+)
+
+func (r PostNewParamsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostNewParamsRecyclingGapFreqDay, PostNewParamsRecyclingGapFreqWeek, PostNewParamsRecyclingGapFreqMonth:
+		return true
+	}
+	return false
+}
+
 type PostUpdateParams struct {
 	// Post text
 	Content param.Field[string] `json:"content"`
 	// Updated media
 	Media param.Field[[]PostUpdateParamsMedia] `json:"media"`
-	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
-	// an ISO 8601 timestamp to schedule.
+	// Internal notes for this post
+	Notes param.Field[string] `json:"notes"`
+	// Recycling configuration (Pro plan only)
+	Recycling param.Field[PostUpdateParamsRecycling] `json:"recycling"`
+	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
+	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
+	// schedule (max 30 days ahead).
 	ScheduledAt   param.Field[string]                            `json:"scheduled_at"`
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
 	// Updated targets
@@ -1831,6 +2984,9 @@ func (r PostUpdateParams) MarshalJSON() (data []byte, err error) {
 type PostUpdateParamsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[PostUpdateParamsMediaType] `json:"type"`
 }
@@ -1857,21 +3013,68 @@ func (r PostUpdateParamsMediaType) IsKnown() bool {
 	return false
 }
 
+// Recycling configuration (Pro plan only)
+type PostUpdateParamsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[PostUpdateParamsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r PostUpdateParamsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type PostUpdateParamsRecyclingGapFreq string
+
+const (
+	PostUpdateParamsRecyclingGapFreqDay   PostUpdateParamsRecyclingGapFreq = "day"
+	PostUpdateParamsRecyclingGapFreqWeek  PostUpdateParamsRecyclingGapFreq = "week"
+	PostUpdateParamsRecyclingGapFreqMonth PostUpdateParamsRecyclingGapFreq = "month"
+)
+
+func (r PostUpdateParamsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostUpdateParamsRecyclingGapFreqDay, PostUpdateParamsRecyclingGapFreqWeek, PostUpdateParamsRecyclingGapFreqMonth:
+		return true
+	}
+	return false
+}
+
 type PostListParams struct {
 	// Filter by specific account ID
 	AccountID param.Field[string] `query:"account_id"`
+	// Filter by any of several account IDs (comma-separated). Takes precedence over
+	// account_id.
+	AccountIDs param.Field[string] `query:"account_ids"`
 	// Pagination cursor
 	Cursor param.Field[string] `query:"cursor"`
 	// Filter: start date (ISO 8601)
 	From param.Field[time.Time] `query:"from" format:"date-time"`
-	// Filter by account group ID
-	GroupID param.Field[string] `query:"group_id"`
+	// Comma-separated list of fields to include in the response (e.g. 'targets,media')
+	Include param.Field[string] `query:"include"`
+	// When true, also return external posts merged by published_at (works with
+	// status=published or no status filter)
+	IncludeExternal param.Field[PostListParamsIncludeExternal] `query:"include_external"`
 	// Number of items per page
 	Limit param.Field[int64] `query:"limit"`
 	// Filter by post status
 	Status param.Field[PostListParamsStatus] `query:"status"`
 	// Filter: end date (ISO 8601)
 	To param.Field[time.Time] `query:"to" format:"date-time"`
+	// Filter by workspace ID
+	WorkspaceID param.Field[string] `query:"workspace_id"`
 }
 
 // URLQuery serializes [PostListParams]'s query parameters as `url.Values`.
@@ -1880,6 +3083,23 @@ func (r PostListParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// When true, also return external posts merged by published_at (works with
+// status=published or no status filter)
+type PostListParamsIncludeExternal string
+
+const (
+	PostListParamsIncludeExternalTrue  PostListParamsIncludeExternal = "true"
+	PostListParamsIncludeExternalFalse PostListParamsIncludeExternal = "false"
+)
+
+func (r PostListParamsIncludeExternal) IsKnown() bool {
+	switch r {
+	case PostListParamsIncludeExternalTrue, PostListParamsIncludeExternalFalse:
+		return true
+	}
+	return false
 }
 
 // Filter by post status
@@ -1911,28 +3131,87 @@ func (r PostBulkNewParams) MarshalJSON() (data []byte, err error) {
 }
 
 type PostBulkNewParamsPost struct {
-	// Publish intent. Use "now" to publish immediately, "draft" to save as draft, or
-	// an ISO 8601 timestamp to schedule.
+	// Publish intent. Use "now" to publish immediately, "draft" to save as draft,
+	// "auto" to auto-schedule to the best available slot, or an ISO 8601 timestamp to
+	// schedule (max 30 days ahead).
 	ScheduledAt param.Field[string] `json:"scheduled_at" api:"required"`
-	// Account IDs, platform names, or group IDs to publish to
+	// Account IDs, platform names, or workspace IDs to publish to
 	Targets param.Field[[]string] `json:"targets" api:"required"`
 	// Post text. Optional if target_options provide per-target content.
 	Content param.Field[string] `json:"content"`
+	// Cross-post actions to execute after publishing (e.g., repost from another
+	// account, comment from another account)
+	CrossPostActions param.Field[[]PostBulkNewParamsPostsCrossPostAction] `json:"cross_post_actions"`
+	// Create post from an idea. Pre-fills content from the idea. Explicit 'content'
+	// field takes precedence.
+	IdeaID param.Field[string] `json:"idea_id"`
 	// Media attachments
 	Media param.Field[[]PostBulkNewParamsPostsMedia] `json:"media"`
-	// Per-target customizations keyed by target value (account ID or platform name)
+	// Recycling configuration for evergreen content (Pro plan only)
+	Recycling param.Field[PostBulkNewParamsPostsRecycling] `json:"recycling"`
+	// Shorten URLs in post content. Only relevant when short link mode is 'ask'.
+	// Ignored when mode is 'always' or 'never'. (Pro plan only)
+	ShortenURLs param.Field[bool] `json:"shorten_urls"`
+	// When true, the default signature is not auto-appended even if one is configured.
+	SkipSignature param.Field[bool] `json:"skip_signature"`
+	// Per-target customizations keyed by target value (account ID or platform name).
+	// Supports platform-specific features such as Twitter polls (poll.options,
+	// poll.duration_minutes), threads, reply_to, and reply_settings.
 	TargetOptions param.Field[map[string]map[string]interface{}] `json:"target_options"`
+	// Content template ID. When provided, the template content is used as the base for
+	// the post. Explicit 'content' field takes precedence.
+	TemplateID param.Field[string] `json:"template_id"`
+	// Variables to interpolate in the template (e.g., { "promo_code": "SUMMER25" }).
+	// Built-in variables: {{date}}, {{account_name}}.
+	TemplateVariables param.Field[map[string]string] `json:"template_variables"`
 	// IANA timezone for scheduling
 	Timezone param.Field[string] `json:"timezone"`
+	// Workspace ID to scope this post to
+	WorkspaceID param.Field[string] `json:"workspace_id"`
 }
 
 func (r PostBulkNewParamsPost) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type PostBulkNewParamsPostsCrossPostAction struct {
+	// Type of cross-post action
+	ActionType param.Field[PostBulkNewParamsPostsCrossPostActionsActionType] `json:"action_type" api:"required"`
+	// Account to perform the action from
+	TargetAccountID param.Field[string] `json:"target_account_id" api:"required"`
+	// Text content for comment/quote actions (required for comment and quote)
+	Content param.Field[string] `json:"content"`
+	// Delay in minutes after publishing
+	DelayMinutes param.Field[int64] `json:"delay_minutes"`
+}
+
+func (r PostBulkNewParamsPostsCrossPostAction) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Type of cross-post action
+type PostBulkNewParamsPostsCrossPostActionsActionType string
+
+const (
+	PostBulkNewParamsPostsCrossPostActionsActionTypeRepost  PostBulkNewParamsPostsCrossPostActionsActionType = "repost"
+	PostBulkNewParamsPostsCrossPostActionsActionTypeComment PostBulkNewParamsPostsCrossPostActionsActionType = "comment"
+	PostBulkNewParamsPostsCrossPostActionsActionTypeQuote   PostBulkNewParamsPostsCrossPostActionsActionType = "quote"
+)
+
+func (r PostBulkNewParamsPostsCrossPostActionsActionType) IsKnown() bool {
+	switch r {
+	case PostBulkNewParamsPostsCrossPostActionsActionTypeRepost, PostBulkNewParamsPostsCrossPostActionsActionTypeComment, PostBulkNewParamsPostsCrossPostActionsActionTypeQuote:
+		return true
+	}
+	return false
+}
+
 type PostBulkNewParamsPostsMedia struct {
 	// Public URL of the media file
 	URL param.Field[string] `json:"url" api:"required" format:"uri"`
+	// Read-only. Stable, hyper-optimized preview URL that persists after the full-res
+	// original expires. Ignored on write.
+	Thumbnail param.Field[string] `json:"thumbnail"`
 	// Media type. Inferred from URL extension if omitted.
 	Type param.Field[PostBulkNewParamsPostsMediaType] `json:"type"`
 }
@@ -1954,6 +3233,45 @@ const (
 func (r PostBulkNewParamsPostsMediaType) IsKnown() bool {
 	switch r {
 	case PostBulkNewParamsPostsMediaTypeImage, PostBulkNewParamsPostsMediaTypeVideo, PostBulkNewParamsPostsMediaTypeGif, PostBulkNewParamsPostsMediaTypeDocument:
+		return true
+	}
+	return false
+}
+
+// Recycling configuration for evergreen content (Pro plan only)
+type PostBulkNewParamsPostsRecycling struct {
+	// Interval value
+	Gap param.Field[int64] `json:"gap" api:"required"`
+	// Interval unit
+	GapFreq param.Field[PostBulkNewParamsPostsRecyclingGapFreq] `json:"gap_freq" api:"required"`
+	// When to start recycling
+	StartDate param.Field[time.Time] `json:"start_date" api:"required" format:"date-time"`
+	// Alternate content texts (round-robin)
+	ContentVariations param.Field[[]string] `json:"content_variations"`
+	// Whether recycling is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// Stop after this many recycles
+	ExpireCount param.Field[int64] `json:"expire_count"`
+	// Stop after this date
+	ExpireDate param.Field[time.Time] `json:"expire_date" format:"date-time"`
+}
+
+func (r PostBulkNewParamsPostsRecycling) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Interval unit
+type PostBulkNewParamsPostsRecyclingGapFreq string
+
+const (
+	PostBulkNewParamsPostsRecyclingGapFreqDay   PostBulkNewParamsPostsRecyclingGapFreq = "day"
+	PostBulkNewParamsPostsRecyclingGapFreqWeek  PostBulkNewParamsPostsRecyclingGapFreq = "week"
+	PostBulkNewParamsPostsRecyclingGapFreqMonth PostBulkNewParamsPostsRecyclingGapFreq = "month"
+)
+
+func (r PostBulkNewParamsPostsRecyclingGapFreq) IsKnown() bool {
+	switch r {
+	case PostBulkNewParamsPostsRecyclingGapFreqDay, PostBulkNewParamsPostsRecyclingGapFreqWeek, PostBulkNewParamsPostsRecyclingGapFreqMonth:
 		return true
 	}
 	return false

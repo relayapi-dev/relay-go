@@ -82,18 +82,18 @@ func (r connectTelegramConnectDirectlyResponseJSON) RawJSON() string {
 
 type ConnectTelegramConnectDirectlyResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectTelegramConnectDirectlyResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                                `json:"id" api:"required"`
+	AvatarURL         string                                                `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                             `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                                `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                                `json:"metadata" api:"required,nullable"`
 	Platform          ConnectTelegramConnectDirectlyResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                             `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                                `json:"username" api:"required,nullable"`
-	JSON              connectTelegramConnectDirectlyResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectTelegramConnectDirectlyResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectTelegramConnectDirectlyResponseAccountJSON      `json:"-"`
 }
 
 // connectTelegramConnectDirectlyResponseAccountJSON contains the JSON metadata for
@@ -103,12 +103,12 @@ type connectTelegramConnectDirectlyResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -118,30 +118,6 @@ func (r *ConnectTelegramConnectDirectlyResponseAccount) UnmarshalJSON(data []byt
 }
 
 func (r connectTelegramConnectDirectlyResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectTelegramConnectDirectlyResponseAccountGroup struct {
-	ID   string                                                 `json:"id" api:"required"`
-	Name string                                                 `json:"name" api:"required"`
-	JSON connectTelegramConnectDirectlyResponseAccountGroupJSON `json:"-"`
-}
-
-// connectTelegramConnectDirectlyResponseAccountGroupJSON contains the JSON
-// metadata for the struct [ConnectTelegramConnectDirectlyResponseAccountGroup]
-type connectTelegramConnectDirectlyResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectTelegramConnectDirectlyResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectTelegramConnectDirectlyResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -165,14 +141,42 @@ const (
 	ConnectTelegramConnectDirectlyResponseAccountPlatformMastodon       ConnectTelegramConnectDirectlyResponseAccountPlatform = "mastodon"
 	ConnectTelegramConnectDirectlyResponseAccountPlatformDiscord        ConnectTelegramConnectDirectlyResponseAccountPlatform = "discord"
 	ConnectTelegramConnectDirectlyResponseAccountPlatformSMS            ConnectTelegramConnectDirectlyResponseAccountPlatform = "sms"
+	ConnectTelegramConnectDirectlyResponseAccountPlatformBeehiiv        ConnectTelegramConnectDirectlyResponseAccountPlatform = "beehiiv"
+	ConnectTelegramConnectDirectlyResponseAccountPlatformConvertkit     ConnectTelegramConnectDirectlyResponseAccountPlatform = "convertkit"
+	ConnectTelegramConnectDirectlyResponseAccountPlatformMailchimp      ConnectTelegramConnectDirectlyResponseAccountPlatform = "mailchimp"
+	ConnectTelegramConnectDirectlyResponseAccountPlatformListmonk       ConnectTelegramConnectDirectlyResponseAccountPlatform = "listmonk"
 )
 
 func (r ConnectTelegramConnectDirectlyResponseAccountPlatform) IsKnown() bool {
 	switch r {
-	case ConnectTelegramConnectDirectlyResponseAccountPlatformTwitter, ConnectTelegramConnectDirectlyResponseAccountPlatformInstagram, ConnectTelegramConnectDirectlyResponseAccountPlatformFacebook, ConnectTelegramConnectDirectlyResponseAccountPlatformLinkedin, ConnectTelegramConnectDirectlyResponseAccountPlatformTiktok, ConnectTelegramConnectDirectlyResponseAccountPlatformYoutube, ConnectTelegramConnectDirectlyResponseAccountPlatformPinterest, ConnectTelegramConnectDirectlyResponseAccountPlatformReddit, ConnectTelegramConnectDirectlyResponseAccountPlatformBluesky, ConnectTelegramConnectDirectlyResponseAccountPlatformThreads, ConnectTelegramConnectDirectlyResponseAccountPlatformTelegram, ConnectTelegramConnectDirectlyResponseAccountPlatformSnapchat, ConnectTelegramConnectDirectlyResponseAccountPlatformGooglebusiness, ConnectTelegramConnectDirectlyResponseAccountPlatformWhatsapp, ConnectTelegramConnectDirectlyResponseAccountPlatformMastodon, ConnectTelegramConnectDirectlyResponseAccountPlatformDiscord, ConnectTelegramConnectDirectlyResponseAccountPlatformSMS:
+	case ConnectTelegramConnectDirectlyResponseAccountPlatformTwitter, ConnectTelegramConnectDirectlyResponseAccountPlatformInstagram, ConnectTelegramConnectDirectlyResponseAccountPlatformFacebook, ConnectTelegramConnectDirectlyResponseAccountPlatformLinkedin, ConnectTelegramConnectDirectlyResponseAccountPlatformTiktok, ConnectTelegramConnectDirectlyResponseAccountPlatformYoutube, ConnectTelegramConnectDirectlyResponseAccountPlatformPinterest, ConnectTelegramConnectDirectlyResponseAccountPlatformReddit, ConnectTelegramConnectDirectlyResponseAccountPlatformBluesky, ConnectTelegramConnectDirectlyResponseAccountPlatformThreads, ConnectTelegramConnectDirectlyResponseAccountPlatformTelegram, ConnectTelegramConnectDirectlyResponseAccountPlatformSnapchat, ConnectTelegramConnectDirectlyResponseAccountPlatformGooglebusiness, ConnectTelegramConnectDirectlyResponseAccountPlatformWhatsapp, ConnectTelegramConnectDirectlyResponseAccountPlatformMastodon, ConnectTelegramConnectDirectlyResponseAccountPlatformDiscord, ConnectTelegramConnectDirectlyResponseAccountPlatformSMS, ConnectTelegramConnectDirectlyResponseAccountPlatformBeehiiv, ConnectTelegramConnectDirectlyResponseAccountPlatformConvertkit, ConnectTelegramConnectDirectlyResponseAccountPlatformMailchimp, ConnectTelegramConnectDirectlyResponseAccountPlatformListmonk:
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type ConnectTelegramConnectDirectlyResponseAccountWorkspace struct {
+	ID   string                                                     `json:"id" api:"required"`
+	Name string                                                     `json:"name" api:"required"`
+	JSON connectTelegramConnectDirectlyResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectTelegramConnectDirectlyResponseAccountWorkspaceJSON contains the JSON
+// metadata for the struct [ConnectTelegramConnectDirectlyResponseAccountWorkspace]
+type connectTelegramConnectDirectlyResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectTelegramConnectDirectlyResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectTelegramConnectDirectlyResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type ConnectTelegramInitiateConnectionResponse struct {
@@ -266,18 +270,18 @@ func (r ConnectTelegramPollConnectionStatusResponseStatus) IsKnown() bool {
 // Connected account details
 type ConnectTelegramPollConnectionStatusResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectTelegramPollConnectionStatusResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                                     `json:"id" api:"required"`
+	AvatarURL         string                                                     `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                                  `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                                     `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                                     `json:"metadata" api:"required,nullable"`
 	Platform          ConnectTelegramPollConnectionStatusResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                     `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                                  `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                                     `json:"username" api:"required,nullable"`
-	JSON              connectTelegramPollConnectionStatusResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectTelegramPollConnectionStatusResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectTelegramPollConnectionStatusResponseAccountJSON      `json:"-"`
 }
 
 // connectTelegramPollConnectionStatusResponseAccountJSON contains the JSON
@@ -287,12 +291,12 @@ type connectTelegramPollConnectionStatusResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -302,31 +306,6 @@ func (r *ConnectTelegramPollConnectionStatusResponseAccount) UnmarshalJSON(data 
 }
 
 func (r connectTelegramPollConnectionStatusResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectTelegramPollConnectionStatusResponseAccountGroup struct {
-	ID   string                                                      `json:"id" api:"required"`
-	Name string                                                      `json:"name" api:"required"`
-	JSON connectTelegramPollConnectionStatusResponseAccountGroupJSON `json:"-"`
-}
-
-// connectTelegramPollConnectionStatusResponseAccountGroupJSON contains the JSON
-// metadata for the struct
-// [ConnectTelegramPollConnectionStatusResponseAccountGroup]
-type connectTelegramPollConnectionStatusResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectTelegramPollConnectionStatusResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectTelegramPollConnectionStatusResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -350,14 +329,43 @@ const (
 	ConnectTelegramPollConnectionStatusResponseAccountPlatformMastodon       ConnectTelegramPollConnectionStatusResponseAccountPlatform = "mastodon"
 	ConnectTelegramPollConnectionStatusResponseAccountPlatformDiscord        ConnectTelegramPollConnectionStatusResponseAccountPlatform = "discord"
 	ConnectTelegramPollConnectionStatusResponseAccountPlatformSMS            ConnectTelegramPollConnectionStatusResponseAccountPlatform = "sms"
+	ConnectTelegramPollConnectionStatusResponseAccountPlatformBeehiiv        ConnectTelegramPollConnectionStatusResponseAccountPlatform = "beehiiv"
+	ConnectTelegramPollConnectionStatusResponseAccountPlatformConvertkit     ConnectTelegramPollConnectionStatusResponseAccountPlatform = "convertkit"
+	ConnectTelegramPollConnectionStatusResponseAccountPlatformMailchimp      ConnectTelegramPollConnectionStatusResponseAccountPlatform = "mailchimp"
+	ConnectTelegramPollConnectionStatusResponseAccountPlatformListmonk       ConnectTelegramPollConnectionStatusResponseAccountPlatform = "listmonk"
 )
 
 func (r ConnectTelegramPollConnectionStatusResponseAccountPlatform) IsKnown() bool {
 	switch r {
-	case ConnectTelegramPollConnectionStatusResponseAccountPlatformTwitter, ConnectTelegramPollConnectionStatusResponseAccountPlatformInstagram, ConnectTelegramPollConnectionStatusResponseAccountPlatformFacebook, ConnectTelegramPollConnectionStatusResponseAccountPlatformLinkedin, ConnectTelegramPollConnectionStatusResponseAccountPlatformTiktok, ConnectTelegramPollConnectionStatusResponseAccountPlatformYoutube, ConnectTelegramPollConnectionStatusResponseAccountPlatformPinterest, ConnectTelegramPollConnectionStatusResponseAccountPlatformReddit, ConnectTelegramPollConnectionStatusResponseAccountPlatformBluesky, ConnectTelegramPollConnectionStatusResponseAccountPlatformThreads, ConnectTelegramPollConnectionStatusResponseAccountPlatformTelegram, ConnectTelegramPollConnectionStatusResponseAccountPlatformSnapchat, ConnectTelegramPollConnectionStatusResponseAccountPlatformGooglebusiness, ConnectTelegramPollConnectionStatusResponseAccountPlatformWhatsapp, ConnectTelegramPollConnectionStatusResponseAccountPlatformMastodon, ConnectTelegramPollConnectionStatusResponseAccountPlatformDiscord, ConnectTelegramPollConnectionStatusResponseAccountPlatformSMS:
+	case ConnectTelegramPollConnectionStatusResponseAccountPlatformTwitter, ConnectTelegramPollConnectionStatusResponseAccountPlatformInstagram, ConnectTelegramPollConnectionStatusResponseAccountPlatformFacebook, ConnectTelegramPollConnectionStatusResponseAccountPlatformLinkedin, ConnectTelegramPollConnectionStatusResponseAccountPlatformTiktok, ConnectTelegramPollConnectionStatusResponseAccountPlatformYoutube, ConnectTelegramPollConnectionStatusResponseAccountPlatformPinterest, ConnectTelegramPollConnectionStatusResponseAccountPlatformReddit, ConnectTelegramPollConnectionStatusResponseAccountPlatformBluesky, ConnectTelegramPollConnectionStatusResponseAccountPlatformThreads, ConnectTelegramPollConnectionStatusResponseAccountPlatformTelegram, ConnectTelegramPollConnectionStatusResponseAccountPlatformSnapchat, ConnectTelegramPollConnectionStatusResponseAccountPlatformGooglebusiness, ConnectTelegramPollConnectionStatusResponseAccountPlatformWhatsapp, ConnectTelegramPollConnectionStatusResponseAccountPlatformMastodon, ConnectTelegramPollConnectionStatusResponseAccountPlatformDiscord, ConnectTelegramPollConnectionStatusResponseAccountPlatformSMS, ConnectTelegramPollConnectionStatusResponseAccountPlatformBeehiiv, ConnectTelegramPollConnectionStatusResponseAccountPlatformConvertkit, ConnectTelegramPollConnectionStatusResponseAccountPlatformMailchimp, ConnectTelegramPollConnectionStatusResponseAccountPlatformListmonk:
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type ConnectTelegramPollConnectionStatusResponseAccountWorkspace struct {
+	ID   string                                                          `json:"id" api:"required"`
+	Name string                                                          `json:"name" api:"required"`
+	JSON connectTelegramPollConnectionStatusResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectTelegramPollConnectionStatusResponseAccountWorkspaceJSON contains the
+// JSON metadata for the struct
+// [ConnectTelegramPollConnectionStatusResponseAccountWorkspace]
+type connectTelegramPollConnectionStatusResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectTelegramPollConnectionStatusResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectTelegramPollConnectionStatusResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type ConnectTelegramConnectDirectlyParams struct {

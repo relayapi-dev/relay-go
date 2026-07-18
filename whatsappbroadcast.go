@@ -37,7 +37,9 @@ func NewWhatsappBroadcastService(opts ...option.RequestOption) (r *WhatsappBroad
 	return
 }
 
-// Create a broadcast
+// Deprecated. Use POST /v1/broadcasts instead.
+//
+// Deprecated: deprecated
 func (r *WhatsappBroadcastService) New(ctx context.Context, body WhatsappBroadcastNewParams, opts ...option.RequestOption) (res *WhatsappBroadcastNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/whatsapp/broadcasts"
@@ -45,7 +47,9 @@ func (r *WhatsappBroadcastService) New(ctx context.Context, body WhatsappBroadca
 	return res, err
 }
 
-// Get broadcast details
+// Deprecated. Use GET /v1/broadcasts/{id} instead.
+//
+// Deprecated: deprecated
 func (r *WhatsappBroadcastService) Get(ctx context.Context, broadcastID string, opts ...option.RequestOption) (res *WhatsappBroadcastGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if broadcastID == "" {
@@ -57,7 +61,9 @@ func (r *WhatsappBroadcastService) Get(ctx context.Context, broadcastID string, 
 	return res, err
 }
 
-// List broadcasts
+// Deprecated. Use GET /v1/broadcasts instead.
+//
+// Deprecated: deprecated
 func (r *WhatsappBroadcastService) List(ctx context.Context, query WhatsappBroadcastListParams, opts ...option.RequestOption) (res *WhatsappBroadcastListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/whatsapp/broadcasts"
@@ -65,7 +71,9 @@ func (r *WhatsappBroadcastService) List(ctx context.Context, query WhatsappBroad
 	return res, err
 }
 
-// Delete a broadcast
+// Deprecated. Use DELETE /v1/broadcasts/{id} instead.
+//
+// Deprecated: deprecated
 func (r *WhatsappBroadcastService) Delete(ctx context.Context, broadcastID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -78,7 +86,9 @@ func (r *WhatsappBroadcastService) Delete(ctx context.Context, broadcastID strin
 	return err
 }
 
-// Schedule a broadcast
+// Deprecated. Use POST /v1/broadcasts/{id}/schedule instead.
+//
+// Deprecated: deprecated
 func (r *WhatsappBroadcastService) Schedule(ctx context.Context, broadcastID string, opts ...option.RequestOption) (res *WhatsappBroadcastScheduleResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if broadcastID == "" {
@@ -90,7 +100,9 @@ func (r *WhatsappBroadcastService) Schedule(ctx context.Context, broadcastID str
 	return res, err
 }
 
-// Send a broadcast immediately
+// Deprecated. Use POST /v1/broadcasts/{id}/send instead.
+//
+// Deprecated: deprecated
 func (r *WhatsappBroadcastService) Send(ctx context.Context, broadcastID string, opts ...option.RequestOption) (res *WhatsappBroadcastSendResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if broadcastID == "" {
@@ -152,16 +164,17 @@ func (r whatsappBroadcastNewResponseJSON) RawJSON() string {
 type WhatsappBroadcastNewResponseStatus string
 
 const (
-	WhatsappBroadcastNewResponseStatusDraft     WhatsappBroadcastNewResponseStatus = "draft"
-	WhatsappBroadcastNewResponseStatusScheduled WhatsappBroadcastNewResponseStatus = "scheduled"
-	WhatsappBroadcastNewResponseStatusSending   WhatsappBroadcastNewResponseStatus = "sending"
-	WhatsappBroadcastNewResponseStatusSent      WhatsappBroadcastNewResponseStatus = "sent"
-	WhatsappBroadcastNewResponseStatusFailed    WhatsappBroadcastNewResponseStatus = "failed"
+	WhatsappBroadcastNewResponseStatusDraft           WhatsappBroadcastNewResponseStatus = "draft"
+	WhatsappBroadcastNewResponseStatusScheduled       WhatsappBroadcastNewResponseStatus = "scheduled"
+	WhatsappBroadcastNewResponseStatusSending         WhatsappBroadcastNewResponseStatus = "sending"
+	WhatsappBroadcastNewResponseStatusSent            WhatsappBroadcastNewResponseStatus = "sent"
+	WhatsappBroadcastNewResponseStatusPartiallyFailed WhatsappBroadcastNewResponseStatus = "partially_failed"
+	WhatsappBroadcastNewResponseStatusFailed          WhatsappBroadcastNewResponseStatus = "failed"
 )
 
 func (r WhatsappBroadcastNewResponseStatus) IsKnown() bool {
 	switch r {
-	case WhatsappBroadcastNewResponseStatusDraft, WhatsappBroadcastNewResponseStatusScheduled, WhatsappBroadcastNewResponseStatusSending, WhatsappBroadcastNewResponseStatusSent, WhatsappBroadcastNewResponseStatusFailed:
+	case WhatsappBroadcastNewResponseStatusDraft, WhatsappBroadcastNewResponseStatusScheduled, WhatsappBroadcastNewResponseStatusSending, WhatsappBroadcastNewResponseStatusSent, WhatsappBroadcastNewResponseStatusPartiallyFailed, WhatsappBroadcastNewResponseStatusFailed:
 		return true
 	}
 	return false
@@ -217,16 +230,17 @@ func (r whatsappBroadcastGetResponseJSON) RawJSON() string {
 type WhatsappBroadcastGetResponseStatus string
 
 const (
-	WhatsappBroadcastGetResponseStatusDraft     WhatsappBroadcastGetResponseStatus = "draft"
-	WhatsappBroadcastGetResponseStatusScheduled WhatsappBroadcastGetResponseStatus = "scheduled"
-	WhatsappBroadcastGetResponseStatusSending   WhatsappBroadcastGetResponseStatus = "sending"
-	WhatsappBroadcastGetResponseStatusSent      WhatsappBroadcastGetResponseStatus = "sent"
-	WhatsappBroadcastGetResponseStatusFailed    WhatsappBroadcastGetResponseStatus = "failed"
+	WhatsappBroadcastGetResponseStatusDraft           WhatsappBroadcastGetResponseStatus = "draft"
+	WhatsappBroadcastGetResponseStatusScheduled       WhatsappBroadcastGetResponseStatus = "scheduled"
+	WhatsappBroadcastGetResponseStatusSending         WhatsappBroadcastGetResponseStatus = "sending"
+	WhatsappBroadcastGetResponseStatusSent            WhatsappBroadcastGetResponseStatus = "sent"
+	WhatsappBroadcastGetResponseStatusPartiallyFailed WhatsappBroadcastGetResponseStatus = "partially_failed"
+	WhatsappBroadcastGetResponseStatusFailed          WhatsappBroadcastGetResponseStatus = "failed"
 )
 
 func (r WhatsappBroadcastGetResponseStatus) IsKnown() bool {
 	switch r {
-	case WhatsappBroadcastGetResponseStatusDraft, WhatsappBroadcastGetResponseStatusScheduled, WhatsappBroadcastGetResponseStatusSending, WhatsappBroadcastGetResponseStatusSent, WhatsappBroadcastGetResponseStatusFailed:
+	case WhatsappBroadcastGetResponseStatusDraft, WhatsappBroadcastGetResponseStatusScheduled, WhatsappBroadcastGetResponseStatusSending, WhatsappBroadcastGetResponseStatusSent, WhatsappBroadcastGetResponseStatusPartiallyFailed, WhatsappBroadcastGetResponseStatusFailed:
 		return true
 	}
 	return false
@@ -234,13 +248,19 @@ func (r WhatsappBroadcastGetResponseStatus) IsKnown() bool {
 
 type WhatsappBroadcastListResponse struct {
 	Data []WhatsappBroadcastListResponseData `json:"data" api:"required"`
-	JSON whatsappBroadcastListResponseJSON   `json:"-"`
+	// Whether more items exist
+	HasMore bool `json:"has_more"`
+	// Cursor for next page
+	NextCursor string                            `json:"next_cursor" api:"nullable"`
+	JSON       whatsappBroadcastListResponseJSON `json:"-"`
 }
 
 // whatsappBroadcastListResponseJSON contains the JSON metadata for the struct
 // [WhatsappBroadcastListResponse]
 type whatsappBroadcastListResponseJSON struct {
 	Data        apijson.Field
+	HasMore     apijson.Field
+	NextCursor  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -303,16 +323,17 @@ func (r whatsappBroadcastListResponseDataJSON) RawJSON() string {
 type WhatsappBroadcastListResponseDataStatus string
 
 const (
-	WhatsappBroadcastListResponseDataStatusDraft     WhatsappBroadcastListResponseDataStatus = "draft"
-	WhatsappBroadcastListResponseDataStatusScheduled WhatsappBroadcastListResponseDataStatus = "scheduled"
-	WhatsappBroadcastListResponseDataStatusSending   WhatsappBroadcastListResponseDataStatus = "sending"
-	WhatsappBroadcastListResponseDataStatusSent      WhatsappBroadcastListResponseDataStatus = "sent"
-	WhatsappBroadcastListResponseDataStatusFailed    WhatsappBroadcastListResponseDataStatus = "failed"
+	WhatsappBroadcastListResponseDataStatusDraft           WhatsappBroadcastListResponseDataStatus = "draft"
+	WhatsappBroadcastListResponseDataStatusScheduled       WhatsappBroadcastListResponseDataStatus = "scheduled"
+	WhatsappBroadcastListResponseDataStatusSending         WhatsappBroadcastListResponseDataStatus = "sending"
+	WhatsappBroadcastListResponseDataStatusSent            WhatsappBroadcastListResponseDataStatus = "sent"
+	WhatsappBroadcastListResponseDataStatusPartiallyFailed WhatsappBroadcastListResponseDataStatus = "partially_failed"
+	WhatsappBroadcastListResponseDataStatusFailed          WhatsappBroadcastListResponseDataStatus = "failed"
 )
 
 func (r WhatsappBroadcastListResponseDataStatus) IsKnown() bool {
 	switch r {
-	case WhatsappBroadcastListResponseDataStatusDraft, WhatsappBroadcastListResponseDataStatusScheduled, WhatsappBroadcastListResponseDataStatusSending, WhatsappBroadcastListResponseDataStatusSent, WhatsappBroadcastListResponseDataStatusFailed:
+	case WhatsappBroadcastListResponseDataStatusDraft, WhatsappBroadcastListResponseDataStatusScheduled, WhatsappBroadcastListResponseDataStatusSending, WhatsappBroadcastListResponseDataStatusSent, WhatsappBroadcastListResponseDataStatusPartiallyFailed, WhatsappBroadcastListResponseDataStatusFailed:
 		return true
 	}
 	return false
@@ -368,16 +389,17 @@ func (r whatsappBroadcastScheduleResponseJSON) RawJSON() string {
 type WhatsappBroadcastScheduleResponseStatus string
 
 const (
-	WhatsappBroadcastScheduleResponseStatusDraft     WhatsappBroadcastScheduleResponseStatus = "draft"
-	WhatsappBroadcastScheduleResponseStatusScheduled WhatsappBroadcastScheduleResponseStatus = "scheduled"
-	WhatsappBroadcastScheduleResponseStatusSending   WhatsappBroadcastScheduleResponseStatus = "sending"
-	WhatsappBroadcastScheduleResponseStatusSent      WhatsappBroadcastScheduleResponseStatus = "sent"
-	WhatsappBroadcastScheduleResponseStatusFailed    WhatsappBroadcastScheduleResponseStatus = "failed"
+	WhatsappBroadcastScheduleResponseStatusDraft           WhatsappBroadcastScheduleResponseStatus = "draft"
+	WhatsappBroadcastScheduleResponseStatusScheduled       WhatsappBroadcastScheduleResponseStatus = "scheduled"
+	WhatsappBroadcastScheduleResponseStatusSending         WhatsappBroadcastScheduleResponseStatus = "sending"
+	WhatsappBroadcastScheduleResponseStatusSent            WhatsappBroadcastScheduleResponseStatus = "sent"
+	WhatsappBroadcastScheduleResponseStatusPartiallyFailed WhatsappBroadcastScheduleResponseStatus = "partially_failed"
+	WhatsappBroadcastScheduleResponseStatusFailed          WhatsappBroadcastScheduleResponseStatus = "failed"
 )
 
 func (r WhatsappBroadcastScheduleResponseStatus) IsKnown() bool {
 	switch r {
-	case WhatsappBroadcastScheduleResponseStatusDraft, WhatsappBroadcastScheduleResponseStatusScheduled, WhatsappBroadcastScheduleResponseStatusSending, WhatsappBroadcastScheduleResponseStatusSent, WhatsappBroadcastScheduleResponseStatusFailed:
+	case WhatsappBroadcastScheduleResponseStatusDraft, WhatsappBroadcastScheduleResponseStatusScheduled, WhatsappBroadcastScheduleResponseStatusSending, WhatsappBroadcastScheduleResponseStatusSent, WhatsappBroadcastScheduleResponseStatusPartiallyFailed, WhatsappBroadcastScheduleResponseStatusFailed:
 		return true
 	}
 	return false
@@ -433,16 +455,17 @@ func (r whatsappBroadcastSendResponseJSON) RawJSON() string {
 type WhatsappBroadcastSendResponseStatus string
 
 const (
-	WhatsappBroadcastSendResponseStatusDraft     WhatsappBroadcastSendResponseStatus = "draft"
-	WhatsappBroadcastSendResponseStatusScheduled WhatsappBroadcastSendResponseStatus = "scheduled"
-	WhatsappBroadcastSendResponseStatusSending   WhatsappBroadcastSendResponseStatus = "sending"
-	WhatsappBroadcastSendResponseStatusSent      WhatsappBroadcastSendResponseStatus = "sent"
-	WhatsappBroadcastSendResponseStatusFailed    WhatsappBroadcastSendResponseStatus = "failed"
+	WhatsappBroadcastSendResponseStatusDraft           WhatsappBroadcastSendResponseStatus = "draft"
+	WhatsappBroadcastSendResponseStatusScheduled       WhatsappBroadcastSendResponseStatus = "scheduled"
+	WhatsappBroadcastSendResponseStatusSending         WhatsappBroadcastSendResponseStatus = "sending"
+	WhatsappBroadcastSendResponseStatusSent            WhatsappBroadcastSendResponseStatus = "sent"
+	WhatsappBroadcastSendResponseStatusPartiallyFailed WhatsappBroadcastSendResponseStatus = "partially_failed"
+	WhatsappBroadcastSendResponseStatusFailed          WhatsappBroadcastSendResponseStatus = "failed"
 )
 
 func (r WhatsappBroadcastSendResponseStatus) IsKnown() bool {
 	switch r {
-	case WhatsappBroadcastSendResponseStatusDraft, WhatsappBroadcastSendResponseStatusScheduled, WhatsappBroadcastSendResponseStatusSending, WhatsappBroadcastSendResponseStatusSent, WhatsappBroadcastSendResponseStatusFailed:
+	case WhatsappBroadcastSendResponseStatusDraft, WhatsappBroadcastSendResponseStatusScheduled, WhatsappBroadcastSendResponseStatusSending, WhatsappBroadcastSendResponseStatusSent, WhatsappBroadcastSendResponseStatusPartiallyFailed, WhatsappBroadcastSendResponseStatusFailed:
 		return true
 	}
 	return false
@@ -518,6 +541,10 @@ func (r WhatsappBroadcastNewParamsTemplateComponentsType) IsKnown() bool {
 type WhatsappBroadcastListParams struct {
 	// WhatsApp account ID
 	AccountID param.Field[string] `query:"account_id" api:"required"`
+	// Pagination cursor
+	Cursor param.Field[string] `query:"cursor"`
+	// Number of items per page
+	Limit param.Field[int64] `query:"limit"`
 }
 
 // URLQuery serializes [WhatsappBroadcastListParams]'s query parameters as

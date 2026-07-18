@@ -151,18 +151,18 @@ func (r connectLinkedinOrganizationSelectResponseJSON) RawJSON() string {
 
 type ConnectLinkedinOrganizationSelectResponseAccount struct {
 	// Account ID
-	ID          string    `json:"id" api:"required"`
-	AvatarURL   string    `json:"avatar_url" api:"required,nullable"`
-	ConnectedAt time.Time `json:"connected_at" api:"required" format:"date-time"`
-	DisplayName string    `json:"display_name" api:"required,nullable"`
-	// Account group
-	Group             ConnectLinkedinOrganizationSelectResponseAccountGroup    `json:"group" api:"required,nullable"`
+	ID                string                                                   `json:"id" api:"required"`
+	AvatarURL         string                                                   `json:"avatar_url" api:"required,nullable"`
+	ConnectedAt       time.Time                                                `json:"connected_at" api:"required" format:"date-time"`
+	DisplayName       string                                                   `json:"display_name" api:"required,nullable"`
 	Metadata          map[string]interface{}                                   `json:"metadata" api:"required,nullable"`
 	Platform          ConnectLinkedinOrganizationSelectResponseAccountPlatform `json:"platform" api:"required"`
 	PlatformAccountID string                                                   `json:"platform_account_id" api:"required"`
 	UpdatedAt         time.Time                                                `json:"updated_at" api:"required" format:"date-time"`
 	Username          string                                                   `json:"username" api:"required,nullable"`
-	JSON              connectLinkedinOrganizationSelectResponseAccountJSON     `json:"-"`
+	// Account workspace
+	Workspace ConnectLinkedinOrganizationSelectResponseAccountWorkspace `json:"workspace" api:"required,nullable"`
+	JSON      connectLinkedinOrganizationSelectResponseAccountJSON      `json:"-"`
 }
 
 // connectLinkedinOrganizationSelectResponseAccountJSON contains the JSON metadata
@@ -172,12 +172,12 @@ type connectLinkedinOrganizationSelectResponseAccountJSON struct {
 	AvatarURL         apijson.Field
 	ConnectedAt       apijson.Field
 	DisplayName       apijson.Field
-	Group             apijson.Field
 	Metadata          apijson.Field
 	Platform          apijson.Field
 	PlatformAccountID apijson.Field
 	UpdatedAt         apijson.Field
 	Username          apijson.Field
+	Workspace         apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -187,30 +187,6 @@ func (r *ConnectLinkedinOrganizationSelectResponseAccount) UnmarshalJSON(data []
 }
 
 func (r connectLinkedinOrganizationSelectResponseAccountJSON) RawJSON() string {
-	return r.raw
-}
-
-// Account group
-type ConnectLinkedinOrganizationSelectResponseAccountGroup struct {
-	ID   string                                                    `json:"id" api:"required"`
-	Name string                                                    `json:"name" api:"required"`
-	JSON connectLinkedinOrganizationSelectResponseAccountGroupJSON `json:"-"`
-}
-
-// connectLinkedinOrganizationSelectResponseAccountGroupJSON contains the JSON
-// metadata for the struct [ConnectLinkedinOrganizationSelectResponseAccountGroup]
-type connectLinkedinOrganizationSelectResponseAccountGroupJSON struct {
-	ID          apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ConnectLinkedinOrganizationSelectResponseAccountGroup) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r connectLinkedinOrganizationSelectResponseAccountGroupJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -234,14 +210,43 @@ const (
 	ConnectLinkedinOrganizationSelectResponseAccountPlatformMastodon       ConnectLinkedinOrganizationSelectResponseAccountPlatform = "mastodon"
 	ConnectLinkedinOrganizationSelectResponseAccountPlatformDiscord        ConnectLinkedinOrganizationSelectResponseAccountPlatform = "discord"
 	ConnectLinkedinOrganizationSelectResponseAccountPlatformSMS            ConnectLinkedinOrganizationSelectResponseAccountPlatform = "sms"
+	ConnectLinkedinOrganizationSelectResponseAccountPlatformBeehiiv        ConnectLinkedinOrganizationSelectResponseAccountPlatform = "beehiiv"
+	ConnectLinkedinOrganizationSelectResponseAccountPlatformConvertkit     ConnectLinkedinOrganizationSelectResponseAccountPlatform = "convertkit"
+	ConnectLinkedinOrganizationSelectResponseAccountPlatformMailchimp      ConnectLinkedinOrganizationSelectResponseAccountPlatform = "mailchimp"
+	ConnectLinkedinOrganizationSelectResponseAccountPlatformListmonk       ConnectLinkedinOrganizationSelectResponseAccountPlatform = "listmonk"
 )
 
 func (r ConnectLinkedinOrganizationSelectResponseAccountPlatform) IsKnown() bool {
 	switch r {
-	case ConnectLinkedinOrganizationSelectResponseAccountPlatformTwitter, ConnectLinkedinOrganizationSelectResponseAccountPlatformInstagram, ConnectLinkedinOrganizationSelectResponseAccountPlatformFacebook, ConnectLinkedinOrganizationSelectResponseAccountPlatformLinkedin, ConnectLinkedinOrganizationSelectResponseAccountPlatformTiktok, ConnectLinkedinOrganizationSelectResponseAccountPlatformYoutube, ConnectLinkedinOrganizationSelectResponseAccountPlatformPinterest, ConnectLinkedinOrganizationSelectResponseAccountPlatformReddit, ConnectLinkedinOrganizationSelectResponseAccountPlatformBluesky, ConnectLinkedinOrganizationSelectResponseAccountPlatformThreads, ConnectLinkedinOrganizationSelectResponseAccountPlatformTelegram, ConnectLinkedinOrganizationSelectResponseAccountPlatformSnapchat, ConnectLinkedinOrganizationSelectResponseAccountPlatformGooglebusiness, ConnectLinkedinOrganizationSelectResponseAccountPlatformWhatsapp, ConnectLinkedinOrganizationSelectResponseAccountPlatformMastodon, ConnectLinkedinOrganizationSelectResponseAccountPlatformDiscord, ConnectLinkedinOrganizationSelectResponseAccountPlatformSMS:
+	case ConnectLinkedinOrganizationSelectResponseAccountPlatformTwitter, ConnectLinkedinOrganizationSelectResponseAccountPlatformInstagram, ConnectLinkedinOrganizationSelectResponseAccountPlatformFacebook, ConnectLinkedinOrganizationSelectResponseAccountPlatformLinkedin, ConnectLinkedinOrganizationSelectResponseAccountPlatformTiktok, ConnectLinkedinOrganizationSelectResponseAccountPlatformYoutube, ConnectLinkedinOrganizationSelectResponseAccountPlatformPinterest, ConnectLinkedinOrganizationSelectResponseAccountPlatformReddit, ConnectLinkedinOrganizationSelectResponseAccountPlatformBluesky, ConnectLinkedinOrganizationSelectResponseAccountPlatformThreads, ConnectLinkedinOrganizationSelectResponseAccountPlatformTelegram, ConnectLinkedinOrganizationSelectResponseAccountPlatformSnapchat, ConnectLinkedinOrganizationSelectResponseAccountPlatformGooglebusiness, ConnectLinkedinOrganizationSelectResponseAccountPlatformWhatsapp, ConnectLinkedinOrganizationSelectResponseAccountPlatformMastodon, ConnectLinkedinOrganizationSelectResponseAccountPlatformDiscord, ConnectLinkedinOrganizationSelectResponseAccountPlatformSMS, ConnectLinkedinOrganizationSelectResponseAccountPlatformBeehiiv, ConnectLinkedinOrganizationSelectResponseAccountPlatformConvertkit, ConnectLinkedinOrganizationSelectResponseAccountPlatformMailchimp, ConnectLinkedinOrganizationSelectResponseAccountPlatformListmonk:
 		return true
 	}
 	return false
+}
+
+// Account workspace
+type ConnectLinkedinOrganizationSelectResponseAccountWorkspace struct {
+	ID   string                                                        `json:"id" api:"required"`
+	Name string                                                        `json:"name" api:"required"`
+	JSON connectLinkedinOrganizationSelectResponseAccountWorkspaceJSON `json:"-"`
+}
+
+// connectLinkedinOrganizationSelectResponseAccountWorkspaceJSON contains the JSON
+// metadata for the struct
+// [ConnectLinkedinOrganizationSelectResponseAccountWorkspace]
+type connectLinkedinOrganizationSelectResponseAccountWorkspaceJSON struct {
+	ID          apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ConnectLinkedinOrganizationSelectResponseAccountWorkspace) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r connectLinkedinOrganizationSelectResponseAccountWorkspaceJSON) RawJSON() string {
+	return r.raw
 }
 
 type ConnectLinkedinOrganizationSelectParams struct {

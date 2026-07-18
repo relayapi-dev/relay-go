@@ -31,16 +31,40 @@ func TestPostNewWithOptionalParams(t *testing.T) {
 		ScheduledAt: relaygo.F("now"),
 		Targets:     relaygo.F([]string{"string"}),
 		Content:     relaygo.F("content"),
-		Media: relaygo.F([]relaygo.PostNewParamsMedia{{
-			URL:  relaygo.F("https://example.com"),
-			Type: relaygo.F(relaygo.PostNewParamsMediaTypeImage),
+		CrossPostActions: relaygo.F([]relaygo.PostNewParamsCrossPostAction{{
+			ActionType:      relaygo.F(relaygo.PostNewParamsCrossPostActionsActionTypeRepost),
+			TargetAccountID: relaygo.F("target_account_id"),
+			Content:         relaygo.F("content"),
+			DelayMinutes:    relaygo.F(int64(0)),
 		}}),
+		IdeaID: relaygo.F("idea_id"),
+		Media: relaygo.F([]relaygo.PostNewParamsMedia{{
+			URL:       relaygo.F("https://example.com"),
+			Thumbnail: relaygo.F("thumbnail"),
+			Type:      relaygo.F(relaygo.PostNewParamsMediaTypeImage),
+		}}),
+		Recycling: relaygo.F(relaygo.PostNewParamsRecycling{
+			Gap:               relaygo.F(int64(1)),
+			GapFreq:           relaygo.F(relaygo.PostNewParamsRecyclingGapFreqDay),
+			StartDate:         relaygo.F(time.Now()),
+			ContentVariations: relaygo.F([]string{"string"}),
+			Enabled:           relaygo.F(true),
+			ExpireCount:       relaygo.F(int64(1)),
+			ExpireDate:        relaygo.F(time.Now()),
+		}),
+		ShortenURLs:   relaygo.F(true),
+		SkipSignature: relaygo.F(true),
 		TargetOptions: relaygo.F(map[string]map[string]interface{}{
 			"foo": {
 				"foo": "bar",
 			},
 		}),
-		Timezone: relaygo.F("timezone"),
+		TemplateID: relaygo.F("template_id"),
+		TemplateVariables: relaygo.F(map[string]string{
+			"foo": "string",
+		}),
+		Timezone:    relaygo.F("timezone"),
+		WorkspaceID: relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -93,9 +117,20 @@ func TestPostUpdateWithOptionalParams(t *testing.T) {
 		relaygo.PostUpdateParams{
 			Content: relaygo.F("content"),
 			Media: relaygo.F([]relaygo.PostUpdateParamsMedia{{
-				URL:  relaygo.F("https://example.com"),
-				Type: relaygo.F(relaygo.PostUpdateParamsMediaTypeImage),
+				URL:       relaygo.F("https://example.com"),
+				Thumbnail: relaygo.F("thumbnail"),
+				Type:      relaygo.F(relaygo.PostUpdateParamsMediaTypeImage),
 			}}),
+			Notes: relaygo.F("notes"),
+			Recycling: relaygo.F(relaygo.PostUpdateParamsRecycling{
+				Gap:               relaygo.F(int64(1)),
+				GapFreq:           relaygo.F(relaygo.PostUpdateParamsRecyclingGapFreqDay),
+				StartDate:         relaygo.F(time.Now()),
+				ContentVariations: relaygo.F([]string{"string"}),
+				Enabled:           relaygo.F(true),
+				ExpireCount:       relaygo.F(int64(1)),
+				ExpireDate:        relaygo.F(time.Now()),
+			}),
 			ScheduledAt: relaygo.F("now"),
 			TargetOptions: relaygo.F(map[string]map[string]interface{}{
 				"foo": {
@@ -129,13 +164,16 @@ func TestPostListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Posts.List(context.TODO(), relaygo.PostListParams{
-		AccountID: relaygo.F("account_id"),
-		Cursor:    relaygo.F("cursor"),
-		From:      relaygo.F(time.Now()),
-		GroupID:   relaygo.F("group_id"),
-		Limit:     relaygo.F(int64(1)),
-		Status:    relaygo.F(relaygo.PostListParamsStatusDraft),
-		To:        relaygo.F(time.Now()),
+		AccountID:       relaygo.F("account_id"),
+		AccountIDs:      relaygo.F("account_ids"),
+		Cursor:          relaygo.F("cursor"),
+		From:            relaygo.F(time.Now()),
+		Include:         relaygo.F("include"),
+		IncludeExternal: relaygo.F(relaygo.PostListParamsIncludeExternalTrue),
+		Limit:           relaygo.F(int64(1)),
+		Status:          relaygo.F(relaygo.PostListParamsStatusDraft),
+		To:              relaygo.F(time.Now()),
+		WorkspaceID:     relaygo.F("workspace_id"),
 	})
 	if err != nil {
 		var apierr *relaygo.Error
@@ -187,16 +225,40 @@ func TestPostBulkNew(t *testing.T) {
 			ScheduledAt: relaygo.F("now"),
 			Targets:     relaygo.F([]string{"string"}),
 			Content:     relaygo.F("content"),
-			Media: relaygo.F([]relaygo.PostBulkNewParamsPostsMedia{{
-				URL:  relaygo.F("https://example.com"),
-				Type: relaygo.F(relaygo.PostBulkNewParamsPostsMediaTypeImage),
+			CrossPostActions: relaygo.F([]relaygo.PostBulkNewParamsPostsCrossPostAction{{
+				ActionType:      relaygo.F(relaygo.PostBulkNewParamsPostsCrossPostActionsActionTypeRepost),
+				TargetAccountID: relaygo.F("target_account_id"),
+				Content:         relaygo.F("content"),
+				DelayMinutes:    relaygo.F(int64(0)),
 			}}),
+			IdeaID: relaygo.F("idea_id"),
+			Media: relaygo.F([]relaygo.PostBulkNewParamsPostsMedia{{
+				URL:       relaygo.F("https://example.com"),
+				Thumbnail: relaygo.F("thumbnail"),
+				Type:      relaygo.F(relaygo.PostBulkNewParamsPostsMediaTypeImage),
+			}}),
+			Recycling: relaygo.F(relaygo.PostBulkNewParamsPostsRecycling{
+				Gap:               relaygo.F(int64(1)),
+				GapFreq:           relaygo.F(relaygo.PostBulkNewParamsPostsRecyclingGapFreqDay),
+				StartDate:         relaygo.F(time.Now()),
+				ContentVariations: relaygo.F([]string{"string"}),
+				Enabled:           relaygo.F(true),
+				ExpireCount:       relaygo.F(int64(1)),
+				ExpireDate:        relaygo.F(time.Now()),
+			}),
+			ShortenURLs:   relaygo.F(true),
+			SkipSignature: relaygo.F(true),
 			TargetOptions: relaygo.F(map[string]map[string]interface{}{
 				"foo": {
 					"foo": "bar",
 				},
 			}),
-			Timezone: relaygo.F("timezone"),
+			TemplateID: relaygo.F("template_id"),
+			TemplateVariables: relaygo.F(map[string]string{
+				"foo": "string",
+			}),
+			Timezone:    relaygo.F("timezone"),
+			WorkspaceID: relaygo.F("workspace_id"),
 		}}),
 	})
 	if err != nil {
